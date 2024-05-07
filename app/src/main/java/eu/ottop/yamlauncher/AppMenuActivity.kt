@@ -9,21 +9,29 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.UserHandle
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.webkit.RenderProcessGoneDetail
+import android.widget.EditText
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.SearchView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.drawable.toDrawable
+import androidx.lifecycle.lifecycleScope
 import eu.ottop.yamlauncher.databinding.ActivityAppMenuBinding
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
 
 class AppMenuActivity : AppCompatActivity() {
 
@@ -96,7 +104,7 @@ class AppMenuActivity : AppCompatActivity() {
     }
 
     private fun startTask() {
-        checkApps = GlobalScope.launch {
+        checkApps = lifecycleScope.launch {
             while (true) {
                 if (!listsEqual(shownApps, getInstalledApps())) {
                     shownApps = getInstalledApps()
@@ -166,20 +174,39 @@ class AppMenuActivity : AppCompatActivity() {
         val appInfo = appInfo.activityInfo.applicationInfo
 
         val textView = TextView(this)
+        val editLayout = LinearLayout(this)
+
+        val editText = EditText(this)
+        editText.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+
+        val imageView = ImageView(this)
+        imageView.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+
         val launcherApps = getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
-        val mainActivity =
-            launcherApps.getActivityList(appInfo.packageName, userHandle).firstOrNull()
+        val mainActivity = launcherApps.getActivityList(appInfo.packageName, userHandle).firstOrNull()
 
-        setupTextView(textView, appInfo, workProfile)
+        editLayout.layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+        editLayout.orientation = LinearLayout.HORIZONTAL;
 
-        setupTextListeners(textView, appInfo, userHandle, workProfile, launcherApps, mainActivity)
+        setupTextView(textView, editText, appInfo, workProfile)
+
+        setupTextListeners(textView, editLayout, appInfo, userHandle, workProfile, launcherApps, mainActivity)
+
+        editLayout.addView(editText);
+        editLayout.addView(imageView);
+
+        editLayout.visibility = View.GONE
 
         binding.container.addView(textView)
+        binding.container.addView(editLayout)
 
         return true
     }
 
-    private fun setupTextView(textView: TextView, appInfo: ApplicationInfo, workProfile: Int) {
+    private fun setupTextView(textView: TextView, editText: EditText, appInfo: ApplicationInfo, workProfile: Int) {
         val states = arrayOf(
             intArrayOf(-android.R.attr.state_pressed),
             intArrayOf(android.R.attr.state_pressed)
@@ -204,10 +231,27 @@ class AppMenuActivity : AppCompatActivity() {
             }
             setTextColor(ColorStateList(states, colors))
         }
+        with(editText) {
+            id = R.id.app_name
+            textSize = 28f
+            setPadding(0, 10, 0, 80)
+            isClickable = true
+            focusable = View.FOCUSABLE
+            gravity = Gravity.CENTER_VERTICAL
+            isElegantTextHeight = false
+            isFocusable = true
+            isClickable = true
+            includeFontPadding = true
+            isSingleLine = true
+            setTextColor(ColorStateList(states, colors))
+            background = null
+        }
+        editText.setText(textView.text)
     }
 
     private fun setupTextListeners(
         textView: TextView,
+        editLayout: LinearLayout,
         appInfo: ApplicationInfo,
         userHandle: UserHandle,
         workProfile: Int,
@@ -215,7 +259,7 @@ class AppMenuActivity : AppCompatActivity() {
         mainActivity: LauncherActivityInfo?
     ) {
         textView.setOnLongClickListener {
-            appActionMenu(textView, appInfo, userHandle, workProfile, launcherApps, mainActivity)
+            appActionMenu(textView, editLayout, appInfo, userHandle, workProfile, launcherApps, mainActivity)
         }
 
         textView.setOnClickListener {
@@ -233,6 +277,7 @@ class AppMenuActivity : AppCompatActivity() {
 
     private fun appActionMenu(
         textView: TextView,
+        editLayout: LinearLayout,
         appInfo: ApplicationInfo,
         userHandle: UserHandle,
         workProfile: Int,
@@ -261,8 +306,9 @@ class AppMenuActivity : AppCompatActivity() {
 
         popupWindow.showAsDropDown(textView, 0, -textView.height)
 
+        var editing = false
         popupWindow.setOnDismissListener {
-            textView.visibility = View.VISIBLE
+            if (!editing) {textView.visibility = View.VISIBLE}
         }
 
         popupView.findViewById<TextView>(R.id.info).setOnClickListener {
@@ -288,8 +334,19 @@ class AppMenuActivity : AppCompatActivity() {
         }
 
         popupView.findViewById<TextView>(R.id.rename).setOnClickListener {
-            // Handle rename action
+            textView.visibility = View.GONE
+            editLayout.visibility = View.VISIBLE
+            editing = true
             popupWindow.dismiss()
+            val editText = editLayout.findViewById<EditText>(R.id.app_name)
+            editText.requestFocus()
+            val imm = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+
+            val handler = Handler(Looper.getMainLooper())
+            handler.postDelayed({
+                val imm = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
+            }, 100) // Adjust delay as needed
         }
 
         popupView.findViewById<TextView>(R.id.hide).setOnClickListener {
@@ -304,7 +361,7 @@ class AppMenuActivity : AppCompatActivity() {
 
     private fun setAppHidden(packageName: String, profile: Int, hidden: Boolean) {
         // Get the shared preferences editor
-        val editor = getSharedPreferences("app_data", MODE_PRIVATE).edit()
+        val editor = getSharedPreferences("hidden_apps", MODE_PRIVATE).edit()
         val key = "$packageName-${profile}"
         editor.putBoolean(key, hidden)
         editor.apply()
@@ -312,14 +369,14 @@ class AppMenuActivity : AppCompatActivity() {
 
     private fun isAppHidden(packageName: String, profile: Int): Boolean {
         // Get the shared preferences object
-        val sharedPref = getSharedPreferences("app_data", MODE_PRIVATE)
+        val sharedPref = getSharedPreferences("hidden_apps", MODE_PRIVATE)
         val key = "$packageName-${profile}"
         return sharedPref.getBoolean(key, false) // Default to false (visible)
     }
 
     private fun setAppVisible(packageName: String, profile: Int) {
         // Get the shared preferences editor
-        val editor = getSharedPreferences("app_data", MODE_PRIVATE).edit()
+        val editor = getSharedPreferences("hidden_apps", MODE_PRIVATE).edit()
         val key = "$packageName-${profile}"
         editor.remove(key)
         editor.apply()

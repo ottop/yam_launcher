@@ -9,8 +9,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:foreground="@drawable/app_action_foreground"
         android:drawableTop="@android:drawable/ic_menu_info_details"
+        android:foreground="@drawable/app_action_foreground"
         android:text="Info"
         android:textAlignment="center"
         android:textColor="#F3F3F3FF" />
@@ -20,8 +20,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:foreground="@drawable/app_action_foreground"
         android:drawableTop="@android:drawable/ic_menu_delete"
+        android:foreground="@drawable/app_action_foreground"
         android:text="Uninstall"
         android:textAlignment="center"
         android:textColor="#F3F3F3FF" />
@@ -31,8 +31,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:foreground="@drawable/app_action_foreground"
         android:drawableTop="@android:drawable/ic_menu_edit"
+        android:foreground="@drawable/app_action_foreground"
         android:text="Rename"
         android:textAlignment="center"
         android:textColor="#F3F3F3FF" />
@@ -42,8 +42,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:foreground="@drawable/app_action_foreground"
         android:drawableTop="@android:drawable/ic_menu_view"
+        android:foreground="@drawable/app_action_foreground"
         android:text="Hide"
         android:textAlignment="center"
         android:textColor="#F3F3F3FF" />
