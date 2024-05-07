@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#6F000000">
+
+    <TextView
+        android:id="@+id/info"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:foreground="@drawable/app_action_foreground"
+        android:drawableTop="@android:drawable/ic_menu_info_details"
+        android:text="Info"
+        android:textAlignment="center"
+        android:textColor="#F3F3F3FF" />
+
+    <TextView
+        android:id="@+id/uninstall"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:foreground="@drawable/app_action_foreground"
+        android:drawableTop="@android:drawable/ic_menu_delete"
+        android:text="Uninstall"
+        android:textAlignment="center"
+        android:textColor="#F3F3F3FF" />
+
+    <TextView
+        android:id="@+id/rename"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:foreground="@drawable/app_action_foreground"
+        android:drawableTop="@android:drawable/ic_menu_edit"
+        android:text="Rename"
+        android:textAlignment="center"
+        android:textColor="#F3F3F3FF" />
+
+    <TextView
+        android:id="@+id/hide"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:foreground="@drawable/app_action_foreground"
+        android:drawableTop="@android:drawable/ic_menu_view"
+        android:text="Hide"
+        android:textAlignment="center"
+        android:textColor="#F3F3F3FF" />
+
+</LinearLayout>
