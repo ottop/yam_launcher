@@ -15,6 +15,7 @@ import android.os.UserHandle
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.webkit.RenderProcessGoneDetail
 import android.widget.EditText
@@ -224,11 +225,8 @@ class AppMenuActivity : AppCompatActivity() {
             focusable = View.FOCUSABLE
             gravity = Gravity.START
 
-            text = if (workProfile != 0) {
-                "*" + appInfo.loadLabel(packageManager)
-            } else {
-                appInfo.loadLabel(packageManager)
-            }
+            text = getAppName(appInfo.packageName, workProfile, appInfo.loadLabel(packageManager))
+            if (workProfile != 0) {text = "*" + text}
             setTextColor(ColorStateList(states, colors))
         }
         with(editText) {
@@ -245,6 +243,7 @@ class AppMenuActivity : AppCompatActivity() {
             isSingleLine = true
             setTextColor(ColorStateList(states, colors))
             background = null
+            imeOptions = EditorInfo.IME_ACTION_DONE
         }
         editText.setText(textView.text)
     }
@@ -305,7 +304,6 @@ class AppMenuActivity : AppCompatActivity() {
         textView.visibility = View.INVISIBLE
 
         popupWindow.showAsDropDown(textView, 0, -textView.height)
-
         var editing = false
         popupWindow.setOnDismissListener {
             if (!editing) {textView.visibility = View.VISIBLE}
@@ -339,14 +337,37 @@ class AppMenuActivity : AppCompatActivity() {
             editing = true
             popupWindow.dismiss()
             val editText = editLayout.findViewById<EditText>(R.id.app_name)
+
             editText.requestFocus()
-            val imm = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
             val handler = Handler(Looper.getMainLooper())
             handler.postDelayed({
-                val imm = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
-            }, 100) // Adjust delay as needed
+                binding.appList.scrollToDescendant(textView)
+            }, 100)
+
+            binding.root.addOnLayoutChangeListener {
+                    _, _, top, _, bottom, _, oldTop, _, oldBottom ->
+                if (bottom - top > oldBottom - oldTop) {
+                    editing = false
+                    editLayout.clearFocus()
+
+                    editLayout.visibility = View.GONE
+                    textView.visibility = View.VISIBLE
+            }
+            }
+            editText.setOnEditorActionListener { _, actionId, _ ->
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.hideSoftInputFromWindow(editText.windowToken, 0)
+                    setAppName(appInfo.packageName, workProfile, editText.text.toString())
+                    refreshAppMenu()
+
+                    return@setOnEditorActionListener true
+                }
+                false
+            }
         }
 
         popupView.findViewById<TextView>(R.id.hide).setOnClickListener {
@@ -362,7 +383,7 @@ class AppMenuActivity : AppCompatActivity() {
     private fun setAppHidden(packageName: String, profile: Int, hidden: Boolean) {
         // Get the shared preferences editor
         val editor = getSharedPreferences("hidden_apps", MODE_PRIVATE).edit()
-        val key = "$packageName-${profile}"
+        val key = "$packageName-$profile"
         editor.putBoolean(key, hidden)
         editor.apply()
     }
@@ -370,15 +391,28 @@ class AppMenuActivity : AppCompatActivity() {
     private fun isAppHidden(packageName: String, profile: Int): Boolean {
         // Get the shared preferences object
         val sharedPref = getSharedPreferences("hidden_apps", MODE_PRIVATE)
-        val key = "$packageName-${profile}"
+        val key = "$packageName-$profile"
         return sharedPref.getBoolean(key, false) // Default to false (visible)
     }
 
     private fun setAppVisible(packageName: String, profile: Int) {
         // Get the shared preferences editor
         val editor = getSharedPreferences("hidden_apps", MODE_PRIVATE).edit()
-        val key = "$packageName-${profile}"
+        val key = "$packageName-$profile"
         editor.remove(key)
         editor.apply()
+    }
+
+    private fun setAppName(packageName: String, profile: Int, newName: String) {
+        val editor = getSharedPreferences("renamed_apps", MODE_PRIVATE).edit()
+        val key = "$packageName-$profile"
+        editor.putString(key, newName)
+        editor.apply()
+    }
+
+    private fun getAppName(packageName: String, profile: Int, appName: CharSequence): CharSequence? {
+        val sharedPreferences = getSharedPreferences("renamed_apps", MODE_PRIVATE)
+        val key = "$packageName-$profile"
+        return sharedPreferences.getString(key, appName.toString())
     }
 }
