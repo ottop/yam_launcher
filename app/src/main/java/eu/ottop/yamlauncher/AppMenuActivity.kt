@@ -1,41 +1,208 @@
 package eu.ottop.yamlauncher
 
 import android.content.Context
-import android.content.Intent
-import android.content.pm.ApplicationInfo
 import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
-import android.content.res.ColorStateList
-import android.graphics.Color
-import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.os.UserHandle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
-import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
-import android.webkit.RenderProcessGoneDetail
-import android.widget.EditText
-import android.widget.ImageView
+import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.PopupWindow
 import android.widget.SearchView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.graphics.drawable.toDrawable
-import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import eu.ottop.yamlauncher.databinding.ActivityAppMenuBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
-class AppMenuActivity : AppCompatActivity() {
+class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, AppMenuAdapter.OnItemLongClickListener {
 
+        private lateinit var binding: ActivityAppMenuBinding
+        private lateinit var recyclerView: RecyclerView
+        private lateinit var searchView: SearchView
+        private lateinit var adapter: AppMenuAdapter
+        private lateinit var shownApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>
+        private lateinit var job: Job
+        private var appActionMenu = AppActionMenu()
+        private lateinit var launcherApps: LauncherApps
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityAppMenuBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(null)
+        launcherApps = getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
+        searchView = findViewById(R.id.searchView)
+
+        recyclerView = findViewById(R.id.recycler_view)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        shownApps = getInstalledApps()
+        adapter = AppMenuAdapter(shownApps, this, this)
+        recyclerView.adapter = adapter
+    }
+
+    override fun onItemClick(appInfo: LauncherActivityInfo, userHandle: UserHandle) {
+        val mainActivity = launcherApps.getActivityList(appInfo.applicationInfo.packageName, userHandle).firstOrNull()
+        if (mainActivity != null) {
+            launcherApps.startMainActivity(mainActivity.componentName, userHandle, null, null)
+        } else {
+            // Handle the case when launch intent is null (e.g., app cannot be launched)
+            Toast.makeText(this, "Cannot launch app", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onItemLongClick(
+        appInfo: LauncherActivityInfo,
+        userHandle: UserHandle,
+        userProfile: Int,
+        textView: TextView,
+        actionMenuLayout: LinearLayout,
+        editView: LinearLayout
+    ) {
+        // Handle the long click action here, for example, show additional options or information about the app
+        textView.visibility = View.GONE
+        actionMenuLayout.visibility = View.VISIBLE
+        val mainActivity = launcherApps.getActivityList(appInfo.applicationInfo.packageName, userHandle).firstOrNull()
+        appActionMenu.setActionListeners(this@AppMenuActivity, CoroutineScope(Dispatchers.Main), binding, textView, editView, actionMenuLayout, searchView, appInfo.applicationInfo, userHandle, userProfile, launcherApps, mainActivity)
+
+    }
+
+        private fun getInstalledApps(): List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>> {
+            val allApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
+            val launcherApps = getSystemService(LAUNCHER_APPS_SERVICE) as LauncherApps
+            for (i in launcherApps.profiles.indices) {
+                launcherApps.getActivityList(null, launcherApps.profiles[i]).forEach { app ->
+                    allApps.add(Pair(app, Pair(launcherApps.profiles[i], i)))
+                }
+            }
+            return allApps.sortedBy {
+                it.first.applicationInfo.loadLabel(packageManager).toString().lowercase()
+            }
+        }
+
+    override fun onStop() {
+        super.onStop()
+        job.cancel()
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+        startTask()
+    }
+
+    private fun startTask() {
+        job = CoroutineScope(Dispatchers.IO).launch {
+            while (true) {
+                if (!listsEqual(shownApps, getInstalledApps())) {
+                    shownApps = getInstalledApps()
+                    withContext(Dispatchers.Main) {
+                        adapter.updateApps(shownApps)
+                    }
+                }
+                delay(5000)
+            }
+        }
+    }
+
+    private fun listsEqual(
+        list1: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>,
+        list2: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>
+    ): Boolean {
+        if (list1.size != list2.size) return false
+
+        for (i in list1.indices) {
+            if (list1[i].first.componentName != list2[i].first.componentName || list1[i].second.first != list2[i].second.first) {
+                return false
+            }
+        }
+
+        return true
+    }
+
+}
+
+    class AppMenuAdapter(private var apps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>, private val itemClickListener: OnItemClickListener, private val itemLongClickListener: OnItemLongClickListener) :
+        RecyclerView.Adapter<AppMenuAdapter.AppViewHolder>() {
+
+        interface OnItemClickListener {
+            fun onItemClick(appInfo: LauncherActivityInfo, userHandle: UserHandle)
+        }
+
+        interface OnItemLongClickListener {
+            fun onItemLongClick(
+                appInfo: LauncherActivityInfo,
+                userHandle: UserHandle,
+                userProfile: Int,
+                textView: TextView,
+                actionMenuLayout: LinearLayout,
+                editView: LinearLayout
+            )
+        }
+
+        inner class AppViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+            val textView: TextView = itemView.findViewById(R.id.app_name)
+
+            init {
+                val actionMenuLayout = LayoutInflater.from(itemView.context)
+                    .inflate(R.layout.app_action_menu, itemView.findViewById(R.id.list_item), false) as LinearLayout
+                val editView = LayoutInflater.from(itemView.context)
+                    .inflate(R.layout.rename_view, itemView.findViewById(R.id.list_item), false) as LinearLayout
+                val parentLayout: ViewGroup = itemView.findViewById(R.id.list_item)
+                parentLayout.addView(actionMenuLayout)
+                parentLayout.addView(editView)
+                actionMenuLayout.visibility = View.GONE
+                editView.visibility = View.GONE
+                itemView.setOnClickListener {
+                    val position = bindingAdapterPosition
+                    if (position != RecyclerView.NO_POSITION) {
+                        val app = apps[position].first
+                        itemClickListener.onItemClick(app, apps[position].second.first)
+                    }
+                }
+                itemView.setOnLongClickListener {
+                    val position = bindingAdapterPosition
+                    if (position != RecyclerView.NO_POSITION) {
+                        val app = apps[position].first
+                        itemLongClickListener.onItemLongClick(app, apps[position].second.first, apps[position].second.second, textView, actionMenuLayout, editView)
+                        return@setOnLongClickListener true
+                    }
+                    false
+                }
+            }
+        }
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AppViewHolder {
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.app_item_layout, parent, false)
+            return AppViewHolder(view)
+        }
+
+        override fun onBindViewHolder(holder: AppViewHolder, position: Int) {
+            val app = apps[position]
+            val appInfo = app.first.activityInfo.applicationInfo
+            holder.textView.text = appInfo.loadLabel(holder.itemView.context.packageManager)
+        }
+
+        override fun getItemCount(): Int {
+            return apps.size
+        }
+
+        fun updateApps(newApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
+            apps = newApps
+            notifyDataSetChanged()
+        }
+    }
+
+/*
     private lateinit var binding: ActivityAppMenuBinding
     private lateinit var searchView: SearchView
     private lateinit var container: LinearLayout
@@ -415,4 +582,4 @@ class AppMenuActivity : AppCompatActivity() {
         val key = "$packageName-$profile"
         return sharedPreferences.getString(key, appName.toString())
     }
-}
+}*/
