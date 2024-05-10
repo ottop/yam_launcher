@@ -1,20 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/rename_view"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingVertical="10dp">
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/app_name"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:hint="hint" />
+        android:background="#6F000000"
+        android:clickable="true"
+        android:elegantTextHeight="false"
+        android:imeOptions="actionDone"
+        android:includeFontPadding="true"
+        android:paddingLeft="60dp"
+        android:paddingTop="10dp"
+        android:paddingRight="40dp"
+        android:paddingBottom="10dp"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:textSize="28sp" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/button2"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
         android:layout_weight="0.3"
-        android:text="Reset" />
+        android:background="#89000000"
+        android:gravity="center"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:text="Reset"
+        android:textColor="#F3F3F3" />
 </LinearLayout>

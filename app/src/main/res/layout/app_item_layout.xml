@@ -11,6 +11,12 @@
         android:id="@+id/app_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:clickable="false"
+        android:gravity="start"
+        android:paddingLeft="40dp"
+        android:paddingTop="20dp"
+        android:paddingRight="40dp"
+        android:paddingBottom="20dp"
         android:textColor="#F3F3F3"
         android:textSize="28sp"
         android:visibility="visible" />
