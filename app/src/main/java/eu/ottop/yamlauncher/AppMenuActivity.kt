@@ -5,9 +5,13 @@ import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
 import android.os.Bundle
 import android.os.UserHandle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
+import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.SearchView
 import android.widget.TextView
@@ -69,7 +73,7 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         editView: LinearLayout
     ) {
         // Handle the long click action here, for example, show additional options or information about the app
-        textView.visibility = View.GONE
+        textView.visibility = View.INVISIBLE
         actionMenuLayout.visibility = View.VISIBLE
         val mainActivity = launcherApps.getActivityList(appInfo.applicationInfo.packageName, userHandle).firstOrNull()
         appActionMenu.setActionListeners(this@AppMenuActivity, CoroutineScope(Dispatchers.Main), binding, textView, editView, actionMenuLayout, searchView, appInfo.applicationInfo, userHandle, userProfile, launcherApps, mainActivity)
@@ -150,18 +154,12 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         }
 
         inner class AppViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            val textView: TextView = itemView.findViewById(R.id.app_name)
+            private val listItem: FrameLayout = itemView.findViewById(R.id.list_item)
+            val textView: TextView = listItem.findViewById(R.id.app_name)
+            val actionMenuLayout: LinearLayout = listItem.findViewById(R.id.action_menu)
+            val editView: LinearLayout = listItem.findViewById(R.id.rename_view)
 
             init {
-                val actionMenuLayout = LayoutInflater.from(itemView.context)
-                    .inflate(R.layout.app_action_menu, itemView.findViewById(R.id.list_item), false) as LinearLayout
-                val editView = LayoutInflater.from(itemView.context)
-                    .inflate(R.layout.rename_view, itemView.findViewById(R.id.list_item), false) as LinearLayout
-                val parentLayout: ViewGroup = itemView.findViewById(R.id.list_item)
-                parentLayout.addView(actionMenuLayout)
-                parentLayout.addView(editView)
-                actionMenuLayout.visibility = View.GONE
-                editView.visibility = View.GONE
                 itemView.setOnClickListener {
                     val position = bindingAdapterPosition
                     if (position != RecyclerView.NO_POSITION) {
@@ -190,6 +188,11 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
             val app = apps[position]
             val appInfo = app.first.activityInfo.applicationInfo
             holder.textView.text = appInfo.loadLabel(holder.itemView.context.packageManager)
+            holder.editView.findViewById<EditText>(R.id.app_name_edit).setText(holder.textView.text)
+            holder.actionMenuLayout.viewTreeObserver.addOnGlobalLayoutListener {
+                Log.d("Yooo", position.toString())
+                // Perform any action you want here
+            }
         }
 
         override fun getItemCount(): Int {

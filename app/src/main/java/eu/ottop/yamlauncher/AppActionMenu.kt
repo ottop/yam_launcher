@@ -49,7 +49,7 @@ class AppActionMenu {
                 )
             }
 
-            actionMenu.visibility = View.GONE
+            actionMenu.visibility = View.INVISIBLE
             textView.visibility = View.VISIBLE
         }
 
@@ -59,23 +59,22 @@ class AppActionMenu {
             intent.putExtra(Intent.EXTRA_USER, userHandle)
             activity.startActivity(intent)
 
-            actionMenu.visibility = View.GONE
+            actionMenu.visibility = View.INVISIBLE
             textView.visibility = View.VISIBLE
         }
 
         actionMenu.findViewById<TextView>(R.id.rename).setOnClickListener {
-            textView.visibility = View.GONE
+            textView.visibility = View.INVISIBLE
             editLayout.visibility = View.VISIBLE
-            actionMenu.visibility = View.GONE
-            val editText = editLayout.findViewById<EditText>(R.id.app_name)
-            searchView.visibility = View.GONE
+            actionMenu.visibility = View.INVISIBLE
+            val editText = editLayout.findViewById<EditText>(R.id.app_name_edit)
+            searchView.visibility = View.INVISIBLE
             editText.requestFocus()
 
             val handler = Handler(Looper.getMainLooper())
             handler.postDelayed({
                 val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
-                //binding.appList.scrollToDescendant(textView)
             }, 100)
 
             binding.root.addOnLayoutChangeListener {
@@ -83,7 +82,7 @@ class AppActionMenu {
                 if (bottom - top > oldBottom - oldTop) {
                     editLayout.clearFocus()
 
-                    editLayout.visibility = View.GONE
+                    editLayout.visibility = View.INVISIBLE
                     textView.visibility = View.VISIBLE
                     searchView.visibility = View.VISIBLE
                 }
@@ -106,12 +105,12 @@ class AppActionMenu {
 
         actionMenu.findViewById<TextView>(R.id.hide).setOnClickListener {
             sharedPreferenceManager.setAppHidden(activity, appInfo.packageName, workProfile, true)
-            actionMenu.visibility = View.GONE
-            textView.visibility = View.GONE
+            actionMenu.visibility = View.INVISIBLE
+            textView.visibility = View.INVISIBLE
         }
 
         actionMenu.findViewById<TextView>(R.id.close).setOnClickListener {
-            actionMenu.visibility = View.GONE
+            actionMenu.visibility = View.INVISIBLE
             textView.visibility = View.VISIBLE
         }
     }
