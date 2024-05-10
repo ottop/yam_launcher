@@ -31,7 +31,8 @@
             android:paddingBottom="10dp"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:textSize="28sp" />
+            android:textSize="28sp"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/button2"
@@ -44,7 +45,8 @@
             android:insetTop="0dp"
             android:insetBottom="0dp"
             android:text="Reset"
-            android:textColor="#F3F3F3" />
+            android:textColor="#F3F3F3"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault"/>
     </LinearLayout>
 
     <TextView
@@ -57,6 +59,7 @@
         android:paddingTop="20dp"
         android:paddingRight="40dp"
         android:paddingBottom="20dp"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault"
         android:textColor="#F3F3F3"
         android:textSize="28sp"
         android:visibility="visible" />
@@ -78,7 +81,8 @@
             android:text="Info"
             android:textAlignment="center"
             android:textColor="#F3F3F3FF"
-            app:drawableTopCompat="@android:drawable/ic_menu_info_details" />
+            app:drawableTopCompat="@android:drawable/ic_menu_info_details"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault" />
 
         <TextView
             android:id="@+id/uninstall"
@@ -90,7 +94,8 @@
             android:text="Uninstall"
             android:textAlignment="center"
             android:textColor="#F3F3F3FF"
-            app:drawableTopCompat="@android:drawable/ic_menu_delete" />
+            app:drawableTopCompat="@android:drawable/ic_menu_delete"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault" />
 
         <TextView
             android:id="@+id/rename"
@@ -102,7 +107,8 @@
             android:text="Rename"
             android:textAlignment="center"
             android:textColor="#F3F3F3FF"
-            app:drawableTopCompat="@android:drawable/ic_menu_edit" />
+            app:drawableTopCompat="@android:drawable/ic_menu_edit"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault" />
 
         <TextView
             android:id="@+id/hide"
@@ -114,7 +120,8 @@
             android:text="Hide"
             android:textAlignment="center"
             android:textColor="#F3F3F3FF"
-            app:drawableTopCompat="@android:drawable/ic_menu_view" />
+            app:drawableTopCompat="@android:drawable/ic_menu_view"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault" />
 
         <TextView
             android:id="@+id/close"
@@ -126,7 +133,8 @@
             android:text="Close"
             android:textAlignment="center"
             android:textColor="#F3F3F3FF"
-            app:drawableTopCompat="@android:drawable/ic_menu_close_clear_cancel" />
+            app:drawableTopCompat="@android:drawable/ic_menu_close_clear_cancel"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault" />
 
     </LinearLayout>
 

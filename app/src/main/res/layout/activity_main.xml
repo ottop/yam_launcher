@@ -20,14 +20,17 @@
         android:layout_weight="1"
         android:textAlignment="center"
         android:textColor="#F3F3F3"
-        android:textSize="70sp" />
+        android:textSize="70sp"
+        android:fontFamily= "@null"
+        android:textAppearance= "@android:style/TextAppearance.DeviceDefault" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0.1"
         android:onClick="openAppMenuActivity"
-        android:text="Button" />
+        android:text="Button"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault" />
 </LinearLayout>
 

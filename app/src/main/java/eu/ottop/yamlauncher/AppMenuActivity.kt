@@ -5,15 +5,15 @@ import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
 import android.os.Bundle
 import android.os.UserHandle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.LinearLayout
-import android.widget.SearchView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -32,7 +32,7 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
 
         private lateinit var binding: ActivityAppMenuBinding
         private lateinit var recyclerView: RecyclerView
-        private lateinit var searchView: SearchView
+        private lateinit var searchView: EditText
         private lateinit var adapter: AppMenuAdapter
         private lateinit var shownApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>
         private lateinit var job: Job
@@ -52,6 +52,12 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         shownApps = getInstalledApps()
         adapter = AppMenuAdapter(shownApps, this, this)
         recyclerView.adapter = adapter
+
+        binding.root.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
+            if (bottom - top > oldBottom - oldTop) {
+                searchView.clearFocus()
+            }
+        }
     }
 
     override fun onItemClick(appInfo: LauncherActivityInfo, userHandle: UserHandle) {
@@ -73,12 +79,54 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         editView: LinearLayout
     ) {
         // Handle the long click action here, for example, show additional options or information about the app
+        editView.findViewById<EditText>(R.id.app_name_edit).addTextChangedListener(object :
+            TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // This method is called before the text is changed
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // This method is called when the text is changed
+                // You can perform actions here based on the text changes
+                // For example, check if text is inserted or removed
+                filterItems(editView.findViewById<EditText>(R.id.app_name_edit).text.toString())
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+
+            }
+
+        })
         textView.visibility = View.INVISIBLE
         actionMenuLayout.visibility = View.VISIBLE
         val mainActivity = launcherApps.getActivityList(appInfo.applicationInfo.packageName, userHandle).firstOrNull()
         appActionMenu.setActionListeners(this@AppMenuActivity, CoroutineScope(Dispatchers.Main), binding, textView, editView, actionMenuLayout, searchView, appInfo.applicationInfo, userHandle, userProfile, launcherApps, mainActivity)
 
     }
+
+    private fun filterItems(query: String?) {
+        val cleanQuery = query?.replace("[^a-zA-Z0-9]".toRegex(), "")
+
+        for (i in 0 until binding.recyclerView.childCount) {
+            val view = binding.recyclerView.getChildAt(i)
+
+
+            if (view is FrameLayout) {
+                for (i in 0 until view.childCount) {
+                    val text = view.getChildAt(i)
+                    if (text is TextView) {
+                        val itemText = text.text.toString()
+                        val cleanItemText = itemText.replace("[^a-zA-Z0-9]".toRegex(), "")
+
+                        if (cleanItemText.contains(cleanQuery ?: "", ignoreCase = true)) {
+                            view.visibility = View.VISIBLE
+                        } else {
+                            view.visibility = View.GONE
+                    }
+                }
+            }
+        }
+    }}
 
         private fun getInstalledApps(): List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>> {
             val allApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()

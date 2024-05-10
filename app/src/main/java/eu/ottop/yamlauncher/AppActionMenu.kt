@@ -14,7 +14,6 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.LinearLayout
-import android.widget.SearchView
 import android.widget.TextView
 import eu.ottop.yamlauncher.databinding.ActivityAppMenuBinding
 import kotlinx.coroutines.CoroutineScope
@@ -31,7 +30,7 @@ class AppActionMenu {
         textView: TextView,
         editLayout: LinearLayout,
         actionMenu: View,
-        searchView: SearchView,
+        searchView: EditText,
         appInfo: ApplicationInfo,
         userHandle: UserHandle,
         workProfile: Int,
