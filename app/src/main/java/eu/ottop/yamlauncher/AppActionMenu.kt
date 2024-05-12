@@ -35,7 +35,7 @@ class AppActionMenu {
         userHandle: UserHandle,
         workProfile: Int,
         launcherApps: LauncherApps,
-        mainActivity: LauncherActivityInfo?
+        mainActivity: LauncherActivityInfo?,
     ){
 
         actionMenu.findViewById<TextView>(R.id.info).setOnClickListener {
@@ -104,8 +104,7 @@ class AppActionMenu {
 
         actionMenu.findViewById<TextView>(R.id.hide).setOnClickListener {
             sharedPreferenceManager.setAppHidden(activity, appInfo.packageName, workProfile, true)
-            actionMenu.visibility = View.INVISIBLE
-            textView.visibility = View.INVISIBLE
+
         }
 
         actionMenu.findViewById<TextView>(R.id.close).setOnClickListener {

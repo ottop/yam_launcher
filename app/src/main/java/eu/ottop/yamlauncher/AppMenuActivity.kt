@@ -23,8 +23,10 @@ import eu.ottop.yamlauncher.databinding.ActivityAppMenuBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 
@@ -34,10 +36,13 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         private lateinit var recyclerView: RecyclerView
         private lateinit var searchView: EditText
         private lateinit var adapter: AppMenuAdapter
-        private lateinit var shownApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>
+        private lateinit var filteredApps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>
+        private lateinit var installedApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>
         private lateinit var job: Job
         private var appActionMenu = AppActionMenu()
         private lateinit var launcherApps: LauncherApps
+
+    private val sharedPreferenceManager = SharedPreferenceManager()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,15 +54,12 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
 
         recyclerView = findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        shownApps = getInstalledApps()
-        adapter = AppMenuAdapter(shownApps, this, this)
+        installedApps = getInstalledApps()
+        filteredApps = mutableListOf()
+        adapter = AppMenuAdapter(installedApps, this, this)
         recyclerView.adapter = adapter
 
-        binding.root.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
-            if (bottom - top > oldBottom - oldTop) {
-                searchView.clearFocus()
-            }
-        }
+        setupSearch()
     }
 
     override fun onItemClick(appInfo: LauncherActivityInfo, userHandle: UserHandle) {
@@ -79,24 +81,6 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         editView: LinearLayout
     ) {
         // Handle the long click action here, for example, show additional options or information about the app
-        editView.findViewById<EditText>(R.id.app_name_edit).addTextChangedListener(object :
-            TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // This method is called before the text is changed
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                // This method is called when the text is changed
-                // You can perform actions here based on the text changes
-                // For example, check if text is inserted or removed
-                filterItems(editView.findViewById<EditText>(R.id.app_name_edit).text.toString())
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-
-            }
-
-        })
         textView.visibility = View.INVISIBLE
         actionMenuLayout.visibility = View.VISIBLE
         val mainActivity = launcherApps.getActivityList(appInfo.applicationInfo.packageName, userHandle).firstOrNull()
@@ -104,42 +88,63 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
 
     }
 
+    private fun setupSearch() {
+        binding.root.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
+            if (bottom - top > oldBottom - oldTop) {
+                searchView.clearFocus()
+            }
+        }
+
+        searchView.addTextChangedListener(object :
+            TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                filterItems(searchView.text.toString())
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+            }
+
+        })
+    }
+
     private fun filterItems(query: String?) {
         val cleanQuery = query?.replace("[^a-zA-Z0-9]".toRegex(), "")
+        filteredApps.clear()
 
-        for (i in 0 until binding.recyclerView.childCount) {
-            val view = binding.recyclerView.getChildAt(i)
+        if (cleanQuery.isNullOrEmpty()) {
+            filteredApps.addAll(installedApps)
+        }
 
-
-            if (view is FrameLayout) {
-                for (i in 0 until view.childCount) {
-                    val text = view.getChildAt(i)
-                    if (text is TextView) {
-                        val itemText = text.text.toString()
-                        val cleanItemText = itemText.replace("[^a-zA-Z0-9]".toRegex(), "")
-
-                        if (cleanItemText.contains(cleanQuery ?: "", ignoreCase = true)) {
-                            view.visibility = View.VISIBLE
-                        } else {
-                            view.visibility = View.GONE
-                    }
+        else {
+            installedApps.forEach {
+                val cleanItemText = it.first.applicationInfo.loadLabel(packageManager).replace("[^a-zA-Z0-9]".toRegex(), "")
+                if (cleanItemText.contains(cleanQuery, ignoreCase=true)) {
+                    filteredApps.add(it)
                 }
             }
         }
-    }}
 
-        private fun getInstalledApps(): List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>> {
-            val allApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
-            val launcherApps = getSystemService(LAUNCHER_APPS_SERVICE) as LauncherApps
-            for (i in launcherApps.profiles.indices) {
-                launcherApps.getActivityList(null, launcherApps.profiles[i]).forEach { app ->
+        adapter.updateApps(filteredApps)
+
+    }
+
+    private fun getInstalledApps(): List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>> {
+        val allApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
+        val launcherApps = getSystemService(LAUNCHER_APPS_SERVICE) as LauncherApps
+        for (i in launcherApps.profiles.indices) {
+            launcherApps.getActivityList(null, launcherApps.profiles[i]).forEach { app ->
+                if (!sharedPreferenceManager.isAppHidden(this@AppMenuActivity, app.applicationInfo.packageName, i)) {
                     allApps.add(Pair(app, Pair(launcherApps.profiles[i], i)))
                 }
             }
-            return allApps.sortedBy {
-                it.first.applicationInfo.loadLabel(packageManager).toString().lowercase()
-            }
         }
+        return allApps.sortedBy {
+            it.first.applicationInfo.loadLabel(packageManager).toString().lowercase()
+        }
+    }
 
     override fun onStop() {
         super.onStop()
@@ -155,13 +160,22 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
     private fun startTask() {
         job = CoroutineScope(Dispatchers.IO).launch {
             while (true) {
-                if (!listsEqual(shownApps, getInstalledApps())) {
-                    shownApps = getInstalledApps()
+                if (!listsEqual(installedApps, getInstalledApps())) {
+                    installedApps = getInstalledApps()
                     withContext(Dispatchers.Main) {
-                        adapter.updateApps(shownApps)
+                        adapter.updateApps(installedApps)
                     }
                 }
                 delay(5000)
+            }
+        }
+    }
+
+    fun manualRefreshApps() {
+        CoroutineScope(Dispatchers.IO).launch {
+            installedApps = getInstalledApps()
+            withContext(Dispatchers.Main) {
+                adapter.updateApps(installedApps)
             }
         }
     }
@@ -183,75 +197,7 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
 
 }
 
-    class AppMenuAdapter(private var apps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>, private val itemClickListener: OnItemClickListener, private val itemLongClickListener: OnItemLongClickListener) :
-        RecyclerView.Adapter<AppMenuAdapter.AppViewHolder>() {
 
-        interface OnItemClickListener {
-            fun onItemClick(appInfo: LauncherActivityInfo, userHandle: UserHandle)
-        }
-
-        interface OnItemLongClickListener {
-            fun onItemLongClick(
-                appInfo: LauncherActivityInfo,
-                userHandle: UserHandle,
-                userProfile: Int,
-                textView: TextView,
-                actionMenuLayout: LinearLayout,
-                editView: LinearLayout
-            )
-        }
-
-        inner class AppViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            private val listItem: FrameLayout = itemView.findViewById(R.id.list_item)
-            val textView: TextView = listItem.findViewById(R.id.app_name)
-            val actionMenuLayout: LinearLayout = listItem.findViewById(R.id.action_menu)
-            val editView: LinearLayout = listItem.findViewById(R.id.rename_view)
-
-            init {
-                itemView.setOnClickListener {
-                    val position = bindingAdapterPosition
-                    if (position != RecyclerView.NO_POSITION) {
-                        val app = apps[position].first
-                        itemClickListener.onItemClick(app, apps[position].second.first)
-                    }
-                }
-                itemView.setOnLongClickListener {
-                    val position = bindingAdapterPosition
-                    if (position != RecyclerView.NO_POSITION) {
-                        val app = apps[position].first
-                        itemLongClickListener.onItemLongClick(app, apps[position].second.first, apps[position].second.second, textView, actionMenuLayout, editView)
-                        return@setOnLongClickListener true
-                    }
-                    false
-                }
-            }
-        }
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AppViewHolder {
-            val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.app_item_layout, parent, false)
-            return AppViewHolder(view)
-        }
-
-        override fun onBindViewHolder(holder: AppViewHolder, position: Int) {
-            val app = apps[position]
-            val appInfo = app.first.activityInfo.applicationInfo
-            holder.textView.text = appInfo.loadLabel(holder.itemView.context.packageManager)
-            holder.editView.findViewById<EditText>(R.id.app_name_edit).setText(holder.textView.text)
-            holder.actionMenuLayout.viewTreeObserver.addOnGlobalLayoutListener {
-                Log.d("Yooo", position.toString())
-                // Perform any action you want here
-            }
-        }
-
-        override fun getItemCount(): Int {
-            return apps.size
-        }
-
-        fun updateApps(newApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
-            apps = newApps
-            notifyDataSetChanged()
-        }
-    }
 
 /*
     private lateinit var binding: ActivityAppMenuBinding
