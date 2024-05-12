@@ -24,13 +24,5 @@
         android:fontFamily= "@null"
         android:textAppearance= "@android:style/TextAppearance.DeviceDefault" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.1"
-        android:onClick="openAppMenuActivity"
-        android:text="Button"
-        android:textAppearance="@android:style/TextAppearance.DeviceDefault" />
 </LinearLayout>
 

@@ -17,6 +17,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import eu.ottop.yamlauncher.databinding.ActivityAppMenuBinding
@@ -80,7 +81,6 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         actionMenuLayout: LinearLayout,
         editView: LinearLayout
     ) {
-        // Handle the long click action here, for example, show additional options or information about the app
         textView.visibility = View.INVISIBLE
         actionMenuLayout.visibility = View.VISIBLE
         val mainActivity = launcherApps.getActivityList(appInfo.applicationInfo.packageName, userHandle).firstOrNull()
@@ -102,6 +102,7 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 filterItems(searchView.text.toString())
+
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -111,24 +112,29 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
     }
 
     private fun filterItems(query: String?) {
-        val cleanQuery = query?.replace("[^a-zA-Z0-9]".toRegex(), "")
-        filteredApps.clear()
+        CoroutineScope(Dispatchers.Default).launch {
+            val cleanQuery = query?.clean()
+            filteredApps.clear()
 
-        if (cleanQuery.isNullOrEmpty()) {
-            filteredApps.addAll(installedApps)
-        }
-
-        else {
-            installedApps.forEach {
-                val cleanItemText = it.first.applicationInfo.loadLabel(packageManager).replace("[^a-zA-Z0-9]".toRegex(), "")
-                if (cleanItemText.contains(cleanQuery, ignoreCase=true)) {
-                    filteredApps.add(it)
+            if (cleanQuery.isNullOrEmpty()) {
+                filteredApps.addAll(installedApps)
+            } else {
+                installedApps.forEach {
+                    val cleanItemText = sharedPreferenceManager.getAppName(this@AppMenuActivity, it.first.applicationInfo.packageName, it.second.second, it.first.applicationInfo.loadLabel(packageManager)).toString().clean()
+                    if (cleanItemText.contains(cleanQuery, ignoreCase = true)) {
+                        filteredApps.add(it)
+                    }
                 }
+            }
+            withContext(Dispatchers.Main) {
+                adapter.updateApps(filteredApps)
             }
         }
 
-        adapter.updateApps(filteredApps)
+    }
 
+    fun String.clean(): String {
+        return this.replace("[^a-zA-Z0-9]".toRegex(), "")
     }
 
     private fun getInstalledApps(): List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>> {
@@ -160,10 +166,11 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
     }
 
     private fun startTask() {
-        job = CoroutineScope(Dispatchers.IO).launch {
+        job = CoroutineScope(Dispatchers.Default).launch {
             while (true) {
-                if (!listsEqual(installedApps, getInstalledApps())) {
-                    installedApps = getInstalledApps()
+                val updatedApps = getInstalledApps()
+                if (!listsEqual(installedApps, updatedApps)) {
+                    installedApps = updatedApps
                     withContext(Dispatchers.Main) {
                         adapter.updateApps(installedApps)
                     }
@@ -174,7 +181,7 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
     }
 
     fun manualRefreshApps() {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.Default).launch {
             installedApps = getInstalledApps()
             withContext(Dispatchers.Main) {
                 adapter.updateApps(installedApps)
@@ -197,4 +204,22 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         return true
     }
 
+}
+
+class AppMenuDiffCallback(
+    private val oldList: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>,
+    private val newList: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>
+) : DiffUtil.Callback() {
+
+    override fun getOldListSize(): Int = oldList.size
+    override fun getNewListSize(): Int = newList.size
+
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldList[oldItemPosition].first.componentName == newList[newItemPosition].first.componentName
+    }
+
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        // If the items are the same, no need to update
+        return oldList[oldItemPosition] == newList[newItemPosition]
+    }
 }

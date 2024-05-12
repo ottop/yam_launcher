@@ -12,9 +12,10 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 
-class AppMenuAdapter(private val activity: AppMenuActivity, private var apps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>, private val itemClickListener: OnItemClickListener, private val itemLongClickListener: OnItemLongClickListener) :
+class AppMenuAdapter(private val activity: AppMenuActivity, var apps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>, private val itemClickListener: OnItemClickListener, private val itemLongClickListener: OnItemLongClickListener) :
     RecyclerView.Adapter<AppMenuAdapter.AppViewHolder>() {
 
         private val sharedPreferenceManager = SharedPreferenceManager()
