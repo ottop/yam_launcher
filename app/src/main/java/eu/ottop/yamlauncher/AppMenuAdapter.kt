@@ -33,12 +33,12 @@ class AppMenuAdapter(private var apps: List<Pair<LauncherActivityInfo, Pair<User
     inner class AppViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val listItem: FrameLayout = itemView.findViewById(R.id.list_item)
         val textView: TextView = listItem.findViewById(R.id.app_name)
-        val actionMenuLayout: LinearLayout = listItem.findViewById(R.id.action_menu)
+        private val actionMenuLayout: LinearLayout = listItem.findViewById(R.id.action_menu)
         val editView: LinearLayout = listItem.findViewById(R.id.rename_view)
 
         init {
-            actionMenuLayout.visibility = View.GONE
-            editView.visibility = View.GONE
+            actionMenuLayout.visibility = View.INVISIBLE
+            editView.visibility = View.INVISIBLE
 
             itemView.setOnClickListener {
                 val position = bindingAdapterPosition
@@ -69,10 +69,7 @@ class AppMenuAdapter(private var apps: List<Pair<LauncherActivityInfo, Pair<User
         val appInfo = app.first.activityInfo.applicationInfo
         holder.textView.text = appInfo.loadLabel(holder.itemView.context.packageManager)
         holder.editView.findViewById<EditText>(R.id.app_name_edit).setText(holder.textView.text)
-        holder.actionMenuLayout.viewTreeObserver.addOnGlobalLayoutListener {
-            Log.d("Yooo", position.toString())
-            // Perform any action you want here
-        }
+        holder.textView.visibility = View.VISIBLE
     }
 
     override fun getItemCount(): Int {

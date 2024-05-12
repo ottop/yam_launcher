@@ -104,7 +104,8 @@ class AppActionMenu {
 
         actionMenu.findViewById<TextView>(R.id.hide).setOnClickListener {
             sharedPreferenceManager.setAppHidden(activity, appInfo.packageName, workProfile, true)
-
+            activity.manualRefreshApps()
+            actionMenu.visibility = View.GONE
         }
 
         actionMenu.findViewById<TextView>(R.id.close).setOnClickListener {
