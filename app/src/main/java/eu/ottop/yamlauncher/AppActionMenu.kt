@@ -93,7 +93,7 @@ class AppActionMenu {
                     imm.hideSoftInputFromWindow(editText.windowToken, 0)
                     sharedPreferenceManager.setAppName(activity, appInfo.packageName, workProfile, editText.text.toString())
                     uiScope.launch {
-                        //activity.refreshAppMenu()
+                        activity.manualRefreshApps()
                     }
 
                     return@setOnEditorActionListener true

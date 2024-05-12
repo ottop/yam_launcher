@@ -1,19 +1,23 @@
 package eu.ottop.yamlauncher
 
+import android.content.Context
 import android.content.pm.LauncherActivityInfo
 import android.os.UserHandle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatButton
 import androidx.recyclerview.widget.RecyclerView
 
-class AppMenuAdapter(private var apps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>, private val itemClickListener: OnItemClickListener, private val itemLongClickListener: OnItemLongClickListener) :
+class AppMenuAdapter(private val activity: AppMenuActivity, private var apps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>, private val itemClickListener: OnItemClickListener, private val itemLongClickListener: OnItemLongClickListener) :
     RecyclerView.Adapter<AppMenuAdapter.AppViewHolder>() {
+
+        private val sharedPreferenceManager = SharedPreferenceManager()
 
     interface OnItemClickListener {
         fun onItemClick(appInfo: LauncherActivityInfo, userHandle: UserHandle)
@@ -67,9 +71,15 @@ class AppMenuAdapter(private var apps: List<Pair<LauncherActivityInfo, Pair<User
     override fun onBindViewHolder(holder: AppViewHolder, position: Int) {
         val app = apps[position]
         val appInfo = app.first.activityInfo.applicationInfo
-        holder.textView.text = appInfo.loadLabel(holder.itemView.context.packageManager)
+        holder.textView.text = sharedPreferenceManager.getAppName(activity, app.first.applicationInfo.packageName,app.second.second, appInfo.loadLabel(holder.itemView.context.packageManager))
         holder.editView.findViewById<EditText>(R.id.app_name_edit).setText(holder.textView.text)
         holder.textView.visibility = View.VISIBLE
+        holder.editView.findViewById<AppCompatButton>(R.id.reset).setOnClickListener {
+            val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(holder.editView.windowToken, 0)
+            sharedPreferenceManager.resetAppName(activity, app.first.applicationInfo.packageName, app.second.second)
+            activity.manualRefreshApps()
+        }
     }
 
     override fun getItemCount(): Int {
