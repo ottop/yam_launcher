@@ -142,8 +142,10 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
             }
         }
         return allApps.sortedBy {
-            it.first.applicationInfo.loadLabel(packageManager).toString().lowercase()
+            sharedPreferenceManager.getAppName(this, it.first.applicationInfo.packageName,it.second.second, it.first.applicationInfo.loadLabel(packageManager)).toString().lowercase()
         }
+
+
     }
 
     override fun onStop() {

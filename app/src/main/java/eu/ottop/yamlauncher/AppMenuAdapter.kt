@@ -62,6 +62,7 @@ class AppMenuAdapter(private val activity: AppMenuActivity, private var apps: Li
             }
         }
     }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AppViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.app_item_layout, parent, false)
