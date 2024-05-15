@@ -7,27 +7,20 @@ import android.os.Bundle
 import android.os.UserHandle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import eu.ottop.yamlauncher.databinding.ActivityAppMenuBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 
@@ -133,7 +126,7 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
 
     }
 
-    fun String.clean(): String {
+    private fun String.clean(): String {
         return this.replace("[^a-zA-Z0-9]".toRegex(), "")
     }
 
@@ -204,22 +197,4 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         return true
     }
 
-}
-
-class AppMenuDiffCallback(
-    private val oldList: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>,
-    private val newList: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>
-) : DiffUtil.Callback() {
-
-    override fun getOldListSize(): Int = oldList.size
-    override fun getNewListSize(): Int = newList.size
-
-    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldList[oldItemPosition].first.componentName == newList[newItemPosition].first.componentName
-    }
-
-    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        // If the items are the same, no need to update
-        return oldList[oldItemPosition] == newList[newItemPosition]
-    }
 }
