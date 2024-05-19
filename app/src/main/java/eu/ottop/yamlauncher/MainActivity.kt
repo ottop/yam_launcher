@@ -1,12 +1,19 @@
 package eu.ottop.yamlauncher
 
+import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.pm.LauncherApps
 import android.os.Bundle
 import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
 import eu.ottop.yamlauncher.databinding.ActivityMainBinding
@@ -16,7 +23,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var gestureDetector: GestureDetector
-    private val sharedPreferenceManager = SharedPreferenceManager()
+    private lateinit var launcherApps: LauncherApps
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,12 +31,29 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         setSupportActionBar(null)
 
+        launcherApps = getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
+
         for (i in findViewById<LinearLayout>(R.id.shortcuts).children) {
+
+            var textView = i as TextView
+
             i.setOnClickListener {
                 Log.d("hHJKJFAF", "Click done")
             }
+
             i.setOnLongClickListener {
-                Log.d("hHJKJFAF", "long click done")
+                AppMenuActivity.start(this@MainActivity, "shortcut") { newText ->
+                    textView.text = newText.first
+                    i.setOnClickListener {
+                        val mainActivity = launcherApps.getActivityList(newText.second.first.applicationInfo.packageName, newText.second.second).firstOrNull()
+                        if (mainActivity != null) {
+                            launcherApps.startMainActivity(mainActivity.componentName,  newText.second.second, null, null)
+                        } else {
+                            Toast.makeText(this, "Cannot launch app", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+
                 return@setOnLongClickListener true
             }
         }
@@ -37,6 +61,8 @@ class MainActivity : AppCompatActivity() {
         gestureDetector = GestureDetector(this, GestureListener())
 
     }
+
+
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         gestureDetector.onTouchEvent(event)
@@ -68,7 +94,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun openAppMenuActivity() {
-        startActivity(Intent(this, AppMenuActivity::class.java))
+        AppMenuActivity.start(this) {
+        }
     }
 
 }
+

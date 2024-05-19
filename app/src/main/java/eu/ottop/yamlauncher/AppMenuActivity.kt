@@ -1,12 +1,15 @@
 package eu.ottop.yamlauncher
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
 import android.os.Bundle
 import android.os.UserHandle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -24,22 +27,41 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
-class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, AppMenuAdapter.OnItemLongClickListener {
+class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, AppMenuAdapter.OnShortcutListener, AppMenuAdapter.OnItemLongClickListener {
 
-        private lateinit var binding: ActivityAppMenuBinding
-        private lateinit var recyclerView: RecyclerView
-        private lateinit var searchView: EditText
-        private lateinit var adapter: AppMenuAdapter
-        private lateinit var filteredApps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>
-        private lateinit var installedApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>
-        private lateinit var job: Job
-        private var appActionMenu = AppActionMenu()
-        private lateinit var launcherApps: LauncherApps
+    private lateinit var binding: ActivityAppMenuBinding
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var searchView: EditText
+    private lateinit var adapter: AppMenuAdapter
+    private lateinit var filteredApps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>
+    private lateinit var installedApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>
+    private lateinit var job: Job
+    private var appActionMenu = AppActionMenu()
+    private lateinit var launcherApps: LauncherApps
 
     private val sharedPreferenceManager = SharedPreferenceManager()
 
+    private lateinit var menuMode: String
+
+    companion object {
+        private lateinit var callback: (Pair<String, Pair<LauncherActivityInfo, UserHandle>>) -> Unit
+        private const val MENU_MODE = "abcd"
+
+        fun start(context: Context, param1: String = "app", callback: (Pair<String, Pair<LauncherActivityInfo, UserHandle>>) -> Unit) {
+            val intent = Intent(context, AppMenuActivity::class.java).apply {
+                putExtra(MENU_MODE, param1)
+            }
+            context.startActivity(intent)
+
+            this.callback = callback
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        menuMode = intent.getStringExtra(MENU_MODE) ?: "app"
+
         binding = ActivityAppMenuBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(null)
@@ -50,7 +72,7 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         recyclerView.layoutManager = LinearLayoutManager(this)
         installedApps = getInstalledApps()
         filteredApps = mutableListOf()
-        adapter = AppMenuAdapter(this@AppMenuActivity, installedApps, this, this)
+        adapter = AppMenuAdapter(this@AppMenuActivity, installedApps, this, this,this, menuMode)
         recyclerView.adapter = adapter
 
         setupSearch()
@@ -60,10 +82,15 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         val mainActivity = launcherApps.getActivityList(appInfo.applicationInfo.packageName, userHandle).firstOrNull()
         if (mainActivity != null) {
             launcherApps.startMainActivity(mainActivity.componentName, userHandle, null, null)
+            finish()
         } else {
-            // Handle the case when launch intent is null (e.g., app cannot be launched)
             Toast.makeText(this, "Cannot launch app", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    override fun onShortcut(appInfo: LauncherActivityInfo, userHandle: UserHandle, textView: TextView) {
+        callback.invoke(Pair(textView.text.toString(), Pair(appInfo, userHandle,)))
+        finish()
     }
 
     override fun onItemLongClick(
@@ -74,11 +101,25 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         actionMenuLayout: LinearLayout,
         editView: LinearLayout
     ) {
-        textView.visibility = View.INVISIBLE
-        actionMenuLayout.visibility = View.VISIBLE
-        val mainActivity = launcherApps.getActivityList(appInfo.applicationInfo.packageName, userHandle).firstOrNull()
-        appActionMenu.setActionListeners(this@AppMenuActivity, CoroutineScope(Dispatchers.Main), binding, textView, editView, actionMenuLayout, searchView, appInfo.applicationInfo, userHandle, userProfile, launcherApps, mainActivity)
-
+            textView.visibility = View.INVISIBLE
+            actionMenuLayout.visibility = View.VISIBLE
+            val mainActivity =
+                launcherApps.getActivityList(appInfo.applicationInfo.packageName, userHandle)
+                    .firstOrNull()
+            appActionMenu.setActionListeners(
+                this@AppMenuActivity,
+                CoroutineScope(Dispatchers.Main),
+                binding,
+                textView,
+                editView,
+                actionMenuLayout,
+                searchView,
+                appInfo.applicationInfo,
+                userHandle,
+                userProfile,
+                launcherApps,
+                mainActivity
+            )
     }
 
     private fun setupSearch() {

@@ -12,16 +12,26 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 
-class AppMenuAdapter(private val activity: AppMenuActivity, var apps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>, private val itemClickListener: OnItemClickListener, private val itemLongClickListener: OnItemLongClickListener) :
+class AppMenuAdapter(
+    private val activity: AppMenuActivity,
+    var apps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>,
+    private val itemClickListener: OnItemClickListener,
+    private val shortcutListener: OnShortcutListener,
+    private val itemLongClickListener: OnItemLongClickListener,
+    private val menuMode: String
+) :
     RecyclerView.Adapter<AppMenuAdapter.AppViewHolder>() {
 
         private val sharedPreferenceManager = SharedPreferenceManager()
 
     interface OnItemClickListener {
         fun onItemClick(appInfo: LauncherActivityInfo, userHandle: UserHandle)
+    }
+
+    interface OnShortcutListener {
+        fun onShortcut(appInfo: LauncherActivityInfo, userHandle: UserHandle, textView: TextView)
     }
 
     interface OnItemLongClickListener {
@@ -49,17 +59,31 @@ class AppMenuAdapter(private val activity: AppMenuActivity, var apps: List<Pair<
                 val position = bindingAdapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     val app = apps[position].first
-                    itemClickListener.onItemClick(app, apps[position].second.first)
+                    if (menuMode == "shortcut") {
+                        shortcutListener.onShortcut(app, apps[position].second.first, textView)
+                    }
+                    else if (menuMode == "app") {
+                        itemClickListener.onItemClick(app, apps[position].second.first)
+                    }
                 }
             }
-            itemView.setOnLongClickListener {
-                val position = bindingAdapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    val app = apps[position].first
-                    itemLongClickListener.onItemLongClick(app, apps[position].second.first, apps[position].second.second, textView, actionMenuLayout, editView)
-                    return@setOnLongClickListener true
+            if (menuMode == "app") {
+                itemView.setOnLongClickListener {
+                    val position = bindingAdapterPosition
+                    if (position != RecyclerView.NO_POSITION) {
+                        val app = apps[position].first
+                        itemLongClickListener.onItemLongClick(
+                            app,
+                            apps[position].second.first,
+                            apps[position].second.second,
+                            textView,
+                            actionMenuLayout,
+                            editView
+                        )
+                        return@setOnLongClickListener true
+                    }
+                    false
                 }
-                false
             }
         }
     }
