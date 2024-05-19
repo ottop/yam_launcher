@@ -65,6 +65,11 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         binding = ActivityAppMenuBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(null)
+
+        if (menuMode == "shortcut") {
+            binding.menutitle.visibility = View.VISIBLE
+        }
+
         launcherApps = getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
         searchView = findViewById(R.id.searchView)
 

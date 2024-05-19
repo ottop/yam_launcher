@@ -6,11 +6,30 @@
     android:gravity="bottom"
     android:orientation="vertical">
 
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="60dp" />
+
+    <TextView
+        android:id="@+id/menutitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:gravity="start"
+        android:paddingLeft="40dp"
+        android:paddingTop="20dp"
+        android:paddingRight="40dp"
+        android:paddingBottom="20dp"
+        android:text="Select an app"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+        android:textColor="#C1F3F3F3"
+        android:textSize="36sp"
+        android:visibility="gone" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="25dp"
         android:layout_weight="1"
         android:clipToPadding="false"
         android:fadingEdgeLength="20dp"

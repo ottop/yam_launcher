@@ -31,8 +31,8 @@
             android:paddingBottom="10dp"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:textSize="28sp"
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault" />
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+            android:textSize="28sp" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/reset"
@@ -45,8 +45,8 @@
             android:insetTop="0dp"
             android:insetBottom="0dp"
             android:text="Reset"
-            android:textColor="#F3F3F3"
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault"/>
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+            android:textColor="#F3F3F3" />
     </LinearLayout>
 
     <TextView
@@ -62,7 +62,8 @@
         android:textAppearance="@android:style/TextAppearance.DeviceDefault"
         android:textColor="#F3F3F3"
         android:textSize="28sp"
-        android:visibility="visible" />
+        android:visibility="visible"
+        app:drawableLeftCompat="@drawable/ic_work_app" />
 
     <LinearLayout
         android:id="@+id/action_menu"
@@ -80,9 +81,9 @@
             android:foreground="@drawable/app_action_foreground"
             android:text="Info"
             android:textAlignment="center"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault"
             android:textColor="#F3F3F3FF"
-            app:drawableTopCompat="@android:drawable/ic_menu_info_details"
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault" />
+            app:drawableTopCompat="@android:drawable/ic_menu_info_details" />
 
         <TextView
             android:id="@+id/uninstall"
@@ -93,9 +94,9 @@
             android:foreground="@drawable/app_action_foreground"
             android:text="Uninstall"
             android:textAlignment="center"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault"
             android:textColor="#F3F3F3FF"
-            app:drawableTopCompat="@android:drawable/ic_menu_delete"
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault" />
+            app:drawableTopCompat="@android:drawable/ic_menu_delete" />
 
         <TextView
             android:id="@+id/rename"
@@ -106,9 +107,9 @@
             android:foreground="@drawable/app_action_foreground"
             android:text="Rename"
             android:textAlignment="center"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault"
             android:textColor="#F3F3F3FF"
-            app:drawableTopCompat="@android:drawable/ic_menu_edit"
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault" />
+            app:drawableTopCompat="@android:drawable/ic_menu_edit" />
 
         <TextView
             android:id="@+id/hide"
@@ -119,9 +120,9 @@
             android:foreground="@drawable/app_action_foreground"
             android:text="Hide"
             android:textAlignment="center"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault"
             android:textColor="#F3F3F3FF"
-            app:drawableTopCompat="@android:drawable/ic_menu_view"
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault" />
+            app:drawableTopCompat="@android:drawable/ic_menu_view" />
 
         <TextView
             android:id="@+id/close"
@@ -132,9 +133,9 @@
             android:foreground="@drawable/app_action_foreground"
             android:text="Close"
             android:textAlignment="center"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault"
             android:textColor="#F3F3F3FF"
-            app:drawableTopCompat="@android:drawable/ic_menu_close_clear_cancel"
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault" />
+            app:drawableTopCompat="@android:drawable/ic_menu_close_clear_cancel" />
 
     </LinearLayout>
 

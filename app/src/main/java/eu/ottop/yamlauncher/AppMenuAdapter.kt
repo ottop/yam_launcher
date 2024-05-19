@@ -2,6 +2,7 @@ package eu.ottop.yamlauncher
 
 import android.content.Context
 import android.content.pm.LauncherActivityInfo
+import android.content.res.Resources
 import android.os.UserHandle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,7 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 
 class AppMenuAdapter(
@@ -55,22 +57,20 @@ class AppMenuAdapter(
             actionMenuLayout.visibility = View.INVISIBLE
             editView.visibility = View.INVISIBLE
 
-            itemView.setOnClickListener {
-                val position = bindingAdapterPosition
-                if (position != RecyclerView.NO_POSITION) {
+            textView.setOnClickListener {
+                    val position = bindingAdapterPosition
                     val app = apps[position].first
                     if (menuMode == "shortcut") {
-                        shortcutListener.onShortcut(app, apps[position].second.first, textView, apps[position].second.second )
+                        shortcutListener.onShortcut(app, apps[position].second.first, textView, apps[position].second.second)
                     }
                     else if (menuMode == "app") {
                         itemClickListener.onItemClick(app, apps[position].second.first)
                     }
-                }
             }
             if (menuMode == "app") {
-                itemView.setOnLongClickListener {
-                    val position = bindingAdapterPosition
-                    if (position != RecyclerView.NO_POSITION) {
+                textView.setOnLongClickListener {
+                        val position = bindingAdapterPosition
+
                         val app = apps[position].first
                         itemLongClickListener.onItemLongClick(
                             app,
@@ -82,8 +82,8 @@ class AppMenuAdapter(
                         )
                         return@setOnLongClickListener true
                     }
-                    false
-                }
+
+
             }
         }
     }
@@ -96,6 +96,17 @@ class AppMenuAdapter(
 
     override fun onBindViewHolder(holder: AppViewHolder, position: Int) {
         val app = apps[position]
+
+        holder.textView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
+
+        if (app.second.second != 0) {
+            holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_work_app, null),null,null,null)
+        }
+        else {
+            holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null),null,null,null)
+        }
+        holder.textView.compoundDrawablePadding = 0
+
         val appInfo = app.first.activityInfo.applicationInfo
         holder.textView.text = sharedPreferenceManager.getAppName(activity, app.first.applicationInfo.packageName,app.second.second, appInfo.loadLabel(holder.itemView.context.packageManager))
         holder.editView.findViewById<EditText>(R.id.app_name_edit).setText(holder.textView.text)

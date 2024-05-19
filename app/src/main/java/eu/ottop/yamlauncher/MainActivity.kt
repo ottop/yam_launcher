@@ -15,6 +15,7 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.children
 import eu.ottop.yamlauncher.databinding.ActivityMainBinding
 import kotlin.math.abs
@@ -40,12 +41,27 @@ class MainActivity : AppCompatActivity() {
 
             val savedView = sharedPreferenceManager.getShortcut(this, textView)
 
+            textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_empty, null),null,null,null)
+
+            textView.compoundDrawablePadding = 0
+
+            i.setOnClickListener {
+                Toast.makeText(this, "Long click to select an app", Toast.LENGTH_SHORT).show()
+            }
+
             if (savedView?.get(1) != "e") {
+
+                if (savedView?.get(1) != "0") {
+                    textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_work_app, null),null,null,null)
+                }
+                else {
+                    textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_empty, null),null,null,null)
+                }
                 textView.text = savedView?.get(2)
                 textView.setOnClickListener {
                     val mainActivity = launcherApps.getActivityList(savedView?.get(0).toString(), launcherApps.profiles[savedView?.get(1)!!.toInt()]).firstOrNull()
                     if (mainActivity != null) {
-                        launcherApps.startMainActivity(mainActivity.componentName,  launcherApps.profiles[savedView[1]!!.toInt()], null, null)
+                        launcherApps.startMainActivity(mainActivity.componentName,  launcherApps.profiles[savedView[1].toInt()], null, null)
                     } else {
                         Toast.makeText(this, "Cannot launch app", Toast.LENGTH_SHORT).show()
                     }
@@ -54,6 +70,13 @@ class MainActivity : AppCompatActivity() {
 
             i.setOnLongClickListener {
                 AppMenuActivity.start(this@MainActivity, "shortcut") { newText ->
+
+                    if (newText.first.second != 0) {
+                        textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_work_app, null),null,null,null)
+                    }
+                    else {
+                        textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_empty, null),null,null,null)
+                    }
                     textView.text = newText.first.first
                     i.setOnClickListener {
                         val mainActivity = launcherApps.getActivityList(newText.second.first.applicationInfo.packageName, newText.second.second).firstOrNull()
