@@ -44,10 +44,10 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
     private lateinit var menuMode: String
 
     companion object {
-        private lateinit var callback: (Pair<String, Pair<LauncherActivityInfo, UserHandle>>) -> Unit
+        private lateinit var callback: (Pair<Pair<String, Int>, Pair<LauncherActivityInfo, UserHandle>>) -> Unit
         private const val MENU_MODE = "abcd"
 
-        fun start(context: Context, param1: String = "app", callback: (Pair<String, Pair<LauncherActivityInfo, UserHandle>>) -> Unit) {
+        fun start(context: Context, param1: String = "app", callback: (Pair<Pair<String, Int>, Pair<LauncherActivityInfo, UserHandle>>) -> Unit) {
             val intent = Intent(context, AppMenuActivity::class.java).apply {
                 putExtra(MENU_MODE, param1)
             }
@@ -88,8 +88,8 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         }
     }
 
-    override fun onShortcut(appInfo: LauncherActivityInfo, userHandle: UserHandle, textView: TextView) {
-        callback.invoke(Pair(textView.text.toString(), Pair(appInfo, userHandle,)))
+    override fun onShortcut(appInfo: LauncherActivityInfo, userHandle: UserHandle, textView: TextView, userProfile: Int) {
+        callback.invoke(Pair(Pair(textView.text.toString(), userProfile), Pair(appInfo, userHandle,)))
         finish()
     }
 

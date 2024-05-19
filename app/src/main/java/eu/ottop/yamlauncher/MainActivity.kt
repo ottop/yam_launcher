@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var gestureDetector: GestureDetector
     private lateinit var launcherApps: LauncherApps
+    private val sharedPreferenceManager = SharedPreferenceManager()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,15 +36,25 @@ class MainActivity : AppCompatActivity() {
 
         for (i in findViewById<LinearLayout>(R.id.shortcuts).children) {
 
-            var textView = i as TextView
+            val textView = i as TextView
 
-            i.setOnClickListener {
-                Log.d("hHJKJFAF", "Click done")
+            val savedView = sharedPreferenceManager.getShortcut(this, textView)
+
+            if (savedView?.get(1) != "e") {
+                textView.text = savedView?.get(2)
+                textView.setOnClickListener {
+                    val mainActivity = launcherApps.getActivityList(savedView?.get(0).toString(), launcherApps.profiles[savedView?.get(1)!!.toInt()]).firstOrNull()
+                    if (mainActivity != null) {
+                        launcherApps.startMainActivity(mainActivity.componentName,  launcherApps.profiles[savedView[1]!!.toInt()], null, null)
+                    } else {
+                        Toast.makeText(this, "Cannot launch app", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
 
             i.setOnLongClickListener {
                 AppMenuActivity.start(this@MainActivity, "shortcut") { newText ->
-                    textView.text = newText.first
+                    textView.text = newText.first.first
                     i.setOnClickListener {
                         val mainActivity = launcherApps.getActivityList(newText.second.first.applicationInfo.packageName, newText.second.second).firstOrNull()
                         if (mainActivity != null) {
@@ -52,6 +63,7 @@ class MainActivity : AppCompatActivity() {
                             Toast.makeText(this, "Cannot launch app", Toast.LENGTH_SHORT).show()
                         }
                     }
+                    sharedPreferenceManager.setShortcut(this, textView, newText.second.first.applicationInfo.packageName, newText.first.second)
                 }
 
                 return@setOnLongClickListener true

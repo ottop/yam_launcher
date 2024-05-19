@@ -1,9 +1,24 @@
 package eu.ottop.yamlauncher
 
 import android.content.Context
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
 class SharedPreferenceManager {
+
+    fun setShortcut(cont: Context, textView: TextView, packageName: String, profile: Int) {
+        val editor = cont.getSharedPreferences("shortcuts", AppCompatActivity.MODE_PRIVATE).edit()
+        val key = textView.id.toString()
+        editor.putString(key, "$packageName-$profile-${textView.text}")
+        editor.apply()
+    }
+
+    fun getShortcut(cont: Context, textView: TextView): List<String>? {
+        val sharedPref = cont.getSharedPreferences("shortcuts", AppCompatActivity.MODE_PRIVATE)
+        val key = textView.id.toString()
+        val value = sharedPref.getString(key, "e-e")
+        return value?.split("-")
+    }
 
     fun setAppHidden(cont: Context, packageName: String, profile: Int, hidden: Boolean) {
         val editor = cont.getSharedPreferences("hidden_apps", AppCompatActivity.MODE_PRIVATE).edit()

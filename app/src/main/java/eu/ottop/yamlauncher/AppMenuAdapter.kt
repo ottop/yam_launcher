@@ -31,7 +31,7 @@ class AppMenuAdapter(
     }
 
     interface OnShortcutListener {
-        fun onShortcut(appInfo: LauncherActivityInfo, userHandle: UserHandle, textView: TextView)
+        fun onShortcut(appInfo: LauncherActivityInfo, userHandle: UserHandle, textView: TextView, userProfile: Int)
     }
 
     interface OnItemLongClickListener {
@@ -60,7 +60,7 @@ class AppMenuAdapter(
                 if (position != RecyclerView.NO_POSITION) {
                     val app = apps[position].first
                     if (menuMode == "shortcut") {
-                        shortcutListener.onShortcut(app, apps[position].second.first, textView)
+                        shortcutListener.onShortcut(app, apps[position].second.first, textView, apps[position].second.second )
                     }
                     else if (menuMode == "app") {
                         itemClickListener.onItemClick(app, apps[position].second.first)
