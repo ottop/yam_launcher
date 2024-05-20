@@ -75,6 +75,7 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         recyclerView.layoutManager = LinearLayoutManager(this)
         installedApps = getInstalledApps()
         filteredApps = mutableListOf()
+        filteredApps.addAll(installedApps)
         val newApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
         newApps.addAll(installedApps)
         adapter = AppMenuAdapter(this@AppMenuActivity, newApps, this, this,this, menuMode)
@@ -155,21 +156,24 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
     private fun filterItems(query: String?) {
         CoroutineScope(Dispatchers.Default).launch {
             val cleanQuery = query?.clean()
-            filteredApps.clear()
+            val newFilteredApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
 
             if (cleanQuery.isNullOrEmpty()) {
-                filteredApps.addAll(installedApps)
+                newFilteredApps.addAll(installedApps)
             } else {
                 installedApps.forEachIndexed {index, it ->
                     val cleanItemText = sharedPreferenceManager.getAppName(this@AppMenuActivity, it.first.applicationInfo.packageName, it.second.second, it.first.applicationInfo.loadLabel(packageManager)).toString().clean()
                     if (cleanItemText.contains(cleanQuery, ignoreCase = true)) {
-                        filteredApps.add(it)
+                        newFilteredApps.add(it)
                     }
                 }
             }
+
+            val changes = detectChanges(filteredApps, newFilteredApps)
             withContext(Dispatchers.Main) {
-                adapter.updateAllApps(filteredApps)
+                applyChanges(changes, newFilteredApps)
             }
+            filteredApps = newFilteredApps
         }
 
     }
@@ -198,6 +202,7 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
     override fun onStop() {
         super.onStop()
         job.cancel()
+        //finish()
 
     }
 
@@ -228,20 +233,21 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
 
     private fun detectChanges(oldList: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>, newList: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>): List<Change> {
         val changes = mutableListOf<Change>()
+        val removalChanges = mutableListOf<Change>()
         val oldSet = oldList.map { Pair(it.first.applicationInfo.packageName, it.second.second) }.toSet()
         val newSet = newList.map { Pair(it.first.applicationInfo.packageName, it.second.second) }.toSet()
-
-        // Detect removals
-        oldList.forEachIndexed { index, oldItem ->
-            if (!newSet.contains(Pair(oldItem.first.applicationInfo.packageName, oldItem.second.second))) {
-                changes.add(Change(ChangeType.REMOVE, index))
-            }
-        }
 
         // Detect insertions
         newList.forEachIndexed { index, newItem ->
             if (!oldSet.contains(Pair(newItem.first.applicationInfo.packageName, newItem.second.second))) {
                 changes.add(Change(ChangeType.INSERT, index))
+            }
+        }
+
+        // Detect removals
+        oldList.forEachIndexed { index, oldItem ->
+            if (!newSet.contains(Pair(oldItem.first.applicationInfo.packageName, oldItem.second.second))) {
+                removalChanges.add(Change(ChangeType.REMOVE, index))
             }
         }
 
@@ -254,6 +260,8 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
                 }
             }
         }
+
+        changes.addAll(removalChanges.reversed())
 
         return changes
     }

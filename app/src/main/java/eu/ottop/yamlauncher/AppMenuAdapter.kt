@@ -137,11 +137,4 @@ class AppMenuAdapter(
     fun updateApp(position: Int, app: Pair<LauncherActivityInfo, Pair<UserHandle, Int>>) {
         apps[position] = app
     }
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun updateAllApps(newApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
-        apps.clear()
-        apps.addAll(newApps)
-        notifyDataSetChanged()
-    }
 }
