@@ -1,5 +1,6 @@
 package eu.ottop.yamlauncher
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.LauncherActivityInfo
 import android.os.UserHandle
@@ -67,6 +68,7 @@ class AppMenuAdapter(
                         itemClickListener.onItemClick(app, apps[position].second.first)
                     }
             }
+
             if (menuMode == "app") {
                 textView.setOnLongClickListener {
                         val position = bindingAdapterPosition
@@ -134,5 +136,12 @@ class AppMenuAdapter(
 
     fun updateApp(position: Int, app: Pair<LauncherActivityInfo, Pair<UserHandle, Int>>) {
         apps[position] = app
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateAllApps(newApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
+        apps.clear()
+        apps.addAll(newApps)
+        notifyDataSetChanged()
     }
 }

@@ -160,7 +160,7 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
             if (cleanQuery.isNullOrEmpty()) {
                 filteredApps.addAll(installedApps)
             } else {
-                installedApps.forEach {
+                installedApps.forEachIndexed {index, it ->
                     val cleanItemText = sharedPreferenceManager.getAppName(this@AppMenuActivity, it.first.applicationInfo.packageName, it.second.second, it.first.applicationInfo.loadLabel(packageManager)).toString().clean()
                     if (cleanItemText.contains(cleanQuery, ignoreCase = true)) {
                         filteredApps.add(it)
@@ -168,7 +168,7 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
                 }
             }
             withContext(Dispatchers.Main) {
-                //adapter.updateApps(filteredApps)
+                adapter.updateAllApps(filteredApps)
             }
         }
 
@@ -210,31 +210,14 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         job = CoroutineScope(Dispatchers.Default).launch {
             while (true) {
                 val updatedApps = getInstalledApps()
-                if (!listsEqual(installedApps, updatedApps)) {
-                    val changes = detectChanges(installedApps, updatedApps)
-                    installedApps = updatedApps
-                    withContext(Dispatchers.Main) {
-                        applyChanges(changes, installedApps)
-                    }
+                val changes = detectChanges(installedApps, updatedApps)
+                installedApps = updatedApps
+                withContext(Dispatchers.Main) {
+                    applyChanges(changes, installedApps)
                 }
                 delay(5000)
             }
         }
-    }
-
-    private fun listsEqual(
-        list1: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>,
-        list2: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>
-    ): Boolean {
-        if (list1.size != list2.size) return false
-
-        for (i in list1.indices) {
-            if (list1[i].first.componentName != list2[i].first.componentName || list1[i].second.first != list2[i].second.first) {
-                return false
-            }
-        }
-
-        return true
     }
 
     data class Change(val type: ChangeType, val position: Int)
