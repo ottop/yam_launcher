@@ -1,6 +1,5 @@
 package eu.ottop.yamlauncher
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.LauncherActivityInfo
@@ -9,7 +8,6 @@ import android.os.Bundle
 import android.os.UserHandle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -45,7 +43,7 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
 
     companion object {
         private lateinit var callback: (Pair<Pair<String, Int>, Pair<LauncherActivityInfo, UserHandle>>) -> Unit
-        private const val MENU_MODE = "abcd"
+        private const val MENU_MODE = "app"
 
         fun start(context: Context, param1: String = "app", callback: (Pair<Pair<String, Int>, Pair<LauncherActivityInfo, UserHandle>>) -> Unit) {
             val intent = Intent(context, AppMenuActivity::class.java).apply {
@@ -77,7 +75,9 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         recyclerView.layoutManager = LinearLayoutManager(this)
         installedApps = getInstalledApps()
         filteredApps = mutableListOf()
-        adapter = AppMenuAdapter(this@AppMenuActivity, installedApps, this, this,this, menuMode)
+        val newApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
+        newApps.addAll(installedApps)
+        adapter = AppMenuAdapter(this@AppMenuActivity, newApps, this, this,this, menuMode)
         recyclerView.adapter = adapter
 
         setupSearch()
@@ -94,7 +94,7 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
     }
 
     override fun onShortcut(appInfo: LauncherActivityInfo, userHandle: UserHandle, textView: TextView, userProfile: Int) {
-        callback.invoke(Pair(Pair(textView.text.toString(), userProfile), Pair(appInfo, userHandle,)))
+        callback.invoke(Pair(Pair(textView.text.toString(), userProfile), Pair(appInfo, userHandle)))
         finish()
     }
 
@@ -104,7 +104,8 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         userProfile: Int,
         textView: TextView,
         actionMenuLayout: LinearLayout,
-        editView: LinearLayout
+        editView: LinearLayout,
+        position: Int
     ) {
             textView.visibility = View.INVISIBLE
             actionMenuLayout.visibility = View.VISIBLE
@@ -123,7 +124,8 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
                 userHandle,
                 userProfile,
                 launcherApps,
-                mainActivity
+                mainActivity,
+                position
             )
     }
 
@@ -166,7 +168,7 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
                 }
             }
             withContext(Dispatchers.Main) {
-                adapter.updateApps(filteredApps)
+                //adapter.updateApps(filteredApps)
             }
         }
 
@@ -209,21 +211,13 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
             while (true) {
                 val updatedApps = getInstalledApps()
                 if (!listsEqual(installedApps, updatedApps)) {
+                    val changes = detectChanges(installedApps, updatedApps)
                     installedApps = updatedApps
                     withContext(Dispatchers.Main) {
-                        adapter.updateApps(installedApps)
+                        applyChanges(changes, installedApps)
                     }
                 }
                 delay(5000)
-            }
-        }
-    }
-
-    fun manualRefreshApps() {
-        CoroutineScope(Dispatchers.Default).launch {
-            installedApps = getInstalledApps()
-            withContext(Dispatchers.Main) {
-                adapter.updateApps(installedApps)
             }
         }
     }
@@ -241,6 +235,74 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         }
 
         return true
+    }
+
+    data class Change(val type: ChangeType, val position: Int)
+
+    enum class ChangeType {
+        INSERT, REMOVE, UPDATE
+    }
+
+    private fun detectChanges(oldList: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>, newList: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>): List<Change> {
+        val changes = mutableListOf<Change>()
+        val oldSet = oldList.map { Pair(it.first.applicationInfo.packageName, it.second.second) }.toSet()
+        val newSet = newList.map { Pair(it.first.applicationInfo.packageName, it.second.second) }.toSet()
+
+        // Detect removals
+        oldList.forEachIndexed { index, oldItem ->
+            if (!newSet.contains(Pair(oldItem.first.applicationInfo.packageName, oldItem.second.second))) {
+                changes.add(Change(ChangeType.REMOVE, index))
+            }
+        }
+
+        // Detect insertions
+        newList.forEachIndexed { index, newItem ->
+            if (!oldSet.contains(Pair(newItem.first.applicationInfo.packageName, newItem.second.second))) {
+                changes.add(Change(ChangeType.INSERT, index))
+            }
+        }
+
+        // Detect updates
+        oldList.forEachIndexed { index, oldItem ->
+            if (newSet.contains(Pair(oldItem.first.applicationInfo.packageName, oldItem.second.second))) {
+                val newIndex = newList.indexOfFirst { it.first.applicationInfo.packageName == oldItem.first.applicationInfo.packageName }
+                if (oldItem.first.applicationInfo.packageName != newList[newIndex].first.applicationInfo.packageName) {
+                    changes.add(Change(ChangeType.UPDATE, index))
+                }
+            }
+        }
+
+        return changes
+    }
+
+    private fun applyChanges(changes: List<Change>, updatedApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
+        changes.forEach { change ->
+            when (change.type) {
+                ChangeType.INSERT -> {
+                    insertItem(change.position, updatedApps[change.position])
+                }
+                ChangeType.REMOVE -> {
+                    removeItem(change.position)
+                }
+                ChangeType.UPDATE -> {
+                    updateItem(change.position, updatedApps[change.position])
+                }
+            }
+        }
+    }
+
+    private fun insertItem(position: Int, app: Pair<LauncherActivityInfo, Pair<UserHandle, Int>>) {
+        adapter.addApp(position, app)
+        adapter.notifyItemInserted(position)
+    }
+    private fun removeItem(position: Int) {
+        adapter.removeApp(position)
+        adapter.notifyItemRemoved(position)
+    }
+
+    fun updateItem(position: Int, app: Pair<LauncherActivityInfo, Pair<UserHandle, Int>>) {
+        adapter.updateApp(position, app)
+        adapter.notifyItemChanged(position)
     }
 
 }

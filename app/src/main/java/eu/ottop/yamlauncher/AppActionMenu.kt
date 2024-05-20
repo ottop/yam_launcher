@@ -36,6 +36,7 @@ class AppActionMenu {
         workProfile: Int,
         launcherApps: LauncherApps,
         mainActivity: LauncherActivityInfo?,
+        position: Int
     ){
 
         actionMenu.findViewById<TextView>(R.id.info).setOnClickListener {
@@ -93,7 +94,7 @@ class AppActionMenu {
                     imm.hideSoftInputFromWindow(editText.windowToken, 0)
                     sharedPreferenceManager.setAppName(activity, appInfo.packageName, workProfile, editText.text.toString())
                     uiScope.launch {
-                        activity.manualRefreshApps()
+                        activity.updateItem(position,Pair(mainActivity!!, Pair(userHandle, workProfile)))
                     }
 
                     return@setOnEditorActionListener true
@@ -104,7 +105,8 @@ class AppActionMenu {
 
         actionMenu.findViewById<TextView>(R.id.hide).setOnClickListener {
             sharedPreferenceManager.setAppHidden(activity, appInfo.packageName, workProfile, true)
-            activity.manualRefreshApps()
+            textView.visibility = View.GONE
+            editLayout.visibility = View.GONE
             actionMenu.visibility = View.GONE
         }
 
