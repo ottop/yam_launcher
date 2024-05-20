@@ -116,7 +116,7 @@ class AppMenuAdapter(
             val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(holder.editView.windowToken, 0)
             sharedPreferenceManager.resetAppName(activity, app.first.applicationInfo.packageName, app.second.second)
-            updateApp(position, app)
+            activity.updateItem(position, app)
         }
     }
 

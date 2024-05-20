@@ -266,7 +266,7 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         oldList.forEachIndexed { index, oldItem ->
             if (newSet.contains(Pair(oldItem.first.applicationInfo.packageName, oldItem.second.second))) {
                 val newIndex = newList.indexOfFirst { it.first.applicationInfo.packageName == oldItem.first.applicationInfo.packageName }
-                if (oldItem.first.applicationInfo.packageName != newList[newIndex].first.applicationInfo.packageName) {
+                if (oldItem.first.componentName != newList[newIndex].first.componentName) {
                     changes.add(Change(ChangeType.UPDATE, index))
                 }
             }
