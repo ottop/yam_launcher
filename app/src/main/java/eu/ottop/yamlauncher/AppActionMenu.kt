@@ -15,6 +15,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatButton
 import eu.ottop.yamlauncher.databinding.ActivityAppMenuBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -68,17 +69,21 @@ class AppActionMenu {
             editLayout.visibility = View.VISIBLE
             actionMenu.visibility = View.INVISIBLE
             val editText = editLayout.findViewById<EditText>(R.id.app_name_edit)
+            val resetButton = editLayout.findViewById<AppCompatButton>(R.id.reset)
+
+            val app = Pair(mainActivity!!, Pair(userHandle, workProfile))
+
             searchView.visibility = View.INVISIBLE
             editText.requestFocus()
 
             val handler = Handler(Looper.getMainLooper())
             handler.postDelayed({
-                val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                val imm =
+                    activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
             }, 100)
 
-            binding.root.addOnLayoutChangeListener {
-                    _, _, top, _, bottom, _, oldTop, _, oldBottom ->
+            binding.root.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
                 if (bottom - top > oldBottom - oldTop) {
                     editLayout.clearFocus()
 
@@ -90,24 +95,51 @@ class AppActionMenu {
 
             editText.setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    val imm =
+                        activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                     imm.hideSoftInputFromWindow(editText.windowToken, 0)
-                    sharedPreferenceManager.setAppName(activity, appInfo.packageName, workProfile, editText.text.toString())
+                    sharedPreferenceManager.setAppName(
+                        activity,
+                        appInfo.packageName,
+                        workProfile,
+                        editText.text.toString()
+                    )
+
+                    val newPosition = activity.getInstalledApps()
+                        .indexOfFirst { it.first.applicationInfo.packageName == appInfo.packageName && it.second.second == workProfile }
                     uiScope.launch {
-                        activity.updateItem(position,Pair(mainActivity!!, Pair(userHandle, workProfile)))
+                        activity.updateItem(position, app)
+                        activity.moveItem(position, newPosition)
+                        activity.manualRefresh()
                     }
 
                     return@setOnEditorActionListener true
                 }
                 false
             }
+
+            resetButton.setOnClickListener {
+                val imm =
+                    activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(editLayout.windowToken, 0)
+                sharedPreferenceManager.resetAppName(
+                    activity,
+                    app.first.applicationInfo.packageName,
+                    app.second.second
+                )
+                val newPosition = activity.getInstalledApps()
+                    .indexOfFirst { it.first.applicationInfo.packageName == appInfo.packageName && it.second.second == workProfile }
+                activity.updateItem(position, app)
+                activity.moveItem(position, newPosition)
+                activity.manualRefresh()
+            }
         }
 
         actionMenu.findViewById<TextView>(R.id.hide).setOnClickListener {
-            sharedPreferenceManager.setAppHidden(activity, appInfo.packageName, workProfile, true)
-            textView.visibility = View.GONE
             editLayout.visibility = View.GONE
+            textView.visibility = View.GONE
             actionMenu.visibility = View.GONE
+            sharedPreferenceManager.setAppHidden(activity, appInfo.packageName, workProfile, true)
         }
 
         actionMenu.findViewById<TextView>(R.id.close).setOnClickListener {

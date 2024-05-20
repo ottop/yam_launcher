@@ -8,7 +8,9 @@ import android.os.Bundle
 import android.os.UserHandle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -72,7 +74,7 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         searchView = findViewById(R.id.searchView)
 
         recyclerView = findViewById(R.id.recycler_view)
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.scrollToPosition(0)
         installedApps = getInstalledApps()
         filteredApps = mutableListOf()
         filteredApps.addAll(installedApps)
@@ -88,7 +90,6 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         val mainActivity = launcherApps.getActivityList(appInfo.applicationInfo.packageName, userHandle).firstOrNull()
         if (mainActivity != null) {
             launcherApps.startMainActivity(mainActivity.componentName, userHandle, null, null)
-            finish()
         } else {
             Toast.makeText(this, "Cannot launch app", Toast.LENGTH_SHORT).show()
         }
@@ -182,7 +183,7 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         return this.replace("[^a-zA-Z0-9]".toRegex(), "")
     }
 
-    private fun getInstalledApps(): List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>> {
+    fun getInstalledApps(): List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>> {
         val allApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
         val launcherApps = getSystemService(LAUNCHER_APPS_SERVICE) as LauncherApps
         for (i in launcherApps.profiles.indices) {
@@ -202,30 +203,39 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
     override fun onStop() {
         super.onStop()
         job.cancel()
-        //finish()
 
     }
 
     override fun onStart() {
         super.onStart()
         startTask()
+        val imm =
+            getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
     }
 
     private fun startTask() {
         job = CoroutineScope(Dispatchers.Default).launch {
             while (true) {
-                val updatedApps = getInstalledApps()
-                val changes = detectChanges(installedApps, updatedApps)
-                installedApps = updatedApps
-                withContext(Dispatchers.Main) {
-                    applyChanges(changes, installedApps)
-                }
+                manualRefresh()
                 delay(5000)
             }
         }
     }
 
-    data class Change(val type: ChangeType, val position: Int)
+    fun manualRefresh() {
+        CoroutineScope(Dispatchers.Default).launch {
+            val updatedApps = getInstalledApps()
+            val changes = detectChanges(installedApps, updatedApps)
+
+            withContext(Dispatchers.Main) {
+                applyChanges(changes, installedApps)
+            }
+            installedApps = updatedApps
+        }
+        }
+
+    data class Change(val type: ChangeType, val position: Int, val newPosition: Int = 0)
 
     enum class ChangeType {
         INSERT, REMOVE, UPDATE
@@ -236,6 +246,16 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         val removalChanges = mutableListOf<Change>()
         val oldSet = oldList.map { Pair(it.first.applicationInfo.packageName, it.second.second) }.toSet()
         val newSet = newList.map { Pair(it.first.applicationInfo.packageName, it.second.second) }.toSet()
+
+        oldList.forEachIndexed { index, oldItem ->
+            if (newSet.contains(Pair(oldItem.first.applicationInfo.packageName, oldItem.second.second))) {
+                val newIndex = newList.indexOfFirst { it.first.applicationInfo.packageName == oldItem.first.applicationInfo.packageName && it.second.second == oldItem.second.second }
+                if (oldItem.first.componentName != newList[newIndex].first.componentName) {
+                    changes.add(Change(ChangeType.UPDATE, index))
+                }
+
+            }
+        }
 
         // Detect insertions
         newList.forEachIndexed { index, newItem ->
@@ -252,14 +272,7 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         }
 
         // Detect updates
-        oldList.forEachIndexed { index, oldItem ->
-            if (newSet.contains(Pair(oldItem.first.applicationInfo.packageName, oldItem.second.second))) {
-                val newIndex = newList.indexOfFirst { it.first.applicationInfo.packageName == oldItem.first.applicationInfo.packageName }
-                if (oldItem.first.componentName != newList[newIndex].first.componentName) {
-                    changes.add(Change(ChangeType.UPDATE, index))
-                }
-            }
-        }
+
 
         changes.addAll(removalChanges.reversed())
 
@@ -294,6 +307,12 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
     fun updateItem(position: Int, app: Pair<LauncherActivityInfo, Pair<UserHandle, Int>>) {
         adapter.updateApp(position, app)
         adapter.notifyItemChanged(position)
+    }
+
+    fun moveItem(position: Int, newPosition: Int) {
+        Log.d("Movestatus","MOVED")
+        adapter.moveApp(position, newPosition)
+        adapter.notifyItemMoved(position, newPosition)
     }
 
 }

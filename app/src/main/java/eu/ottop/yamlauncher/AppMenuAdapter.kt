@@ -114,12 +114,6 @@ class AppMenuAdapter(
         holder.textView.text = sharedPreferenceManager.getAppName(activity, app.first.applicationInfo.packageName,app.second.second, appInfo.loadLabel(holder.itemView.context.packageManager))
         holder.editView.findViewById<EditText>(R.id.app_name_edit).setText(holder.textView.text)
         holder.textView.visibility = View.VISIBLE
-        holder.editView.findViewById<AppCompatButton>(R.id.reset).setOnClickListener {
-            val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(holder.editView.windowToken, 0)
-            sharedPreferenceManager.resetAppName(activity, app.first.applicationInfo.packageName, app.second.second)
-            activity.updateItem(position, app)
-        }
     }
 
     override fun getItemCount(): Int {
@@ -136,5 +130,11 @@ class AppMenuAdapter(
 
     fun updateApp(position: Int, app: Pair<LauncherActivityInfo, Pair<UserHandle, Int>>) {
         apps[position] = app
+    }
+
+    fun moveApp(position: Int, newPosition: Int) {
+            val app = apps.removeAt(position)
+            apps.add(newPosition, app)
+
     }
 }

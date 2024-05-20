@@ -36,7 +36,8 @@
         android:padding="0dp"
         android:requiresFadingEdge="vertical"
         android:scrollbars="none"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager">
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:stackFromEnd="true">
 
     </androidx.recyclerview.widget.RecyclerView>
 
