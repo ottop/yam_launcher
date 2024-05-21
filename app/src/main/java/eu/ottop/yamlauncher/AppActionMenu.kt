@@ -107,11 +107,11 @@ class AppActionMenu {
 
                     val newPosition = activity.getInstalledApps()
                         .indexOfFirst { it.first.applicationInfo.packageName == appInfo.packageName && it.second.second == workProfile }
-                    uiScope.launch {
-                        activity.updateItem(position, app)
-                        activity.moveItem(position, newPosition)
-                        activity.manualRefresh()
-                    }
+
+                    activity.updateItem(position, app)
+                    activity.moveItem(position, newPosition)
+
+
 
                     return@setOnEditorActionListener true
                 }
@@ -131,7 +131,7 @@ class AppActionMenu {
                     .indexOfFirst { it.first.applicationInfo.packageName == appInfo.packageName && it.second.second == workProfile }
                 activity.updateItem(position, app)
                 activity.moveItem(position, newPosition)
-                activity.manualRefresh()
+
             }
         }
 
@@ -140,6 +140,7 @@ class AppActionMenu {
             textView.visibility = View.GONE
             actionMenu.visibility = View.GONE
             sharedPreferenceManager.setAppHidden(activity, appInfo.packageName, workProfile, true)
+            activity.manualRefresh()
         }
 
         actionMenu.findViewById<TextView>(R.id.close).setOnClickListener {

@@ -23,6 +23,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -135,6 +136,10 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         binding.root.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
             if (bottom - top > oldBottom - oldTop) {
                 searchView.clearFocus()
+                startTask()
+            }
+            else if (bottom - top < oldBottom - oldTop) {
+                job.cancel()
             }
         }
 
@@ -145,7 +150,6 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 filterItems(searchView.text.toString())
-
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -158,11 +162,14 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         CoroutineScope(Dispatchers.Default).launch {
             val cleanQuery = query?.clean()
             val newFilteredApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
+            val updatedApps = getInstalledApps()
 
             if (cleanQuery.isNullOrEmpty()) {
+                manualRefresh()
                 newFilteredApps.addAll(installedApps)
+
             } else {
-                installedApps.forEachIndexed {index, it ->
+                updatedApps.forEach {
                     val cleanItemText = sharedPreferenceManager.getAppName(this@AppMenuActivity, it.first.applicationInfo.packageName, it.second.second, it.first.applicationInfo.loadLabel(packageManager)).toString().clean()
                     if (cleanItemText.contains(cleanQuery, ignoreCase = true)) {
                         newFilteredApps.add(it)
@@ -170,11 +177,11 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
                 }
             }
 
-            val changes = detectChanges(filteredApps, newFilteredApps)
+            val changes = detectChanges(installedApps, newFilteredApps)
+            installedApps = newFilteredApps
             withContext(Dispatchers.Main) {
-                applyChanges(changes, newFilteredApps)
+                applyChanges(changes, installedApps)
             }
-            filteredApps = newFilteredApps
         }
 
     }
@@ -227,19 +234,12 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         CoroutineScope(Dispatchers.Default).launch {
             val updatedApps = getInstalledApps()
             val changes = detectChanges(installedApps, updatedApps)
-
+            installedApps = updatedApps
             withContext(Dispatchers.Main) {
                 applyChanges(changes, installedApps)
             }
-            installedApps = updatedApps
         }
         }
-
-    data class Change(val type: ChangeType, val position: Int, val newPosition: Int = 0)
-
-    enum class ChangeType {
-        INSERT, REMOVE, UPDATE
-    }
 
     private fun detectChanges(oldList: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>, newList: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>): List<Change> {
         val changes = mutableListOf<Change>()
@@ -286,7 +286,11 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
                     insertItem(change.position, updatedApps[change.position])
                 }
                 ChangeType.REMOVE -> {
-                    removeItem(change.position)
+                    try {
+                        removeItem(change.position)
+                    }
+                    catch (_: IndexOutOfBoundsException) {
+                    }
                 }
                 ChangeType.UPDATE -> {
                     updateItem(change.position, updatedApps[change.position])
@@ -315,4 +319,10 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         adapter.notifyItemMoved(position, newPosition)
     }
 
+}
+
+data class Change(val type: ChangeType, val position: Int, val newPosition: Int = 0)
+
+enum class ChangeType {
+    INSERT, REMOVE, UPDATE
 }
