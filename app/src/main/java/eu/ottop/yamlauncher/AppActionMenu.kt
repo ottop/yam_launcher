@@ -23,6 +23,7 @@ import kotlinx.coroutines.launch
 class AppActionMenu {
 
     private val sharedPreferenceManager = SharedPreferenceManager()
+    private val appUtils = AppUtils()
 
     fun setActionListeners(
         activity: AppMenuActivity,
@@ -105,7 +106,7 @@ class AppActionMenu {
                         editText.text.toString()
                     )
 
-                    val newPosition = activity.getInstalledApps()
+                    val newPosition = appUtils.getInstalledApps(activity)
                         .indexOfFirst { it.first.applicationInfo.packageName == appInfo.packageName && it.second.second == workProfile }
 
                     activity.updateItem(position, app)
@@ -127,7 +128,7 @@ class AppActionMenu {
                     app.first.applicationInfo.packageName,
                     app.second.second
                 )
-                val newPosition = activity.getInstalledApps()
+                val newPosition = appUtils.getInstalledApps(activity)
                     .indexOfFirst { it.first.applicationInfo.packageName == appInfo.packageName && it.second.second == workProfile }
                 activity.updateItem(position, app)
                 activity.moveItem(position, newPosition)

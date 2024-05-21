@@ -35,26 +35,28 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
     private lateinit var searchView: EditText
     private lateinit var adapter: AppMenuAdapter
     private lateinit var filteredApps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>
-    private lateinit var installedApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>
-    private lateinit var job: Job
+    private var job: Job? = null
     private var appActionMenu = AppActionMenu()
     private lateinit var launcherApps: LauncherApps
+    private lateinit var installedApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>
 
     private val sharedPreferenceManager = SharedPreferenceManager()
+    private val appUtils = AppUtils()
 
     private lateinit var menuMode: String
 
     companion object {
         private lateinit var callback: (Pair<Pair<String, Int>, Pair<LauncherActivityInfo, UserHandle>>) -> Unit
         private const val MENU_MODE = "app"
-
-        fun start(context: Context, param1: String = "app", callback: (Pair<Pair<String, Int>, Pair<LauncherActivityInfo, UserHandle>>) -> Unit) {
+        private lateinit var currentApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>
+        fun start(context: Context, currentApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>, param1: String = "app", callback: (Pair<Pair<String, Int>, Pair<LauncherActivityInfo, UserHandle>>) -> Unit) {
             val intent = Intent(context, AppMenuActivity::class.java).apply {
                 putExtra(MENU_MODE, param1)
             }
             context.startActivity(intent)
 
             this.callback = callback
+            this.currentApps = currentApps
         }
     }
 
@@ -76,7 +78,7 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
 
         recyclerView = findViewById(R.id.recycler_view)
         recyclerView.scrollToPosition(0)
-        installedApps = getInstalledApps()
+        installedApps = currentApps
         filteredApps = mutableListOf()
         filteredApps.addAll(installedApps)
         val newApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
@@ -136,10 +138,13 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         binding.root.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
             if (bottom - top > oldBottom - oldTop) {
                 searchView.clearFocus()
-                startTask()
+                if (searchView.text.isNullOrEmpty()) {
+                    job?.cancel()
+                    startTask()
+                }
             }
-            else if (bottom - top < oldBottom - oldTop) {
-                job.cancel()
+            else {
+                job?.cancel()
             }
         }
 
@@ -162,12 +167,11 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         CoroutineScope(Dispatchers.Default).launch {
             val cleanQuery = query?.clean()
             val newFilteredApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
-            val updatedApps = getInstalledApps()
+            val updatedApps = appUtils.getInstalledApps(this@AppMenuActivity)
 
             if (cleanQuery.isNullOrEmpty()) {
                 manualRefresh()
                 newFilteredApps.addAll(installedApps)
-
             } else {
                 updatedApps.forEach {
                     val cleanItemText = sharedPreferenceManager.getAppName(this@AppMenuActivity, it.first.applicationInfo.packageName, it.second.second, it.first.applicationInfo.loadLabel(packageManager)).toString().clean()
@@ -190,32 +194,22 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         return this.replace("[^a-zA-Z0-9]".toRegex(), "")
     }
 
-    fun getInstalledApps(): List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>> {
-        val allApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
-        val launcherApps = getSystemService(LAUNCHER_APPS_SERVICE) as LauncherApps
-        for (i in launcherApps.profiles.indices) {
-            launcherApps.getActivityList(null, launcherApps.profiles[i]).forEach { app ->
-                if (!sharedPreferenceManager.isAppHidden(this@AppMenuActivity, app.applicationInfo.packageName, i)) {
-                    allApps.add(Pair(app, Pair(launcherApps.profiles[i], i)))
-                }
-            }
-        }
-        return allApps.sortedBy {
-            sharedPreferenceManager.getAppName(this, it.first.applicationInfo.packageName,it.second.second, it.first.applicationInfo.loadLabel(packageManager)).toString().lowercase()
-        }
-
+    override fun onStop() {
+        super.onStop()
+        job?.cancel()
 
     }
 
-    override fun onStop() {
-        super.onStop()
-        job.cancel()
-
+    override fun onDestroy() {
+        super.onDestroy()
+        job?.cancel()
     }
 
     override fun onStart() {
         super.onStart()
         startTask()
+
+        // Keyboard is sometimes open when going back to the app, so close it.
         val imm =
             getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
@@ -224,6 +218,7 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
     private fun startTask() {
         job = CoroutineScope(Dispatchers.Default).launch {
             while (true) {
+                ensureActive()
                 manualRefresh()
                 delay(5000)
             }
@@ -232,7 +227,7 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
 
     fun manualRefresh() {
         CoroutineScope(Dispatchers.Default).launch {
-            val updatedApps = getInstalledApps()
+            val updatedApps = appUtils.getInstalledApps(this@AppMenuActivity)
             val changes = detectChanges(installedApps, updatedApps)
             installedApps = updatedApps
             withContext(Dispatchers.Main) {
@@ -247,6 +242,7 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         val oldSet = oldList.map { Pair(it.first.applicationInfo.packageName, it.second.second) }.toSet()
         val newSet = newList.map { Pair(it.first.applicationInfo.packageName, it.second.second) }.toSet()
 
+        //Detect updates
         oldList.forEachIndexed { index, oldItem ->
             if (newSet.contains(Pair(oldItem.first.applicationInfo.packageName, oldItem.second.second))) {
                 val newIndex = newList.indexOfFirst { it.first.applicationInfo.packageName == oldItem.first.applicationInfo.packageName && it.second.second == oldItem.second.second }
@@ -270,9 +266,6 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
                 removalChanges.add(Change(ChangeType.REMOVE, index))
             }
         }
-
-        // Detect updates
-
 
         changes.addAll(removalChanges.reversed())
 

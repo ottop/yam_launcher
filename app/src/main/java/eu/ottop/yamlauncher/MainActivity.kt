@@ -1,8 +1,10 @@
 package eu.ottop.yamlauncher
 
 import android.content.Context
+import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
 import android.os.Bundle
+import android.os.UserHandle
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.widget.LinearLayout
@@ -12,6 +14,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.children
 import eu.ottop.yamlauncher.databinding.ActivityMainBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlin.math.abs
 
 class MainActivity : AppCompatActivity() {
@@ -19,7 +24,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var gestureDetector: GestureDetector
     private lateinit var launcherApps: LauncherApps
+    private lateinit var installedApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>
+
     private val sharedPreferenceManager = SharedPreferenceManager()
+    private val appUtils = AppUtils()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +36,9 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(null)
 
         launcherApps = getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
+        CoroutineScope(Dispatchers.Default).launch {
+            installedApps = appUtils.getInstalledApps(this@MainActivity)
+        }
 
         for (i in findViewById<LinearLayout>(R.id.shortcuts).children) {
 
@@ -63,7 +74,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             i.setOnLongClickListener {
-                AppMenuActivity.start(this@MainActivity, "shortcut") { newText ->
+                AppMenuActivity.start(this@MainActivity, installedApps, "shortcut") { newText ->
 
                     if (newText.first.second != 0) {
                         textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_work_app, null),null,null,null)
@@ -123,7 +134,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun openAppMenuActivity() {
-        AppMenuActivity.start(this) {
+        AppMenuActivity.start(this, installedApps) {
         }
     }
 
