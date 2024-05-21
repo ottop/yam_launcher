@@ -15,26 +15,24 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import eu.ottop.yamlauncher.databinding.ActivityAppMenuBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
 class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, AppMenuAdapter.OnShortcutListener, AppMenuAdapter.OnItemLongClickListener {
-
+    /*
     private lateinit var binding: ActivityAppMenuBinding
     private lateinit var recyclerView: RecyclerView
     private lateinit var searchView: EditText
     private lateinit var adapter: AppMenuAdapter
-    private lateinit var filteredApps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>
     private var job: Job? = null
     private var appActionMenu = AppActionMenu()
     private lateinit var launcherApps: LauncherApps
@@ -79,14 +77,19 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         recyclerView = findViewById(R.id.recycler_view)
         recyclerView.scrollToPosition(0)
         installedApps = currentApps
-        filteredApps = mutableListOf()
-        filteredApps.addAll(installedApps)
         val newApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
         newApps.addAll(installedApps)
         adapter = AppMenuAdapter(this@AppMenuActivity, newApps, this, this,this, menuMode)
         recyclerView.adapter = adapter
 
         setupSearch()
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                finish()
+
+            }
+        })
     }
 
     override fun onItemClick(appInfo: LauncherActivityInfo, userHandle: UserHandle) {
@@ -218,7 +221,6 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
     private fun startTask() {
         job = CoroutineScope(Dispatchers.Default).launch {
             while (true) {
-                ensureActive()
                 manualRefresh()
                 delay(5000)
             }
@@ -317,5 +319,32 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
 data class Change(val type: ChangeType, val position: Int, val newPosition: Int = 0)
 
 enum class ChangeType {
-    INSERT, REMOVE, UPDATE
+    INSERT, REMOVE, UPDATE*/
+    override fun onItemClick(appInfo: LauncherActivityInfo, userHandle: UserHandle) {
+        TODO("Not yet implemented")
+    }
+
+
+
+    override fun onItemLongClick(
+        appInfo: LauncherActivityInfo,
+        userHandle: UserHandle,
+        userProfile: Int,
+        textView: TextView,
+        actionMenuLayout: LinearLayout,
+        editView: LinearLayout,
+        position: Int
+    ) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onShortcut(
+        appInfo: LauncherActivityInfo,
+        userHandle: UserHandle,
+        textView: TextView,
+        userProfile: Int,
+        shortcutView: TextView
+    ) {
+        TODO("Not yet implemented")
+    }
 }

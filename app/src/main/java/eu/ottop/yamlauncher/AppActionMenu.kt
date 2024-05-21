@@ -17,6 +17,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
 import eu.ottop.yamlauncher.databinding.ActivityAppMenuBinding
+import eu.ottop.yamlauncher.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -26,9 +27,9 @@ class AppActionMenu {
     private val appUtils = AppUtils()
 
     fun setActionListeners(
-        activity: AppMenuActivity,
+        activity: MainActivity,
         uiScope: CoroutineScope,
-        binding: ActivityAppMenuBinding,
+        binding: ActivityMainBinding,
         textView: TextView,
         editLayout: LinearLayout,
         actionMenu: View,

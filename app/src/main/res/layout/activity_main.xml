@@ -1,37 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/home_view"
+    android:id="@+id/main_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="bottom"
-    android:fillViewport="true"
+    android:layout_gravity="fill_vertical"
     android:fitsSystemWindows="true"
-    android:gravity="bottom"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <TextClock
-        android:id="@+id/text_clock"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginVertical="20dp"
-        android:fontFamily="@null"
-        android:textAlignment="center"
-        android:textAppearance="@android:style/TextAppearance.DeviceDefault"
-        android:textColor="#F3F3F3"
-        android:textSize="70sp" />
-
     <LinearLayout
-        android:id="@+id/shortcuts"
+        android:id="@+id/app_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="60dp" />
 
         <TextView
-            android:id="@+id/app1"
+            android:id="@+id/menutitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="false"
@@ -40,129 +32,215 @@
             android:paddingTop="20dp"
             android:paddingRight="40dp"
             android:paddingBottom="20dp"
-            android:text="App"
+            android:text="Select an app"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault"
-            android:textColor="#F3F3F3"
-            android:textSize="28sp"
-            android:visibility="visible" />
+            android:textColor="#C1F3F3F3"
+            android:textSize="36sp"
+            android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/app2"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="false"
-            android:gravity="start"
-            android:paddingLeft="40dp"
-            android:paddingTop="20dp"
-            android:paddingRight="40dp"
-            android:paddingBottom="20dp"
-            android:text="App"
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault"
-            android:textColor="#F3F3F3"
-            android:textSize="28sp"
-            android:visibility="visible" />
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:fadingEdgeLength="20dp"
+            android:padding="0dp"
+            android:requiresFadingEdge="vertical"
+            android:scrollbars="none"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:stackFromEnd="true">
 
-        <TextView
-            android:id="@+id/app3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="false"
-            android:gravity="start"
-            android:paddingLeft="40dp"
-            android:paddingTop="20dp"
-            android:paddingRight="40dp"
-            android:paddingBottom="20dp"
-            android:text="App"
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault"
-            android:textColor="#F3F3F3"
-            android:textSize="28sp"
-            android:visibility="visible" />
+        </androidx.recyclerview.widget.RecyclerView>
 
-        <TextView
-            android:id="@+id/app4"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/searchView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="false"
-            android:gravity="start"
-            android:paddingLeft="40dp"
-            android:paddingTop="20dp"
-            android:paddingRight="40dp"
-            android:paddingBottom="20dp"
-            android:text="App"
+            android:layout_height="0dp"
+            android:layout_gravity="bottom"
+            android:layout_marginHorizontal="40dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="40dp"
+            android:layout_weight="0.1"
+            android:background="@android:color/transparent"
+            android:cursorVisible="true"
+            android:drawableLeft="@android:drawable/ic_menu_search"
+            android:drawablePadding="8dp"
+            android:editTextColor="#f3f3f3"
+            android:hint="Search..."
+            android:singleLine="true"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault"
-            android:textColor="#F3F3F3"
-            android:textSize="28sp"
-            android:visibility="visible" />
+            android:textSize="25sp" />
 
-        <TextView
-            android:id="@+id/app5"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="false"
-            android:gravity="start"
-            android:paddingLeft="40dp"
-            android:paddingTop="20dp"
-            android:paddingRight="40dp"
-            android:paddingBottom="20dp"
-            android:text="App"
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault"
-            android:textColor="#F3F3F3"
-            android:textSize="28sp"
-            android:visibility="visible" />
 
-        <TextView
-            android:id="@+id/app6"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="false"
-            android:gravity="start"
-            android:paddingLeft="40dp"
-            android:paddingTop="20dp"
-            android:paddingRight="40dp"
-            android:paddingBottom="20dp"
-            android:text="App"
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault"
-            android:textColor="#F3F3F3"
-            android:textSize="28sp"
-            android:visibility="visible" />
-
-        <TextView
-            android:id="@+id/app7"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="false"
-            android:gravity="start"
-            android:paddingLeft="40dp"
-            android:paddingTop="20dp"
-            android:paddingRight="40dp"
-            android:paddingBottom="20dp"
-            android:text="App"
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault"
-            android:textColor="#F3F3F3"
-            android:textSize="28sp"
-            android:visibility="visible" />
-
-        <TextView
-            android:id="@+id/app8"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="false"
-            android:gravity="start"
-            android:paddingLeft="40dp"
-            android:paddingTop="20dp"
-            android:paddingRight="40dp"
-            android:paddingBottom="20dp"
-            android:text="App"
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault"
-            android:textColor="#F3F3F3"
-            android:textSize="28sp"
-            android:visibility="visible" />
     </LinearLayout>
 
-    <Space
+    <LinearLayout
+        android:id="@+id/home_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1" />
+        android:layout_height="match_parent"
+        android:layout_gravity="fill_vertical"
+        android:fitsSystemWindows="true"
+        android:gravity="fill_vertical"
+        android:orientation="vertical">
 
-</LinearLayout>
+        <TextClock
+            android:id="@+id/text_clock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="20dp"
+            android:fontFamily="@null"
+            android:textAlignment="center"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+            android:textColor="#F3F3F3"
+            android:textSize="70sp" />
+
+        <LinearLayout
+            android:id="@+id/shortcuts"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="top"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/app1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autoSizeTextType="uniform"
+                android:clickable="false"
+                android:gravity="start"
+                android:paddingLeft="40dp"
+                android:paddingTop="20dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="20dp"
+                android:text="App"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+                android:textColor="#F3F3F3"
+                android:textSize="28sp"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/app2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:gravity="start"
+                android:paddingLeft="40dp"
+                android:paddingTop="20dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="20dp"
+                android:text="App"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+                android:textColor="#F3F3F3"
+                android:textSize="28sp"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/app3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:gravity="start"
+                android:paddingLeft="40dp"
+                android:paddingTop="20dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="20dp"
+                android:text="App"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+                android:textColor="#F3F3F3"
+                android:textSize="28sp"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/app4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:gravity="start"
+                android:paddingLeft="40dp"
+                android:paddingTop="20dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="20dp"
+                android:text="App"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+                android:textColor="#F3F3F3"
+                android:textSize="28sp"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/app5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:gravity="start"
+                android:paddingLeft="40dp"
+                android:paddingTop="20dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="20dp"
+                android:text="App"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+                android:textColor="#F3F3F3"
+                android:textSize="28sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/app6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:gravity="start"
+                android:paddingLeft="40dp"
+                android:paddingTop="20dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="20dp"
+                android:text="App"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+                android:textColor="#F3F3F3"
+                android:textSize="28sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/app7"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:gravity="start"
+                android:paddingLeft="40dp"
+                android:paddingTop="20dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="20dp"
+                android:text="App"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+                android:textColor="#F3F3F3"
+                android:textSize="28sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/app8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:gravity="start"
+                android:paddingLeft="40dp"
+                android:paddingTop="20dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="20dp"
+                android:text="App"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+                android:textColor="#F3F3F3"
+                android:textSize="28sp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.15" />
+
+    </LinearLayout>
+
+</FrameLayout>
 

@@ -14,15 +14,17 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 
 class AppMenuAdapter(
-    private val activity: AppMenuActivity,
+    private val activity: FragmentActivity,
     var apps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>,
     private val itemClickListener: OnItemClickListener,
     private val shortcutListener: OnShortcutListener,
     private val itemLongClickListener: OnItemLongClickListener,
-    private val menuMode: String
+    private val menuMode: String = "app",
+    private val shortcutTextView: TextView? = null
 ) :
     RecyclerView.Adapter<AppMenuAdapter.AppViewHolder>() {
 
@@ -33,7 +35,7 @@ class AppMenuAdapter(
     }
 
     interface OnShortcutListener {
-        fun onShortcut(appInfo: LauncherActivityInfo, userHandle: UserHandle, textView: TextView, userProfile: Int)
+        fun onShortcut(appInfo: LauncherActivityInfo, userHandle: UserHandle, textView: TextView, userProfile: Int, shortcutView: TextView)
     }
 
     interface OnItemLongClickListener {
@@ -62,7 +64,7 @@ class AppMenuAdapter(
                     val position = bindingAdapterPosition
                     val app = apps[position].first
                     if (menuMode == "shortcut") {
-                        shortcutListener.onShortcut(app, apps[position].second.first, textView, apps[position].second.second)
+                        shortcutListener.onShortcut(app, apps[position].second.first, textView, apps[position].second.second, shortcutTextView!!)
                     }
                     else if (menuMode == "app") {
                         itemClickListener.onItemClick(app, apps[position].second.first)
