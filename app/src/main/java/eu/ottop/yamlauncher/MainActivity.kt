@@ -4,10 +4,12 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -38,7 +40,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.math.abs
-
 
 class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, AppMenuAdapter.OnShortcutListener, AppMenuAdapter.OnItemLongClickListener {
 
@@ -135,6 +136,8 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
 
             }
         })
+
+
     }
 
     private fun setupSearch() {
@@ -197,6 +200,12 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         return this.replace("[^a-zA-Z0-9]".toRegex(), "")
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        binding.appView.slideOutToBottom()
+        binding.homeView.FadeIn()
+        super.onNewIntent(intent)
+
+    }
     override fun onStop() {
         super.onStop()
         job?.cancel()
@@ -210,6 +219,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
 
     override fun onStart() {
         super.onStart()
+
         startTask()
 
         // Keyboard is sometimes open when going back to the app, so close it.

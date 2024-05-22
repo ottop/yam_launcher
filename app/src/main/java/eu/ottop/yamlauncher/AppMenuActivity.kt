@@ -66,7 +66,6 @@ class AppMenuActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener,
         binding = ActivityAppMenuBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(null)
-
         if (menuMode == "shortcut") {
             binding.menutitle.visibility = View.VISIBLE
         }
