@@ -22,11 +22,12 @@ class AppMenuAdapter(
     var apps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>,
     private val itemClickListener: OnItemClickListener,
     private val shortcutListener: OnShortcutListener,
-    private val itemLongClickListener: OnItemLongClickListener,
-    private val menuMode: String = "app",
-    private val shortcutTextView: TextView? = null
+    private val itemLongClickListener: OnItemLongClickListener
 ) :
     RecyclerView.Adapter<AppMenuAdapter.AppViewHolder>() {
+
+        var menuMode: String = "app"
+        var shortcutTextView: TextView? = null
 
         private val sharedPreferenceManager = SharedPreferenceManager()
 

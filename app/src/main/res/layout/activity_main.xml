@@ -16,7 +16,7 @@
         android:layout_height="match_parent"
         android:gravity="bottom"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="invisible">
 
         <Space
             android:layout_width="match_parent"

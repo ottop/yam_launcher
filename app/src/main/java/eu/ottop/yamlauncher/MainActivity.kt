@@ -1,8 +1,13 @@
 package eu.ottop.yamlauncher
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ArgbEvaluator
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
+import android.graphics.Color
 import android.os.Bundle
 import android.os.UserHandle
 import android.text.Editable
@@ -11,6 +16,7 @@ import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -18,6 +24,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.children
 import androidx.recyclerview.widget.RecyclerView
@@ -29,6 +36,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.math.abs
+
 
 class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, AppMenuAdapter.OnShortcutListener, AppMenuAdapter.OnItemLongClickListener {
 
@@ -88,13 +96,11 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
             }
 
             i.setOnLongClickListener {
-                binding.homeView.visibility = View.GONE
+                binding.homeView.FadeOut()
+                adapter.menuMode = "shortcut"
+                adapter.shortcutTextView = i
+                binding.appView.slideInFromBottom()
 
-                val newApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
-                newApps.addAll(installedApps)
-                adapter = AppMenuAdapter(this@MainActivity, newApps, this@MainActivity, this@MainActivity, this@MainActivity, "shortcut", i)
-                recyclerView.adapter = adapter
-                binding.appView.visibility = View.VISIBLE
 
                 return@setOnLongClickListener true
             }}
@@ -108,7 +114,14 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
             installedApps = appUtils.getInstalledApps(this@MainActivity)
 
             recyclerView = findViewById(R.id.recycler_view)
-            recyclerView.scrollToPosition(0)
+            val newApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
+            newApps.addAll(installedApps)
+            adapter = AppMenuAdapter(this@MainActivity, newApps, this@MainActivity, this@MainActivity, this@MainActivity)
+            withContext(Dispatchers.Main) {
+                recyclerView.adapter = adapter
+                recyclerView.scrollToPosition(0)
+            }
+
 
             searchView = findViewById(R.id.searchView)
             setupSearch()
@@ -116,8 +129,8 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                binding.appView.visibility = View.GONE
-                binding.homeView.visibility = View.VISIBLE
+                binding.appView.slideOutToBottom()
+                binding.homeView.FadeIn()
 
             }
         })
@@ -242,15 +255,114 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         private const val SWIPE_VELOCITY_THRESHOLD = 100
     }
 
+    private fun View.slideInFromBottom(duration: Long = 100) {
+        if (visibility != View.VISIBLE) {
+            translationY = height.toFloat()
+            alpha = 0f
+            visibility = View.VISIBLE
+            animate()
+                .translationY(0f)
+                .alpha(1f)
+                .setDuration(duration)
+                .setListener(null)
+            val originalColor = ContextCompat.getColor(this@MainActivity, R.color.original_color)
+            val newColor = ContextCompat.getColor(this@MainActivity, R.color.new_color)
+
+            val backgroundColorAnimator: ObjectAnimator = ObjectAnimator.ofObject(
+                binding.root,
+                "backgroundColor",
+                ArgbEvaluator(),
+                originalColor,
+                newColor
+            )
+
+            backgroundColorAnimator.setDuration(100);
+
+            val window = window
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+
+            val statusBarColorAnimator = ObjectAnimator.ofArgb(
+                window,
+                "statusBarColor",
+                originalColor,
+                newColor
+            )
+            statusBarColorAnimator.setDuration(100)
+            backgroundColorAnimator.start();
+            statusBarColorAnimator.start();
+        }
+
+    }
+
+    fun View.slideOutToBottom(duration: Long = 100) {
+        if (visibility == View.VISIBLE) {
+            animate()
+                .translationY(height.toFloat())
+                .alpha(0f)
+                .setDuration(duration)
+                .setListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: Animator) {
+                        visibility = View.INVISIBLE
+                    }
+                })}
+    }
+
+    private fun View.FadeIn(duration: Long = 100) {
+        if (visibility != View.VISIBLE) {
+            alpha = 0f
+            visibility = View.VISIBLE
+            animate()
+                .alpha(1f)
+                .setDuration(duration)
+                .setListener(null)
+            val originalColor = ContextCompat.getColor(this@MainActivity, R.color.new_color)
+            val newColor = ContextCompat.getColor(this@MainActivity, R.color.original_color)
+
+            val backgroundColorAnimator: ObjectAnimator = ObjectAnimator.ofObject(
+                binding.root,
+                "backgroundColor",
+                ArgbEvaluator(),
+                originalColor,
+                newColor
+            )
+
+            backgroundColorAnimator.setDuration(100);
+
+            val window = window
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+
+            val statusBarColorAnimator = ObjectAnimator.ofArgb(
+                window,
+                "statusBarColor",
+                originalColor,
+                newColor
+            )
+            statusBarColorAnimator.setDuration(100)
+            backgroundColorAnimator.start();
+            statusBarColorAnimator.start();
+        }
+    }
+
+    fun View.FadeOut(duration: Long = 100) {
+        if (visibility == View.VISIBLE) {
+            animate()
+                .alpha(0f)
+                .setDuration(duration)
+                .setListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: Animator) {
+                        visibility = View.INVISIBLE
+                    }
+                })}
+    }
+
     fun openAppMenuActivity() {
         //AppMenuActivity.start(this, installedApps) {
         //}
-        binding.homeView.visibility = View.GONE
-        val newApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
-        newApps.addAll(installedApps)
-        adapter = AppMenuAdapter(this@MainActivity, newApps, this@MainActivity, this@MainActivity, this@MainActivity, "app")
-        recyclerView.adapter = adapter
-        binding.appView.visibility = View.VISIBLE
+
+        binding.homeView.FadeOut()
+        binding.appView.slideInFromBottom()
+        window.statusBarColor = Color.parseColor("#6E000000")
+
     }
 
     override fun onItemClick(appInfo: LauncherActivityInfo, userHandle: UserHandle) {
@@ -285,8 +397,8 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
             }
         }
         sharedPreferenceManager.setShortcut(this, shortcutView, appInfo.applicationInfo.packageName, userProfile)
-        binding.appView.visibility = View.GONE
-        binding.homeView.visibility = View.VISIBLE
+        binding.appView.slideOutToBottom()
+        binding.homeView.slideInFromBottom()
     }
 
 
