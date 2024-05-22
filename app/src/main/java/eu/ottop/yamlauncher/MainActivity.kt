@@ -9,6 +9,8 @@ import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.UserHandle
 import android.text.Editable
 import android.text.TextWatcher
@@ -121,7 +123,6 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
                 recyclerView.adapter = adapter
                 recyclerView.scrollToPosition(0)
             }
-
 
             searchView = findViewById(R.id.searchView)
             setupSearch()
@@ -257,11 +258,13 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
 
     private fun View.slideInFromBottom(duration: Long = 100) {
         if (visibility != View.VISIBLE) {
-            translationY = height.toFloat()
+            translationY = height.toFloat()/5
+            scaleY = 1.2f
             alpha = 0f
             visibility = View.VISIBLE
             animate()
                 .translationY(0f)
+                .scaleY(1f)
                 .alpha(1f)
                 .setDuration(duration)
                 .setListener(null)
@@ -294,25 +297,34 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
 
     }
 
-    fun View.slideOutToBottom(duration: Long = 100) {
+    fun View.slideOutToBottom(duration: Long = 50) {
         if (visibility == View.VISIBLE) {
             animate()
-                .translationY(height.toFloat())
+                .translationY(height.toFloat() / 5)
+                .scaleY(1.2f)
                 .alpha(0f)
                 .setDuration(duration)
                 .setListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator) {
                         visibility = View.INVISIBLE
                     }
-                })}
+                })
+            val handler = Handler(Looper.getMainLooper())
+            handler.postDelayed({
+                recyclerView.scrollToPosition(0)
+            }, 150)
+
+        }
     }
 
     private fun View.FadeIn(duration: Long = 100) {
         if (visibility != View.VISIBLE) {
             alpha = 0f
+            translationY = -height.toFloat()/100
             visibility = View.VISIBLE
             animate()
                 .alpha(1f)
+                .translationY(0f)
                 .setDuration(duration)
                 .setListener(null)
             val originalColor = ContextCompat.getColor(this@MainActivity, R.color.new_color)
@@ -343,10 +355,11 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         }
     }
 
-    fun View.FadeOut(duration: Long = 100) {
+    fun View.FadeOut(duration: Long = 50) {
         if (visibility == View.VISIBLE) {
             animate()
                 .alpha(0f)
+                .translationY(-height.toFloat()/100)
                 .setDuration(duration)
                 .setListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator) {
@@ -358,10 +371,8 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
     fun openAppMenuActivity() {
         //AppMenuActivity.start(this, installedApps) {
         //}
-
         binding.homeView.FadeOut()
         binding.appView.slideInFromBottom()
-        window.statusBarColor = Color.parseColor("#6E000000")
 
     }
 
