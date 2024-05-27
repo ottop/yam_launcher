@@ -4,16 +4,16 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
-import android.content.BroadcastReceiver
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.UserHandle
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -32,6 +32,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.children
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import eu.ottop.yamlauncher.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -52,10 +53,14 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
     private lateinit var searchView: EditText
     private lateinit var adapter: AppMenuAdapter
     private var job: Job? = null
-    private var appActionMenu = AppActionMenu()
+    val cameraIntent = Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE)
+    val phoneIntent = Intent(Intent.ACTION_DIAL)
 
+    private var appActionMenu = AppActionMenu()
     private val sharedPreferenceManager = SharedPreferenceManager()
     private val appUtils = AppUtils()
+    private val appMenuLinearLayoutManager = AppMenuLinearLayoutManager(this@MainActivity)
+    private val appMenuEdgeFactory = AppMenuEdgeFactory(this@MainActivity)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,19 +70,70 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
 
         launcherApps = getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
 
+        gestureDetector = GestureDetector(this, GestureListener())
+
+        setupApps()
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                showHome()
+
+            }
+        })
+
+    }
+
+    private fun setupApps() {
+        handleListItems()
+
+        CoroutineScope(Dispatchers.Default).launch {
+            installedApps = appUtils.getInstalledApps(this@MainActivity)
+
+            val newApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
+            newApps.addAll(installedApps)
+
+            setupRecyclerView(newApps)
+
+            searchView = findViewById(R.id.searchView)
+            setupSearch()
+        }
+    }
+
+    private suspend fun setupRecyclerView(newApps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
+        adapter = AppMenuAdapter(this@MainActivity, newApps, this@MainActivity, this@MainActivity, this@MainActivity)
+        withContext(Dispatchers.Main) {
+            recyclerView = findViewById(R.id.recycler_view)
+            recyclerView.layoutManager = appMenuLinearLayoutManager
+            recyclerView.edgeEffectFactory = appMenuEdgeFactory
+            recyclerView.adapter = adapter
+            recyclerView.scrollToPosition(0)
+        }
+
+        recyclerView.addOnScrollListener(object: OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                appMenuLinearLayoutManager.setScrollState(newState)
+            }
+        })
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun handleListItems() {
         for (i in findViewById<LinearLayout>(R.id.shortcuts).children) {
 
             val textView = i as TextView
+
+            textView.setOnTouchListener() {_, event ->
+                gestureDetector.onTouchEvent(event)
+                super.onTouchEvent(event)
+            }
 
             val savedView = sharedPreferenceManager.getShortcut(this, textView)
 
             textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_empty, null),null,null,null)
 
             textView.compoundDrawablePadding = 0
-
-            i.setOnClickListener {
-                Toast.makeText(this, "Long click to select an app", Toast.LENGTH_SHORT).show()
-            }
+            unselectedListeners(textView)
 
             if (savedView?.get(1) != "e") {
 
@@ -88,56 +144,35 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
                     textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_empty, null),null,null,null)
                 }
                 textView.text = savedView?.get(2)
-                textView.setOnClickListener {
-                    val mainActivity = launcherApps.getActivityList(savedView?.get(0).toString(), launcherApps.profiles[savedView?.get(1)!!.toInt()]).firstOrNull()
-                    if (mainActivity != null) {
-                        launcherApps.startMainActivity(mainActivity.componentName,  launcherApps.profiles[savedView[1].toInt()], null, null)
-                    } else {
-                        Toast.makeText(this, "Cannot launch app", Toast.LENGTH_SHORT).show()
-                    }
-                }
+                selectedListeners(textView, savedView)
             }
 
-            i.setOnLongClickListener {
-                binding.homeView.FadeOut()
-                adapter.menuMode = "shortcut"
-                adapter.shortcutTextView = i
-                binding.appView.slideInFromBottom()
-
-
-                return@setOnLongClickListener true
-            }}
-
-
-        gestureDetector = GestureDetector(this, GestureListener())
-
-
-        //Experimental
-        CoroutineScope(Dispatchers.Default).launch {
-            installedApps = appUtils.getInstalledApps(this@MainActivity)
-
-            recyclerView = findViewById(R.id.recycler_view)
-            val newApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
-            newApps.addAll(installedApps)
-            adapter = AppMenuAdapter(this@MainActivity, newApps, this@MainActivity, this@MainActivity, this@MainActivity)
-            withContext(Dispatchers.Main) {
-                recyclerView.adapter = adapter
-                recyclerView.scrollToPosition(0)
-            }
-
-            searchView = findViewById(R.id.searchView)
-            setupSearch()
         }
+    }
 
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                binding.appView.slideOutToBottom()
-                binding.homeView.FadeIn()
+    private fun unselectedListeners(textView: TextView) {
+        textView.setOnClickListener {
+            Toast.makeText(this, "Long click to select an app", Toast.LENGTH_SHORT).show()
+        }
+        textView.setOnLongClickListener {
+            adapter.menuMode = "shortcut"
+            adapter.shortcutTextView = textView
+            showApps()
 
+
+            return@setOnLongClickListener true
+        }
+    }
+
+    private fun selectedListeners(textView: TextView, savedView: List<String>?) {
+        textView.setOnClickListener {
+            val mainActivity = launcherApps.getActivityList(savedView?.get(0).toString(), launcherApps.profiles[savedView?.get(1)!!.toInt()]).firstOrNull()
+            if (mainActivity != null) {
+                launcherApps.startMainActivity(mainActivity.componentName,  launcherApps.profiles[savedView[1].toInt()], null, null)
+            } else {
+                Toast.makeText(this, "Cannot launch app", Toast.LENGTH_SHORT).show()
             }
-        })
-
-
+        }
     }
 
     private fun setupSearch() {
@@ -201,8 +236,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
     }
 
     override fun onNewIntent(intent: Intent?) {
-        binding.appView.slideOutToBottom()
-        binding.homeView.FadeIn()
+        showHome()
         super.onNewIntent(intent)
 
     }
@@ -249,12 +283,24 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
             velocityX: Float,
             velocityY: Float
         ): Boolean {
-            // Detect swipe up gesture
             if (e1 != null) {
                 val deltaY = e2.y - e1.y
+                val deltaX = e2.x - e1.x
+
+                // Detect swipe up
                 if (deltaY < -SWIPE_THRESHOLD && abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
                     openAppMenuActivity()
                     return true
+                }
+
+                // Detect swipe left
+                else if (deltaX < -SWIPE_THRESHOLD && abs(velocityX) > SWIPE_VELOCITY_THRESHOLD){
+                    startActivity(phoneIntent)
+                }
+
+                // Detect swipe right
+                else if (deltaX > -SWIPE_THRESHOLD && abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                    startActivity(cameraIntent)
                 }
             }
             return false
@@ -307,7 +353,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
 
     }
 
-    fun View.slideOutToBottom(duration: Long = 50) {
+    private fun View.slideOutToBottom(duration: Long = 50) {
         if (visibility == View.VISIBLE) {
             animate()
                 .translationY(height.toFloat() / 5)
@@ -327,7 +373,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         }
     }
 
-    private fun View.FadeIn(duration: Long = 100) {
+    private fun View.fadeIn(duration: Long = 100) {
         if (visibility != View.VISIBLE) {
             alpha = 0f
             translationY = -height.toFloat()/100
@@ -365,7 +411,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         }
     }
 
-    fun View.FadeOut(duration: Long = 50) {
+    private fun View.fadeOut(duration: Long = 50) {
         if (visibility == View.VISIBLE) {
             animate()
                 .alpha(0f)
@@ -378,11 +424,20 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
                 })}
     }
 
+    fun showHome() {
+        binding.appView.slideOutToBottom()
+        binding.homeView.fadeIn()
+    }
+
+    private fun showApps() {
+        binding.homeView.fadeOut()
+        binding.appView.slideInFromBottom()
+    }
     fun openAppMenuActivity() {
         //AppMenuActivity.start(this, installedApps) {
         //}
-        binding.homeView.FadeOut()
-        binding.appView.slideInFromBottom()
+        adapter.menuMode = "app"
+        showApps()
 
     }
 
@@ -418,8 +473,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
             }
         }
         sharedPreferenceManager.setShortcut(this, shortcutView, appInfo.applicationInfo.packageName, userProfile)
-        binding.appView.slideOutToBottom()
-        binding.homeView.slideInFromBottom()
+        showHome()
     }
 
 
