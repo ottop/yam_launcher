@@ -32,7 +32,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.children
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import eu.ottop.yamlauncher.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -130,7 +129,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
 
     @SuppressLint("ClickableViewAccessibility")
     private fun unselectedSetup(textView: TextView) {
-        textView.setOnTouchListener() {_, event ->
+        textView.setOnTouchListener {_, event ->
             gestureDetector.onTouchEvent(event)
             super.onTouchEvent(event)
         }
@@ -343,7 +342,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
                 newColor
             )
 
-            backgroundColorAnimator.setDuration(100);
+            backgroundColorAnimator.setDuration(100)
 
             val window = window
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
@@ -355,8 +354,8 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
                 newColor
             )
             statusBarColorAnimator.setDuration(100)
-            backgroundColorAnimator.start();
-            statusBarColorAnimator.start();
+            backgroundColorAnimator.start()
+            statusBarColorAnimator.start()
         }
 
     }
@@ -402,7 +401,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
                 newColor
             )
 
-            backgroundColorAnimator.setDuration(100);
+            backgroundColorAnimator.setDuration(100)
 
             val window = window
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
@@ -414,8 +413,8 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
                 newColor
             )
             statusBarColorAnimator.setDuration(100)
-            backgroundColorAnimator.start();
-            statusBarColorAnimator.start();
+            backgroundColorAnimator.start()
+            statusBarColorAnimator.start()
         }
     }
 
