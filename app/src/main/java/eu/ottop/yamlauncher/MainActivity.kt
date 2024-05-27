@@ -59,7 +59,6 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
     private var appActionMenu = AppActionMenu()
     private val sharedPreferenceManager = SharedPreferenceManager()
     private val appUtils = AppUtils()
-    private val appMenuLinearLayoutManager = AppMenuLinearLayoutManager(this@MainActivity)
     private val appMenuEdgeFactory = AppMenuEdgeFactory(this@MainActivity)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -103,51 +102,50 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         adapter = AppMenuAdapter(this@MainActivity, newApps, this@MainActivity, this@MainActivity, this@MainActivity)
         withContext(Dispatchers.Main) {
             recyclerView = findViewById(R.id.recycler_view)
-            recyclerView.layoutManager = appMenuLinearLayoutManager
             recyclerView.edgeEffectFactory = appMenuEdgeFactory
             recyclerView.adapter = adapter
             recyclerView.scrollToPosition(0)
         }
-
-        recyclerView.addOnScrollListener(object: OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                appMenuLinearLayoutManager.setScrollState(newState)
-            }
-        })
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     private fun handleListItems() {
         for (i in findViewById<LinearLayout>(R.id.shortcuts).children) {
 
             val textView = i as TextView
 
-            textView.setOnTouchListener() {_, event ->
-                gestureDetector.onTouchEvent(event)
-                super.onTouchEvent(event)
-            }
+            unselectedSetup(textView)
 
             val savedView = sharedPreferenceManager.getShortcut(this, textView)
 
-            textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_empty, null),null,null,null)
-
-            textView.compoundDrawablePadding = 0
-            unselectedListeners(textView)
-
             if (savedView?.get(1) != "e") {
-
-                if (savedView?.get(1) != "0") {
-                    textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_work_app, null),null,null,null)
-                }
-                else {
-                    textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_empty, null),null,null,null)
-                }
-                textView.text = savedView?.get(2)
-                selectedListeners(textView, savedView)
+                selectedSetup(textView, savedView)
             }
 
         }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun unselectedSetup(textView: TextView) {
+        textView.setOnTouchListener() {_, event ->
+            gestureDetector.onTouchEvent(event)
+            super.onTouchEvent(event)
+        }
+
+        textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_empty, null),null,null,null)
+
+        textView.compoundDrawablePadding = 0
+        unselectedListeners(textView)
+    }
+
+    private fun selectedSetup(textView: TextView, savedView: List<String>?) {
+        if (savedView?.get(1) != "0") {
+            textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_work_app, null),null,null,null)
+        }
+        else {
+            textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_empty, null),null,null,null)
+        }
+        textView.text = savedView?.get(2)
+        selectedListeners(textView, savedView)
     }
 
     private fun unselectedListeners(textView: TextView) {
@@ -158,7 +156,6 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
             adapter.menuMode = "shortcut"
             adapter.shortcutTextView = textView
             showApps()
-
 
             return@setOnLongClickListener true
         }
@@ -200,7 +197,6 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
 
             override fun afterTextChanged(s: Editable?) {
             }
-
         })
     }
 
@@ -210,25 +206,33 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
             val newFilteredApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
             val updatedApps = appUtils.getInstalledApps(this@MainActivity)
 
-            if (cleanQuery.isNullOrEmpty()) {
-                manualRefresh()
-                newFilteredApps.addAll(installedApps)
-            } else {
-                updatedApps.forEach {
-                    val cleanItemText = sharedPreferenceManager.getAppName(this@MainActivity, it.first.applicationInfo.packageName, it.second.second, it.first.applicationInfo.loadLabel(packageManager)).toString().clean()
-                    if (cleanItemText.contains(cleanQuery, ignoreCase = true)) {
-                        newFilteredApps.add(it)
-                    }
-                }
-            }
+            getFilteredApps(cleanQuery, newFilteredApps, updatedApps)
 
-            val changes = detectChanges(installedApps, newFilteredApps)
-            installedApps = newFilteredApps
-            withContext(Dispatchers.Main) {
-                applyChanges(changes, installedApps)
-            }
+            applySearch(newFilteredApps)
         }
 
+    }
+
+    private fun getFilteredApps(cleanQuery: String?, newFilteredApps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>, updatedApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
+        if (cleanQuery.isNullOrEmpty()) {
+            manualRefresh()
+            newFilteredApps.addAll(installedApps)
+        } else {
+            updatedApps.forEach {
+                val cleanItemText = sharedPreferenceManager.getAppName(this@MainActivity, it.first.applicationInfo.packageName, it.second.second, it.first.applicationInfo.loadLabel(packageManager)).toString().clean()
+                if (cleanItemText.contains(cleanQuery, ignoreCase = true)) {
+                    newFilteredApps.add(it)
+                }
+            }
+        }
+    }
+
+    private suspend fun applySearch(newFilteredApps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
+        val changes = detectChanges(installedApps, newFilteredApps)
+        installedApps = newFilteredApps
+        withContext(Dispatchers.Main) {
+            applyChanges(changes, installedApps)
+        }
     }
 
     private fun String.clean(): String {
@@ -594,7 +598,6 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
     }
 
     fun moveItem(position: Int, newPosition: Int) {
-        Log.d("Movestatus","MOVED")
         adapter.moveApp(position, newPosition)
         adapter.notifyItemMoved(position, newPosition)
     }

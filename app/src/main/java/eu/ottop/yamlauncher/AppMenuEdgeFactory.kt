@@ -9,7 +9,7 @@ class AppMenuEdgeFactory(private val activity: MainActivity) : RecyclerView.Edge
         return AppMenuEdgeEffect(activity)
     }
 }
-class AppMenuEdgeEffect(activity: MainActivity) : EdgeEffect(activity) {
+class AppMenuEdgeEffect(private val activity: MainActivity) : EdgeEffect(activity) {
     // Adjust the speed here
     private val animationSpeedFactor = 0.5f
 
@@ -19,10 +19,7 @@ class AppMenuEdgeEffect(activity: MainActivity) : EdgeEffect(activity) {
 
     override fun onPull(deltaDistance: Float, displacement: Float) {
         super.onPull(deltaDistance * animationSpeedFactor, displacement)
-    }
-
-    override fun onRelease() {
-        super.onRelease()
+        activity.showHome()
     }
 
     override fun onPullDistance(deltaDistance: Float, displacement: Float): Float {
