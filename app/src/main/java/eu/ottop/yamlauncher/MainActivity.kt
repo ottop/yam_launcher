@@ -82,6 +82,10 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
 
     }
 
+    fun recyclerAtTop() : Boolean {
+        return recyclerView.scrollY == 0
+    }
+
     private fun setupApps() {
         handleListItems()
 
