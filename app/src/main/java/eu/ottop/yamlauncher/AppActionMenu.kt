@@ -16,10 +16,11 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
-import eu.ottop.yamlauncher.databinding.ActivityAppMenuBinding
 import eu.ottop.yamlauncher.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AppActionMenu {
 
@@ -28,7 +29,6 @@ class AppActionMenu {
 
     fun setActionListeners(
         activity: MainActivity,
-        uiScope: CoroutineScope,
         binding: ActivityMainBinding,
         textView: TextView,
         editLayout: LinearLayout,
@@ -106,13 +106,14 @@ class AppActionMenu {
                         workProfile,
                         editText.text.toString()
                     )
-
-                    val newPosition = appUtils.getInstalledApps(activity)
-                        .indexOfFirst { it.first.applicationInfo.packageName == appInfo.packageName && it.second.second == workProfile }
-
-                    activity.updateItem(position, app)
-                    activity.moveItem(position, newPosition)
-
+                    CoroutineScope(Dispatchers.Default).launch {
+                        val newPosition = appUtils.getInstalledApps(activity)
+                            .indexOfFirst { it.first.applicationInfo.packageName == appInfo.packageName && it.second.second == workProfile }
+                        withContext(Dispatchers.Main) {
+                            activity.updateItem(position, app)
+                            activity.moveItem(position, newPosition)
+                        }
+                    }
 
 
                     return@setOnEditorActionListener true
@@ -129,11 +130,15 @@ class AppActionMenu {
                     app.first.applicationInfo.packageName,
                     app.second.second
                 )
-                val newPosition = appUtils.getInstalledApps(activity)
-                    .indexOfFirst { it.first.applicationInfo.packageName == appInfo.packageName && it.second.second == workProfile }
-                activity.updateItem(position, app)
-                activity.moveItem(position, newPosition)
 
+                CoroutineScope(Dispatchers.Default).launch {
+                    val newPosition = appUtils.getInstalledApps(activity)
+                        .indexOfFirst { it.first.applicationInfo.packageName == appInfo.packageName && it.second.second == workProfile }
+                    withContext(Dispatchers.Main) {
+                        activity.updateItem(position, app)
+                        activity.moveItem(position, newPosition)
+                    }
+                }
             }
         }
 
@@ -141,8 +146,10 @@ class AppActionMenu {
             editLayout.visibility = View.GONE
             textView.visibility = View.GONE
             actionMenu.visibility = View.GONE
-            sharedPreferenceManager.setAppHidden(activity, appInfo.packageName, workProfile, true)
-            activity.manualRefresh()
+            CoroutineScope(Dispatchers.Default).launch {
+                sharedPreferenceManager.setAppHidden(activity, appInfo.packageName, workProfile, true)
+                activity.refreshAppMenu()
+            }
         }
 
         actionMenu.findViewById<TextView>(R.id.close).setOnClickListener {

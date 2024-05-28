@@ -16,7 +16,6 @@ import android.os.UserHandle
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
@@ -58,7 +57,11 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
     private var appActionMenu = AppActionMenu()
     private val sharedPreferenceManager = SharedPreferenceManager()
     private val appUtils = AppUtils()
+    private val appMenuLinearLayoutManager = AppMenuLinearLayoutManager(this@MainActivity)
     private val appMenuEdgeFactory = AppMenuEdgeFactory(this@MainActivity)
+
+    private val swipeThreshold = 100
+    private val swipeVelocityThreshold = 100
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,40 +78,91 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 showHome()
-
             }
         })
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        showHome()
+        super.onNewIntent(intent)
+
+    }
+    override fun onStop() {
+        super.onStop()
+        job?.cancel()
 
     }
 
-    fun recyclerAtTop() : Boolean {
-        return recyclerView.scrollY == 0
+    override fun onDestroy() {
+        super.onDestroy()
+        job?.cancel()
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        startTask()
+
+        // Keyboard is sometimes open when going back to the app, so close it.
+        val imm =
+            getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        gestureDetector.onTouchEvent(event)
+        return super.onTouchEvent(event)
+    }
+
+    inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
+        override fun onFling(
+            e1: MotionEvent?,
+            e2: MotionEvent,
+            velocityX: Float,
+            velocityY: Float
+        ): Boolean {
+            if (e1 != null) {
+                val deltaY = e2.y - e1.y
+                val deltaX = e2.x - e1.x
+
+                // Detect swipe up
+                if (deltaY < -swipeThreshold && abs(velocityY) > swipeVelocityThreshold) {
+                    openAppMenuActivity()
+                    return true
+                }
+
+                // Detect swipe down
+                else if (deltaY > swipeThreshold && abs(velocityY) > swipeVelocityThreshold) {
+                    return true
+                }
+
+                // Detect swipe left
+                else if (deltaX < -swipeThreshold && abs(velocityX) > swipeVelocityThreshold){
+                    startActivity(cameraIntent)
+                }
+
+                // Detect swipe right
+                else if (deltaX > -swipeThreshold && abs(velocityX) > swipeVelocityThreshold) {
+                    startActivity(phoneIntent)
+                }
+            }
+            return false
+        }
+
     }
 
     private fun setupApps() {
-        handleListItems()
-
+            handleListItems()
         CoroutineScope(Dispatchers.Default).launch {
             installedApps = appUtils.getInstalledApps(this@MainActivity)
-
-            val newApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
-            newApps.addAll(installedApps)
+            val newApps = installedApps.toMutableList()
 
             setupRecyclerView(newApps)
-
-            searchView = findViewById(R.id.searchView)
-            setupSearch()
         }
-    }
 
-    private suspend fun setupRecyclerView(newApps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
-        adapter = AppMenuAdapter(this@MainActivity, newApps, this@MainActivity, this@MainActivity, this@MainActivity)
-        withContext(Dispatchers.Main) {
-            recyclerView = findViewById(R.id.recycler_view)
-            recyclerView.edgeEffectFactory = appMenuEdgeFactory
-            recyclerView.adapter = adapter
-            recyclerView.scrollToPosition(0)
-        }
+        searchView = findViewById(R.id.searchView)
+        setupSearch()
+
     }
 
     private fun handleListItems() {
@@ -175,10 +229,38 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         }
     }
 
+    private suspend fun setupRecyclerView(newApps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
+        adapter = AppMenuAdapter(this@MainActivity, newApps, this@MainActivity, this@MainActivity, this@MainActivity)
+        appMenuLinearLayoutManager.stackFromEnd = true
+        recyclerView = findViewById(R.id.recycler_view)
+        withContext(Dispatchers.Main) {
+            recyclerView.layoutManager = appMenuLinearLayoutManager
+            recyclerView.edgeEffectFactory = appMenuEdgeFactory
+            recyclerView.adapter = adapter
+            recyclerView.scrollToPosition(0)
+        }
+
+        setupRecyclerListener()
+    }
+
+    private fun setupRecyclerListener() {
+        recyclerView.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                    appMenuLinearLayoutManager.setScrollInfo()
+                }
+            }
+        })
+    }
+
     private fun setupSearch() {
         binding.root.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
+
             if (bottom - top > oldBottom - oldTop) {
+
                 searchView.clearFocus()
+
                 if (searchView.text.isNullOrEmpty()) {
                     job?.cancel()
                     startTask()
@@ -195,7 +277,9 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                filterItems(searchView.text.toString())
+                CoroutineScope(Dispatchers.Default).launch {
+                    filterItems(searchView.text.toString())
+                }
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -203,8 +287,8 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         })
     }
 
-    private fun filterItems(query: String?) {
-        CoroutineScope(Dispatchers.Default).launch {
+    private suspend fun filterItems(query: String?) {
+
             val cleanQuery = query?.clean()
             val newFilteredApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
             val updatedApps = appUtils.getInstalledApps(this@MainActivity)
@@ -212,13 +296,12 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
             getFilteredApps(cleanQuery, newFilteredApps, updatedApps)
 
             applySearch(newFilteredApps)
-        }
 
     }
 
-    private fun getFilteredApps(cleanQuery: String?, newFilteredApps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>, updatedApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
+    private suspend fun getFilteredApps(cleanQuery: String?, newFilteredApps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>, updatedApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
         if (cleanQuery.isNullOrEmpty()) {
-            manualRefresh()
+            refreshAppMenu()
             newFilteredApps.addAll(installedApps)
         } else {
             updatedApps.forEach {
@@ -242,81 +325,13 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         return this.replace("[^a-zA-Z0-9]".toRegex(), "")
     }
 
-    override fun onNewIntent(intent: Intent?) {
-        showHome()
-        super.onNewIntent(intent)
-
-    }
-    override fun onStop() {
-        super.onStop()
-        job?.cancel()
-
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        job?.cancel()
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        startTask()
-
-        // Keyboard is sometimes open when going back to the app, so close it.
-        val imm =
-            getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
-    }
-
     private fun startTask() {
         job = CoroutineScope(Dispatchers.Default).launch {
             while (true) {
-                manualRefresh()
+                refreshAppMenu()
                 delay(5000)
             }
         }
-    }
-
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        gestureDetector.onTouchEvent(event)
-        return super.onTouchEvent(event)
-    }
-
-    inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
-        override fun onFling(
-            e1: MotionEvent?,
-            e2: MotionEvent,
-            velocityX: Float,
-            velocityY: Float
-        ): Boolean {
-            if (e1 != null) {
-                val deltaY = e2.y - e1.y
-                val deltaX = e2.x - e1.x
-
-                // Detect swipe up
-                if (deltaY < -SWIPE_THRESHOLD && abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
-                    openAppMenuActivity()
-                    return true
-                }
-
-                // Detect swipe left
-                else if (deltaX < -SWIPE_THRESHOLD && abs(velocityX) > SWIPE_VELOCITY_THRESHOLD){
-                    startActivity(phoneIntent)
-                }
-
-                // Detect swipe right
-                else if (deltaX > -SWIPE_THRESHOLD && abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
-                    startActivity(cameraIntent)
-                }
-            }
-            return false
-        }
-
-    }
-    companion object {
-        private const val SWIPE_THRESHOLD = 100
-        private const val SWIPE_VELOCITY_THRESHOLD = 100
     }
 
     private fun View.slideInFromBottom(duration: Long = 100) {
@@ -500,7 +515,6 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
                 .firstOrNull()
         appActionMenu.setActionListeners(
             this@MainActivity,
-            CoroutineScope(Dispatchers.Main),
             binding,
             textView,
             editView,
@@ -515,8 +529,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         )
     }
 
-    fun manualRefresh() {
-        CoroutineScope(Dispatchers.Default).launch {
+    suspend fun refreshAppMenu() {
             try {
                 val updatedApps = appUtils.getInstalledApps(this@MainActivity)
                 val changes = detectChanges(installedApps, updatedApps)
@@ -527,7 +540,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
             }
             catch (_: UninitializedPropertyAccessException) {
             }
-            }
+
         }
 
     private fun detectChanges(oldList: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>, newList: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>): List<Change> {

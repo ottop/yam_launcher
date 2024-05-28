@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_view"
     android:layout_width="match_parent"
@@ -9,10 +8,6 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical"
     tools:context=".MainActivity">
-
-    <ViewSwitcher
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
     <LinearLayout
         android:id="@+id/app_view"
@@ -36,7 +31,7 @@
             android:paddingTop="20dp"
             android:paddingRight="40dp"
             android:paddingBottom="20dp"
-            android:text="Select an app"
+            android:text="@string/select_an_app"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault"
             android:textColor="#C1F3F3F3"
             android:textSize="36sp"
@@ -51,9 +46,7 @@
             android:fadingEdgeLength="20dp"
             android:padding="0dp"
             android:requiresFadingEdge="vertical"
-            android:scrollbars="none"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:stackFromEnd="true">
+            android:scrollbars="none">
 
         </androidx.recyclerview.widget.RecyclerView>
 
@@ -68,10 +61,10 @@
             android:layout_weight="0.1"
             android:background="@android:color/transparent"
             android:cursorVisible="true"
-            android:drawableLeft="@android:drawable/ic_menu_search"
+            android:drawableStart="@android:drawable/ic_menu_search"
             android:drawablePadding="8dp"
             android:editTextColor="#f3f3f3"
-            android:hint="Search..."
+            android:hint="@string/search"
             android:singleLine="true"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault"
             android:textSize="25sp" />
@@ -119,7 +112,7 @@
                 android:paddingTop="20dp"
                 android:paddingRight="40dp"
                 android:paddingBottom="20dp"
-                android:text="App"
+                android:text="@string/shortcut_default"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault"
                 android:textColor="#F3F3F3"
                 android:textSize="28sp"
@@ -135,7 +128,7 @@
                 android:paddingTop="20dp"
                 android:paddingRight="40dp"
                 android:paddingBottom="20dp"
-                android:text="App"
+                android:text="@string/shortcut_default"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault"
                 android:textColor="#F3F3F3"
                 android:textSize="28sp"
@@ -151,7 +144,7 @@
                 android:paddingTop="20dp"
                 android:paddingRight="40dp"
                 android:paddingBottom="20dp"
-                android:text="App"
+                android:text="@string/shortcut_default"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault"
                 android:textColor="#F3F3F3"
                 android:textSize="28sp"
@@ -167,7 +160,7 @@
                 android:paddingTop="20dp"
                 android:paddingRight="40dp"
                 android:paddingBottom="20dp"
-                android:text="App"
+                android:text="@string/shortcut_default"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault"
                 android:textColor="#F3F3F3"
                 android:textSize="28sp"
@@ -183,7 +176,7 @@
                 android:paddingTop="20dp"
                 android:paddingRight="40dp"
                 android:paddingBottom="20dp"
-                android:text="App"
+                android:text="@string/shortcut_default"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault"
                 android:textColor="#F3F3F3"
                 android:textSize="28sp"
@@ -199,7 +192,7 @@
                 android:paddingTop="20dp"
                 android:paddingRight="40dp"
                 android:paddingBottom="20dp"
-                android:text="App"
+                android:text="@string/shortcut_default"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault"
                 android:textColor="#F3F3F3"
                 android:textSize="28sp"
@@ -215,7 +208,7 @@
                 android:paddingTop="20dp"
                 android:paddingRight="40dp"
                 android:paddingBottom="20dp"
-                android:text="App"
+                android:text="@string/shortcut_default"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault"
                 android:textColor="#F3F3F3"
                 android:textSize="28sp"
@@ -231,7 +224,7 @@
                 android:paddingTop="20dp"
                 android:paddingRight="40dp"
                 android:paddingBottom="20dp"
-                android:text="App"
+                android:text="@string/shortcut_default"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault"
                 android:textColor="#F3F3F3"
                 android:textSize="28sp"
