@@ -166,9 +166,9 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
     }
 
     private fun handleListItems() {
-        for (i in findViewById<LinearLayout>(R.id.shortcuts).children) {
+        for (i in arrayOf(R.id.app1, R.id.app2, R.id.app3, R.id.app4, R.id.app5, R.id.app6, R.id.app7, R.id.app8)) {
 
-            val textView = i as TextView
+            val textView = findViewById<TextView>(i)
 
             unselectedSetup(textView)
 
@@ -177,7 +177,6 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
             if (savedView?.get(1) != "e") {
                 selectedSetup(textView, savedView)
             }
-
         }
     }
 
