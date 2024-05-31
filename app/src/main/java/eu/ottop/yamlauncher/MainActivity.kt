@@ -41,6 +41,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var gestureDetector: GestureDetector
+    private lateinit var shortcutGestureDetector: GestureDetector
     private lateinit var launcherApps: LauncherApps
     private lateinit var installedApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>
 
@@ -74,6 +75,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         launcherApps = getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
 
         gestureDetector = GestureDetector(this, GestureListener())
+        shortcutGestureDetector = GestureDetector(this, TextGestureListener())
 
         setupApps()
 
@@ -123,7 +125,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
     }
 
-    inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
+    open inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
 
         @RequiresApi(Build.VERSION_CODES.TIRAMISU)
         @SuppressLint("WrongConstant")
@@ -172,6 +174,12 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
 
     }
 
+    inner class TextGestureListener : GestureListener() {
+        override fun onLongPress(e: MotionEvent) {
+
+        }
+    }
+
     private fun setupApps() {
             handleListItems()
         CoroutineScope(Dispatchers.Default).launch {
@@ -204,7 +212,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
     @SuppressLint("ClickableViewAccessibility")
     private fun unselectedSetup(textView: TextView) {
         textView.setOnTouchListener {_, event ->
-            gestureDetector.onTouchEvent(event)
+            shortcutGestureDetector.onTouchEvent(event)
             super.onTouchEvent(event)
         }
 
