@@ -16,6 +16,7 @@ import android.text.TextWatcher
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -70,7 +71,6 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(null)
-
 
         launcherApps = getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
 

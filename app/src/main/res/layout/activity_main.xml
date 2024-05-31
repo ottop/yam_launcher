@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="fill_vertical"
-    android:fitsSystemWindows="true"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
@@ -77,7 +76,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="fill_vertical"
-        android:fitsSystemWindows="true"
         android:gravity="fill_vertical"
         android:orientation="vertical"
         android:visibility="visible">

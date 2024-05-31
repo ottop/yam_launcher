@@ -4,7 +4,9 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.app.Activity
+import android.graphics.drawable.ColorDrawable
 import android.view.View
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
@@ -34,56 +36,32 @@ class Animations () {
         val originalColor = ContextCompat.getColor(activity, R.color.original_color)
         val newColor = ContextCompat.getColor(activity, R.color.new_color)
 
-        val backgroundColorAnimator: ObjectAnimator = ObjectAnimator.ofObject(
-            binding.root,
-            "backgroundColor",
-            ArgbEvaluator(),
-            originalColor,
-            newColor
-        )
+        val colorDrawable = ColorDrawable(originalColor)
+        activity.window.setBackgroundDrawable(colorDrawable)
 
-        backgroundColorAnimator.setDuration(duration)
+        val backgroundColorAnimator = ValueAnimator.ofObject(ArgbEvaluator(), originalColor, newColor)
+        backgroundColorAnimator.addUpdateListener { animator ->
+            colorDrawable.color = animator.animatedValue as Int
+        }
+        backgroundColorAnimator.duration = duration
 
-        val window = activity.window
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-
-        val statusBarColorAnimator = ObjectAnimator.ofArgb(
-            window,
-            "statusBarColor",
-            originalColor,
-            newColor
-        )
-        statusBarColorAnimator.setDuration(duration)
         backgroundColorAnimator.start()
-        statusBarColorAnimator.start()
     }
 
     fun backgroundOut(activity: Activity, binding: ActivityMainBinding, duration: Long = 100) {
         val originalColor = ContextCompat.getColor(activity, R.color.new_color)
         val newColor = ContextCompat.getColor(activity, R.color.original_color)
 
-        val backgroundColorAnimator: ObjectAnimator = ObjectAnimator.ofObject(
-            binding.root,
-            "backgroundColor",
-            ArgbEvaluator(),
-            originalColor,
-            newColor
-        )
+        val colorDrawable = ColorDrawable(originalColor)
+        activity.window.setBackgroundDrawable(colorDrawable)
 
-        backgroundColorAnimator.setDuration(duration)
+        val backgroundColorAnimator = ValueAnimator.ofObject(ArgbEvaluator(), originalColor, newColor)
+        backgroundColorAnimator.addUpdateListener { animator ->
+            colorDrawable.color = animator.animatedValue as Int
+        }
+        backgroundColorAnimator.duration = duration
 
-        val window = activity.window
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-
-        val statusBarColorAnimator = ObjectAnimator.ofArgb(
-            window,
-            "statusBarColor",
-            originalColor,
-            newColor
-        )
-        statusBarColorAnimator.setDuration(duration)
         backgroundColorAnimator.start()
-        statusBarColorAnimator.start()
     }
     private fun View.slideInFromBottom(duration: Long = 100) {
         if (visibility != View.VISIBLE) {
