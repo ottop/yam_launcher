@@ -18,7 +18,7 @@ class AppMenuLinearLayoutManager(private val activity: MainActivity) : LinearLay
         val overscroll: Int = dy - scrollRange
 
         if (overscroll < 0 && firstVisibleItemPosition == 0 && scrollStarted) {
-            activity.showHome()
+            activity.backToHome()
         }
 
         if (scrollStarted) {

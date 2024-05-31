@@ -6,4 +6,6 @@
     <color name="original_color">#00000000</color>
     <color name="new_color">#3F000000</color>
 
+    <color name="settings_bg">#88000000</color>
+
 </resources>

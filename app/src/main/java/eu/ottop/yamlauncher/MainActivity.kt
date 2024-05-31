@@ -1,14 +1,11 @@
 package eu.ottop.yamlauncher
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
-import android.animation.ArgbEvaluator
-import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -19,17 +16,15 @@ import android.text.TextWatcher
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
-import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.children
 import androidx.recyclerview.widget.RecyclerView
 import eu.ottop.yamlauncher.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
@@ -39,6 +34,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.math.abs
+import java.lang.reflect.Method
+
 
 class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, AppMenuAdapter.OnShortcutListener, AppMenuAdapter.OnItemLongClickListener {
 
@@ -53,21 +50,26 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
     private var job: Job? = null
     val cameraIntent = Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE)
     val phoneIntent = Intent(Intent.ACTION_DIAL)
+    private lateinit var batteryReceiver: BatteryReceiver
+    private lateinit var batteryTextView: TextView
 
     private var appActionMenu = AppActionMenu()
     private val sharedPreferenceManager = SharedPreferenceManager()
     private val appUtils = AppUtils()
     private val appMenuLinearLayoutManager = AppMenuLinearLayoutManager(this@MainActivity)
     private val appMenuEdgeFactory = AppMenuEdgeFactory(this@MainActivity)
+    private val animations = Animations()
 
     private val swipeThreshold = 100
     private val swipeVelocityThreshold = 100
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(null)
+
 
         launcherApps = getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
 
@@ -75,15 +77,26 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
 
         setupApps()
 
+
+        batteryTextView = findViewById(R.id.battery_charge)
+
+        batteryReceiver = BatteryReceiver.register(this, batteryTextView)
+
+        binding.homeView.setOnTouchListener { _, event ->
+            gestureDetector.onTouchEvent(event)
+            super.onTouchEvent(event)
+            true // Return true if the touch event is handled
+        }
+
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                showHome()
+                backToHome()
             }
         })
     }
 
     override fun onNewIntent(intent: Intent?) {
-        showHome()
+        backToHome()
         super.onNewIntent(intent)
 
     }
@@ -96,6 +109,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
     override fun onDestroy() {
         super.onDestroy()
         job?.cancel()
+        unregisterReceiver(batteryReceiver)
     }
 
     override fun onStart() {
@@ -109,12 +123,10 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
     }
 
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        gestureDetector.onTouchEvent(event)
-        return super.onTouchEvent(event)
-    }
-
     inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
+
+        @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+        @SuppressLint("WrongConstant")
         override fun onFling(
             e1: MotionEvent?,
             e2: MotionEvent,
@@ -128,12 +140,16 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
                 // Detect swipe up
                 if (deltaY < -swipeThreshold && abs(velocityY) > swipeVelocityThreshold) {
                     openAppMenuActivity()
-                    return true
                 }
 
                 // Detect swipe down
                 else if (deltaY > swipeThreshold && abs(velocityY) > swipeVelocityThreshold) {
-                    return true
+
+                    val statusBarService = getSystemService(Context.STATUS_BAR_SERVICE)
+                    val statusBarManager: Class<*> = Class.forName("android.app.StatusBarManager")
+                    val expandMethod: Method = statusBarManager.getMethod("expandNotificationsPanel")
+                    expandMethod.invoke(statusBarService)
+
                 }
 
                 // Detect swipe left
@@ -147,6 +163,11 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
                 }
             }
             return false
+        }
+
+        override fun onLongPress(e: MotionEvent) {
+            super.onLongPress(e)
+            startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
         }
 
     }
@@ -211,7 +232,8 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         textView.setOnLongClickListener {
             adapter.menuMode = "shortcut"
             adapter.shortcutTextView = textView
-            showApps()
+            binding.menutitle.visibility = View.VISIBLE
+            toAppMenu()
 
             return@setOnLongClickListener true
         }
@@ -304,7 +326,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
             newFilteredApps.addAll(installedApps)
         } else {
             updatedApps.forEach {
-                val cleanItemText = sharedPreferenceManager.getAppName(this@MainActivity, it.first.applicationInfo.packageName, it.second.second, it.first.applicationInfo.loadLabel(packageManager)).toString().clean()
+                val cleanItemText = sharedPreferenceManager.getAppName(this@MainActivity, it.first.applicationInfo.packageName, it.second.second, packageManager.getApplicationLabel(it.first.applicationInfo)).toString().clean()
                 if (cleanItemText.contains(cleanQuery, ignoreCase = true)) {
                     newFilteredApps.add(it)
                 }
@@ -333,133 +355,25 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         }
     }
 
-    private fun View.slideInFromBottom(duration: Long = 100) {
-        if (visibility != View.VISIBLE) {
-            translationY = height.toFloat()/5
-            scaleY = 1.2f
-            alpha = 0f
-            visibility = View.VISIBLE
-            animate()
-                .translationY(0f)
-                .scaleY(1f)
-                .alpha(1f)
-                .setDuration(duration)
-                .setListener(null)
-            val originalColor = ContextCompat.getColor(this@MainActivity, R.color.original_color)
-            val newColor = ContextCompat.getColor(this@MainActivity, R.color.new_color)
-
-            val backgroundColorAnimator: ObjectAnimator = ObjectAnimator.ofObject(
-                binding.root,
-                "backgroundColor",
-                ArgbEvaluator(),
-                originalColor,
-                newColor
-            )
-
-            backgroundColorAnimator.setDuration(100)
-
-            val window = window
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-
-            val statusBarColorAnimator = ObjectAnimator.ofArgb(
-                window,
-                "statusBarColor",
-                originalColor,
-                newColor
-            )
-            statusBarColorAnimator.setDuration(100)
-            backgroundColorAnimator.start()
-            statusBarColorAnimator.start()
-        }
-
-    }
-
-    private fun View.slideOutToBottom(duration: Long = 50) {
-        if (visibility == View.VISIBLE) {
-            animate()
-                .translationY(height.toFloat() / 5)
-                .scaleY(1.2f)
-                .alpha(0f)
-                .setDuration(duration)
-                .setListener(object : AnimatorListenerAdapter() {
-                    override fun onAnimationEnd(animation: Animator) {
-                        visibility = View.INVISIBLE
-                    }
-                })
-            val handler = Handler(Looper.getMainLooper())
-            handler.postDelayed({
-                recyclerView.scrollToPosition(0)
-            }, 150)
-
-        }
-    }
-
-    private fun View.fadeIn(duration: Long = 100) {
-        if (visibility != View.VISIBLE) {
-            alpha = 0f
-            translationY = -height.toFloat()/100
-            visibility = View.VISIBLE
-            animate()
-                .alpha(1f)
-                .translationY(0f)
-                .setDuration(duration)
-                .setListener(null)
-            val originalColor = ContextCompat.getColor(this@MainActivity, R.color.new_color)
-            val newColor = ContextCompat.getColor(this@MainActivity, R.color.original_color)
-
-            val backgroundColorAnimator: ObjectAnimator = ObjectAnimator.ofObject(
-                binding.root,
-                "backgroundColor",
-                ArgbEvaluator(),
-                originalColor,
-                newColor
-            )
-
-            backgroundColorAnimator.setDuration(100)
-
-            val window = window
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-
-            val statusBarColorAnimator = ObjectAnimator.ofArgb(
-                window,
-                "statusBarColor",
-                originalColor,
-                newColor
-            )
-            statusBarColorAnimator.setDuration(100)
-            backgroundColorAnimator.start()
-            statusBarColorAnimator.start()
-        }
-    }
-
-    private fun View.fadeOut(duration: Long = 50) {
-        if (visibility == View.VISIBLE) {
-            animate()
-                .alpha(0f)
-                .translationY(-height.toFloat()/100)
-                .setDuration(duration)
-                .setListener(object : AnimatorListenerAdapter() {
-                    override fun onAnimationEnd(animation: Animator) {
-                        visibility = View.INVISIBLE
-                    }
-                })}
-    }
-
-    fun showHome() {
-        binding.appView.slideOutToBottom()
-        binding.homeView.fadeIn()
-    }
-
-    private fun showApps() {
-        binding.homeView.fadeOut()
-        binding.appView.slideInFromBottom()
-    }
     fun openAppMenuActivity() {
         //AppMenuActivity.start(this, installedApps) {
         //}
         adapter.menuMode = "app"
-        showApps()
+        toAppMenu()
+    }
+    
+    fun backToHome() {
+        animations.showHome(binding)
+        animations.backgroundOut(this@MainActivity, binding)
+        val handler = Handler(Looper.getMainLooper())
+        handler.postDelayed({
+            recyclerView.scrollToPosition(0)
+        }, 150)
+    }
 
+    private fun toAppMenu() {
+        animations.showApps(binding)
+        animations.backgroundIn(this@MainActivity, binding)
     }
 
     override fun onItemClick(appInfo: LauncherActivityInfo, userHandle: UserHandle) {
@@ -494,7 +408,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
             }
         }
         sharedPreferenceManager.setShortcut(this, shortcutView, appInfo.applicationInfo.packageName, userProfile)
-        showHome()
+        backToHome()
     }
 
 
@@ -508,7 +422,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         position: Int
     ) {
         textView.visibility = View.INVISIBLE
-        actionMenuLayout.visibility = View.VISIBLE
+        animations.fadeViewIn(actionMenuLayout)
         val mainActivity =
             launcherApps.getActivityList(appInfo.applicationInfo.packageName, userHandle)
                 .firstOrNull()

@@ -21,7 +21,7 @@ class AppUtils {
             }
         }
         return allApps.sortedBy {
-            sharedPreferenceManager.getAppName(activity, it.first.applicationInfo.packageName,it.second.second, it.first.applicationInfo.loadLabel(activity.packageManager)).toString().lowercase()
+            sharedPreferenceManager.getAppName(activity, it.first.applicationInfo.packageName,it.second.second, activity.packageManager.getApplicationLabel(it.first.applicationInfo)).toString().lowercase()
         }
 
 

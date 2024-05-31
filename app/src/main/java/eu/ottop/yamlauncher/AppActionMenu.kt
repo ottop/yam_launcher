@@ -26,6 +26,7 @@ class AppActionMenu {
 
     private val sharedPreferenceManager = SharedPreferenceManager()
     private val appUtils = AppUtils()
+    private val animations = Animations()
 
     fun setActionListeners(
         activity: MainActivity,
@@ -52,7 +53,7 @@ class AppActionMenu {
                 )
             }
 
-            actionMenu.visibility = View.INVISIBLE
+            animations.fadeViewOut(actionMenu, 100)
             textView.visibility = View.VISIBLE
         }
 
@@ -62,14 +63,14 @@ class AppActionMenu {
             intent.putExtra(Intent.EXTRA_USER, userHandle)
             activity.startActivity(intent)
 
-            actionMenu.visibility = View.INVISIBLE
+            animations.fadeViewOut(actionMenu, 100)
             textView.visibility = View.VISIBLE
         }
 
         actionMenu.findViewById<TextView>(R.id.rename).setOnClickListener {
             textView.visibility = View.INVISIBLE
-            editLayout.visibility = View.VISIBLE
-            actionMenu.visibility = View.INVISIBLE
+            animations.fadeViewIn(editLayout)
+            animations.fadeViewOut(actionMenu, 100)
             val editText = editLayout.findViewById<EditText>(R.id.app_name_edit)
             val resetButton = editLayout.findViewById<AppCompatButton>(R.id.reset)
 
@@ -89,7 +90,7 @@ class AppActionMenu {
                 if (bottom - top > oldBottom - oldTop) {
                     editLayout.clearFocus()
 
-                    editLayout.visibility = View.INVISIBLE
+                    animations.fadeViewOut(editLayout, 100)
                     textView.visibility = View.VISIBLE
                     searchView.visibility = View.VISIBLE
                 }
@@ -153,7 +154,7 @@ class AppActionMenu {
         }
 
         actionMenu.findViewById<TextView>(R.id.close).setOnClickListener {
-            actionMenu.visibility = View.INVISIBLE
+            animations.fadeViewOut(actionMenu, 100)
             textView.visibility = View.VISIBLE
         }
     }

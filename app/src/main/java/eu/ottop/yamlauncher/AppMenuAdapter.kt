@@ -114,7 +114,7 @@ class AppMenuAdapter(
         holder.textView.compoundDrawablePadding = 0
 
         val appInfo = app.first.activityInfo.applicationInfo
-        holder.textView.text = sharedPreferenceManager.getAppName(activity, app.first.applicationInfo.packageName,app.second.second, appInfo.loadLabel(holder.itemView.context.packageManager))
+        holder.textView.text = sharedPreferenceManager.getAppName(activity, app.first.applicationInfo.packageName,app.second.second, holder.itemView.context.packageManager.getApplicationLabel(appInfo))
         holder.editView.findViewById<EditText>(R.id.app_name_edit).setText(holder.textView.text)
         holder.textView.visibility = View.VISIBLE
     }
