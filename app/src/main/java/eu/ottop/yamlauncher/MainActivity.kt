@@ -106,7 +106,6 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
     override fun onStop() {
         super.onStop()
         job?.cancel()
-
     }
 
     override fun onDestroy() {
@@ -498,17 +497,17 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
             }
         }
 
-        // Detect insertions
-        newList.forEachIndexed { index, newItem ->
-            if (!oldSet.contains(Pair(newItem.first.applicationInfo.packageName, newItem.second.second))) {
-                changes.add(Change(ChangeType.INSERT, index))
-            }
-        }
-
         // Detect removals
         oldList.forEachIndexed { index, oldItem ->
             if (!newSet.contains(Pair(oldItem.first.applicationInfo.packageName, oldItem.second.second))) {
                 removalChanges.add(Change(ChangeType.REMOVE, index))
+            }
+        }
+
+        // Detect insertions
+        newList.forEachIndexed { index, newItem ->
+            if (!oldSet.contains(Pair(newItem.first.applicationInfo.packageName, newItem.second.second))) {
+                changes.add(Change(ChangeType.INSERT, index))
             }
         }
 
