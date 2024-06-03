@@ -24,7 +24,6 @@ class Animations () {
     fun showHome(binding: ActivityMainBinding) {
         binding.appView.slideOutToBottom()
         binding.homeView.fadeIn()
-        binding.menutitle.visibility = View.GONE
     }
 
     fun showApps(binding: ActivityMainBinding) {
@@ -32,7 +31,7 @@ class Animations () {
         binding.appView.slideInFromBottom()
     }
 
-    fun backgroundIn(activity: Activity, binding: ActivityMainBinding, duration: Long = 100) {
+    fun backgroundIn(activity: Activity, duration: Long = 100) {
         val originalColor = ContextCompat.getColor(activity, R.color.original_color)
         val newColor = ContextCompat.getColor(activity, R.color.new_color)
 
@@ -48,7 +47,7 @@ class Animations () {
         backgroundColorAnimator.start()
     }
 
-    fun backgroundOut(activity: Activity, binding: ActivityMainBinding, duration: Long = 100) {
+    fun backgroundOut(activity: Activity, duration: Long = 100) {
         val originalColor = ContextCompat.getColor(activity, R.color.new_color)
         val newColor = ContextCompat.getColor(activity, R.color.original_color)
 

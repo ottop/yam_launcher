@@ -240,7 +240,6 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         textView.setOnLongClickListener {
             adapter.menuMode = "shortcut"
             adapter.shortcutTextView = textView
-            binding.menutitle.visibility = View.VISIBLE
             toAppMenu()
 
             return@setOnLongClickListener true
@@ -366,9 +365,8 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
     }
 
     fun openAppMenuActivity() {
-        //AppMenuActivity.start(this, installedApps) {
-        //}
         adapter.menuMode = "app"
+        binding.menutitle.visibility = View.GONE
         toAppMenu()
     }
     
@@ -376,8 +374,11 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         closeKeyboard()
         searchView.setText("")
         animations.showHome(binding)
-        animations.backgroundOut(this@MainActivity, binding)
+        animations.backgroundOut(this@MainActivity)
         val handler = Handler(Looper.getMainLooper())
+        handler.postDelayed({
+            binding.menutitle.visibility = View.VISIBLE
+        }, 100)
         handler.postDelayed({
             recyclerView.scrollToPosition(0)
         }, 150)
@@ -385,7 +386,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
 
     private fun toAppMenu() {
         animations.showApps(binding)
-        animations.backgroundIn(this@MainActivity, binding)
+        animations.backgroundIn(this@MainActivity)
     }
 
     override fun onItemClick(appInfo: LauncherActivityInfo, userHandle: UserHandle) {

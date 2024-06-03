@@ -17,7 +17,7 @@ class AppMenuLinearLayoutManager(private val activity: MainActivity) : LinearLay
         val scrollRange = super.scrollVerticallyBy(dy, recycler, state)
         val overscroll: Int = dy - scrollRange
 
-        if (overscroll < 0 && firstVisibleItemPosition == 0 && scrollStarted) {
+        if (overscroll < 0 && firstVisibleItemPosition == 0 && scrollStarted && activity.appUpdate) {
             activity.backToHome()
         }
 
