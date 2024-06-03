@@ -16,7 +16,6 @@ import android.text.TextWatcher
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
-import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -64,6 +63,8 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
 
     private val swipeThreshold = 100
     private val swipeVelocityThreshold = 100
+
+    var appUpdate = true
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -120,9 +121,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         startTask()
 
         // Keyboard is sometimes open when going back to the app, so close it.
-        val imm =
-            getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
+        closeKeyboard()
     }
 
     open inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
@@ -187,10 +186,12 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
             val newApps = installedApps.toMutableList()
 
             setupRecyclerView(newApps)
+
+            searchView = findViewById(R.id.searchView)
+            setupSearch()
         }
 
-        searchView = findViewById(R.id.searchView)
-        setupSearch()
+
 
     }
 
@@ -284,19 +285,20 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
     }
 
     private fun setupSearch() {
-        binding.root.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
+        recyclerView.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
 
             if (bottom - top > oldBottom - oldTop) {
 
                 searchView.clearFocus()
 
                 if (searchView.text.isNullOrEmpty()) {
-                    job?.cancel()
                     startTask()
+                    appUpdate = true
                 }
             }
-            else {
+            else if (bottom - top < oldBottom - oldTop) {
                 job?.cancel()
+                appUpdate = false
             }
         }
 
@@ -355,6 +357,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
     }
 
     private fun startTask() {
+        job?.cancel()
         job = CoroutineScope(Dispatchers.Default).launch {
             while (true) {
                 refreshAppMenu()
@@ -371,6 +374,8 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
     }
     
     fun backToHome() {
+        closeKeyboard()
+        searchView.setText("")
         animations.showHome(binding)
         animations.backgroundOut(this@MainActivity, binding)
         val handler = Handler(Looper.getMainLooper())
@@ -464,6 +469,12 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
 
         }
 
+    private fun closeKeyboard() {
+        val imm =
+            getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
+    }
+
     private fun detectChanges(oldList: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>, newList: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>): List<Change> {
         val changes = mutableListOf<Change>()
         val removalChanges = mutableListOf<Change>()
@@ -476,6 +487,12 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
                 val newIndex = newList.indexOfFirst { it.first.applicationInfo.packageName == oldItem.first.applicationInfo.packageName && it.second.second == oldItem.second.second }
                 if (oldItem.first.componentName != newList[newIndex].first.componentName) {
                     changes.add(Change(ChangeType.UPDATE, index))
+                }
+                if (index != newIndex) {
+                    if (appUpdate) {
+                        changes.add(Change(ChangeType.MOVE, index))
+                        appUpdate = false
+                    }
                 }
 
             }
@@ -500,6 +517,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         return changes
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun applyChanges(changes: List<Change>, updatedApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
         changes.forEach { change ->
             when (change.type) {
@@ -516,6 +534,14 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
                 ChangeType.UPDATE -> {
                     updateItem(change.position, updatedApps[change.position])
                 }
+
+                ChangeType.MOVE -> {
+                    adapter.updateApps(updatedApps)
+                    adapter.notifyDataSetChanged()
+                    println("moved")
+                    appUpdate = true
+                }
+
             }
         }
     }
@@ -538,10 +564,15 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         adapter.moveApp(position, newPosition)
         adapter.notifyItemMoved(position, newPosition)
     }
+
+    fun updateInstalledApps() {
+        installedApps = appUtils.getInstalledApps(this@MainActivity)
+        appUpdate = true
+    }
 }
 
 data class Change(val type: ChangeType, val position: Int, val newPosition: Int = 0)
 
 enum class ChangeType {
-    INSERT, REMOVE, UPDATE
+    INSERT, REMOVE, UPDATE, MOVE
 }

@@ -110,10 +110,12 @@ class AppActionMenu {
                     CoroutineScope(Dispatchers.Default).launch {
                         val newPosition = appUtils.getInstalledApps(activity)
                             .indexOfFirst { it.first.applicationInfo.packageName == appInfo.packageName && it.second.second == workProfile }
+                        activity.appUpdate = false
                         withContext(Dispatchers.Main) {
                             activity.updateItem(position, app)
                             activity.moveItem(position, newPosition)
                         }
+                        activity.updateInstalledApps()
                     }
 
 
@@ -135,10 +137,12 @@ class AppActionMenu {
                 CoroutineScope(Dispatchers.Default).launch {
                     val newPosition = appUtils.getInstalledApps(activity)
                         .indexOfFirst { it.first.applicationInfo.packageName == appInfo.packageName && it.second.second == workProfile }
+                    activity.appUpdate = false
                     withContext(Dispatchers.Main) {
                         activity.updateItem(position, app)
                         activity.moveItem(position, newPosition)
                     }
+                    activity.updateInstalledApps()
                 }
             }
         }

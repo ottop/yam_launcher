@@ -140,4 +140,8 @@ class AppMenuAdapter(
             apps.add(newPosition, app)
 
     }
+
+    fun updateApps(newApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
+        apps = newApps.toMutableList()
+    }
 }

@@ -4,7 +4,16 @@
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:colorBackgroundCacheHint">@android:color/transparent</item>
         <item name="android:windowShowWallpaper">true</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
 
+    </style>
+
+    <style name="SettingsTheme" parent="Base.Theme.YamLauncher">
+        <item name="android:windowBackground">@color/settings_bg</item>
     </style>
 
     <style name="AppSearchView" parent="Widget.AppCompat.SearchView" >
