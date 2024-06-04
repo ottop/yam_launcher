@@ -60,6 +60,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
     private val appMenuLinearLayoutManager = AppMenuLinearLayoutManager(this@MainActivity)
     private val appMenuEdgeFactory = AppMenuEdgeFactory(this@MainActivity)
     private val animations = Animations()
+    private val weatherSystem = WeatherSystem()
 
     private val swipeThreshold = 100
     private val swipeVelocityThreshold = 100
@@ -149,7 +150,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
                     val statusBarManager: Class<*> = Class.forName("android.app.StatusBarManager")
                     val expandMethod: Method = statusBarManager.getMethod("expandNotificationsPanel")
                     expandMethod.invoke(statusBarService)
-
+                    weatherSystem.getWeather()
                 }
 
                 // Detect swipe left
