@@ -373,15 +373,18 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
     
     fun backToHome() {
         closeKeyboard()
-        searchView.setText("")
         animations.showHome(binding)
         animations.backgroundOut(this@MainActivity)
         val handler = Handler(Looper.getMainLooper())
         handler.postDelayed({
             binding.menutitle.visibility = View.VISIBLE
+            searchView.setText("")
         }, 100)
         handler.postDelayed({
             recyclerView.scrollToPosition(0)
+            CoroutineScope(Dispatchers.Default).launch {
+                refreshAppMenu()
+            }
         }, 150)
     }
 
