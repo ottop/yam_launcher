@@ -60,4 +60,16 @@ class SharedPreferenceManager {
         editor.apply()
     }
 
+    fun setWeatherLocation(cont: Context, location: String) {
+        val editor = cont.getSharedPreferences("weather_location", AppCompatActivity.MODE_PRIVATE).edit()
+        val key = "location"
+        editor.putString(key, location)
+        editor.apply()
+    }
+
+    fun getWeatherLocation(cont: Context) : String? {
+        val sharedPreferences = cont.getSharedPreferences("weather_location", AppCompatActivity.MODE_PRIVATE)
+        val key = "location"
+        return sharedPreferences.getString(key, null)
+    }
 }

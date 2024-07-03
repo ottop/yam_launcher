@@ -144,6 +144,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
                 // Detect swipe up
                 if (deltaY < -swipeThreshold && abs(velocityY) > swipeVelocityThreshold) {
                     openAppMenuActivity()
+                    weatherSystem.getTemp(this@MainActivity)
                 }
 
                 // Detect swipe down
