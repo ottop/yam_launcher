@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -24,6 +25,8 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import eu.ottop.yamlauncher.databinding.ActivityMainBinding
@@ -150,7 +153,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
                     val statusBarManager: Class<*> = Class.forName("android.app.StatusBarManager")
                     val expandMethod: Method = statusBarManager.getMethod("expandNotificationsPanel")
                     expandMethod.invoke(statusBarService)
-                    weatherSystem.getWeather()
+                    weatherSystem.getWeatherForCurrentLocation(this@MainActivity)
                 }
 
                 // Detect swipe left
@@ -377,11 +380,21 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         animations.backgroundOut(this@MainActivity)
         val handler = Handler(Looper.getMainLooper())
         handler.postDelayed({
-            binding.menutitle.visibility = View.VISIBLE
-            searchView.setText("")
+            try {
+                binding.menutitle.visibility = View.VISIBLE
+                searchView.setText("")
+            }
+            catch (_: UninitializedPropertyAccessException) {
+
+            }
         }, 100)
         handler.postDelayed({
-            recyclerView.scrollToPosition(0)
+            try {
+                recyclerView.scrollToPosition(0)
+            }
+            catch (_: UninitializedPropertyAccessException) {
+
+            }
             CoroutineScope(Dispatchers.Default).launch {
                 refreshAppMenu()
             }
@@ -485,7 +498,20 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         val oldSet = oldList.map { Pair(it.first.applicationInfo.packageName, it.second.second) }.toSet()
         val newSet = newList.map { Pair(it.first.applicationInfo.packageName, it.second.second) }.toSet()
 
-        //Detect updates
+        // Detect removals
+        oldList.forEachIndexed { index, oldItem ->
+            if (!newSet.contains(Pair(oldItem.first.applicationInfo.packageName, oldItem.second.second))) {
+                removalChanges.add(Change(ChangeType.REMOVE, index))
+            }
+        }
+
+        // Detect insertions
+        newList.forEachIndexed { index, newItem ->
+            if (!oldSet.contains(Pair(newItem.first.applicationInfo.packageName, newItem.second.second))) {
+                changes.add(Change(ChangeType.INSERT, index))
+            }
+        }
+
         oldList.forEachIndexed { index, oldItem ->
             if (newSet.contains(Pair(oldItem.first.applicationInfo.packageName, oldItem.second.second))) {
                 val newIndex = newList.indexOfFirst { it.first.applicationInfo.packageName == oldItem.first.applicationInfo.packageName && it.second.second == oldItem.second.second }
@@ -499,20 +525,6 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
                     }
                 }
 
-            }
-        }
-
-        // Detect removals
-        oldList.forEachIndexed { index, oldItem ->
-            if (!newSet.contains(Pair(oldItem.first.applicationInfo.packageName, oldItem.second.second))) {
-                removalChanges.add(Change(ChangeType.REMOVE, index))
-            }
-        }
-
-        // Detect insertions
-        newList.forEachIndexed { index, newItem ->
-            if (!oldSet.contains(Pair(newItem.first.applicationInfo.packageName, newItem.second.second))) {
-                changes.add(Change(ChangeType.INSERT, index))
             }
         }
 
