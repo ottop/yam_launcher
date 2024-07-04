@@ -68,8 +68,6 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
     private val swipeThreshold = 100
     private val swipeVelocityThreshold = 100
 
-    var appUpdate = true
-
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -144,17 +142,14 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
                 // Detect swipe up
                 if (deltaY < -swipeThreshold && abs(velocityY) > swipeVelocityThreshold) {
                     openAppMenuActivity()
-                    weatherSystem.getTemp(this@MainActivity)
                 }
 
                 // Detect swipe down
                 else if (deltaY > swipeThreshold && abs(velocityY) > swipeVelocityThreshold) {
-
                     val statusBarService = getSystemService(Context.STATUS_BAR_SERVICE)
                     val statusBarManager: Class<*> = Class.forName("android.app.StatusBarManager")
                     val expandMethod: Method = statusBarManager.getMethod("expandNotificationsPanel")
                     expandMethod.invoke(statusBarService)
-                    weatherSystem.getWeatherForCurrentLocation(this@MainActivity)
                 }
 
                 // Detect swipe left
@@ -296,12 +291,10 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
 
                 if (searchView.text.isNullOrEmpty()) {
                     startTask()
-                    appUpdate = true
                 }
             }
             else if (bottom - top < oldBottom - oldTop) {
                 job?.cancel()
-                appUpdate = false
             }
         }
 
@@ -311,12 +304,13 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                CoroutineScope(Dispatchers.Default).launch {
-                    filterItems(searchView.text.toString())
-                }
+
             }
 
             override fun afterTextChanged(s: Editable?) {
+                CoroutineScope(Dispatchers.Default).launch {
+                    filterItems(searchView.text.toString())
+                }
             }
         })
     }
@@ -348,10 +342,11 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
     }
 
     private suspend fun applySearch(newFilteredApps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
-        val changes = detectChanges(installedApps, newFilteredApps)
-        installedApps = newFilteredApps
-        withContext(Dispatchers.Main) {
-            applyChanges(changes, installedApps)
+        if (!listsEqual(installedApps, newFilteredApps)) {
+            withContext(Dispatchers.Main) {
+                updateMenu(newFilteredApps)
+            }
+            installedApps = newFilteredApps
         }
     }
 
@@ -390,16 +385,19 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
             }
         }, 100)
         handler.postDelayed({
+            CoroutineScope(Dispatchers.Default).launch {
+                refreshAppMenu()
+
             try {
-                recyclerView.scrollToPosition(0)
+                withContext(Dispatchers.Main) {
+                    recyclerView.scrollToPosition(0)
+                }
             }
             catch (_: UninitializedPropertyAccessException) {
 
             }
-            CoroutineScope(Dispatchers.Default).launch {
-                refreshAppMenu()
-            }
-        }, 150)
+        }}, 150)
+
     }
 
     private fun toAppMenu() {
@@ -476,10 +474,12 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
     suspend fun refreshAppMenu() {
             try {
                 val updatedApps = appUtils.getInstalledApps(this@MainActivity)
-                val changes = detectChanges(installedApps, updatedApps)
-                installedApps = updatedApps
-                withContext(Dispatchers.Main) {
-                    applyChanges(changes, installedApps)
+                println("update running")
+                if (!listsEqual(installedApps, updatedApps)) {
+                    withContext(Dispatchers.Main) {
+                        updateMenu(updatedApps)
+                    }
+                    installedApps = updatedApps
                 }
             }
             catch (_: UninitializedPropertyAccessException) {
@@ -493,103 +493,31 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
     }
 
-    private fun detectChanges(oldList: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>, newList: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>): List<Change> {
-        val changes = mutableListOf<Change>()
-        val removalChanges = mutableListOf<Change>()
-        val oldSet = oldList.map { Pair(it.first.applicationInfo.packageName, it.second.second) }.toSet()
-        val newSet = newList.map { Pair(it.first.applicationInfo.packageName, it.second.second) }.toSet()
 
-        // Detect removals
-        oldList.forEachIndexed { index, oldItem ->
-            if (!newSet.contains(Pair(oldItem.first.applicationInfo.packageName, oldItem.second.second))) {
-                removalChanges.add(Change(ChangeType.REMOVE, index))
-            }
-        }
-
-        // Detect insertions
-        newList.forEachIndexed { index, newItem ->
-            if (!oldSet.contains(Pair(newItem.first.applicationInfo.packageName, newItem.second.second))) {
-                changes.add(Change(ChangeType.INSERT, index))
-            }
-        }
-
-        oldList.forEachIndexed { index, oldItem ->
-            if (newSet.contains(Pair(oldItem.first.applicationInfo.packageName, oldItem.second.second))) {
-                val newIndex = newList.indexOfFirst { it.first.applicationInfo.packageName == oldItem.first.applicationInfo.packageName && it.second.second == oldItem.second.second }
-                if (oldItem.first.componentName != newList[newIndex].first.componentName) {
-                    changes.add(Change(ChangeType.UPDATE, index))
-                }
-                if (index != newIndex) {
-                    if (appUpdate) {
-                        changes.add(Change(ChangeType.MOVE, index))
-                        appUpdate = false
-                    }
-                }
-
-            }
-        }
-
-        changes.addAll(removalChanges.reversed())
-
-        return changes
-    }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun applyChanges(changes: List<Change>, updatedApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
-        changes.forEach { change ->
-            when (change.type) {
-                ChangeType.INSERT -> {
-                    insertItem(change.position, updatedApps[change.position])
-                }
-                ChangeType.REMOVE -> {
-                    try {
-                        removeItem(change.position)
-                    }
-                    catch (_: IndexOutOfBoundsException) {
-                    }
-                }
-                ChangeType.UPDATE -> {
-                    updateItem(change.position, updatedApps[change.position])
-                }
+    private fun updateMenu(updatedApps : List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
+        adapter.updateApps(updatedApps)
+        println("moved")
+    }
 
-                ChangeType.MOVE -> {
-                    adapter.updateApps(updatedApps)
-                    adapter.notifyDataSetChanged()
-                    println("moved")
-                    appUpdate = true
-                }
+    private fun listsEqual(list1: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>, list2: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>): Boolean {
+        if (list1.size != list2.size) return false
 
+        for (i in list1.indices) {
+            if (list1[i].first.componentName != list2[i].first.componentName || list1[i].second.first != list2[i].second.first) {
+                return false
             }
         }
+
+        return true
     }
 
-    private fun insertItem(position: Int, app: Pair<LauncherActivityInfo, Pair<UserHandle, Int>>) {
-        adapter.addApp(position, app)
-        adapter.notifyItemInserted(position)
+    fun isJobActive(): Boolean {
+        return if (job != null) {
+            job!!.isActive
+        } else {
+            false
+        }
     }
-    private fun removeItem(position: Int) {
-        adapter.removeApp(position)
-        adapter.notifyItemRemoved(position)
-    }
-
-    fun updateItem(position: Int, app: Pair<LauncherActivityInfo, Pair<UserHandle, Int>>) {
-        adapter.updateApp(position, app)
-        adapter.notifyItemChanged(position)
-    }
-
-    fun moveItem(position: Int, newPosition: Int) {
-        adapter.moveApp(position, newPosition)
-        adapter.notifyItemMoved(position, newPosition)
-    }
-
-    fun updateInstalledApps() {
-        installedApps = appUtils.getInstalledApps(this@MainActivity)
-        appUpdate = true
-    }
-}
-
-data class Change(val type: ChangeType, val position: Int, val newPosition: Int = 0)
-
-enum class ChangeType {
-    INSERT, REMOVE, UPDATE, MOVE
 }

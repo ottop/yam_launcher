@@ -123,25 +123,8 @@ class AppMenuAdapter(
         return apps.size
     }
 
-    fun addApp(position: Int, app: Pair<LauncherActivityInfo, Pair<UserHandle, Int>>) {
-        apps.add(position, app)
-    }
-
-    fun removeApp(position: Int) {
-        apps.removeAt(position)
-    }
-
-    fun updateApp(position: Int, app: Pair<LauncherActivityInfo, Pair<UserHandle, Int>>) {
-        apps[position] = app
-    }
-
-    fun moveApp(position: Int, newPosition: Int) {
-            val app = apps.removeAt(position)
-            apps.add(newPosition, app)
-
-    }
-
     fun updateApps(newApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
         apps = newApps.toMutableList()
+        notifyDataSetChanged()
     }
 }
