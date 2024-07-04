@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_view"
     android:layout_width="match_parent"
@@ -79,46 +80,42 @@
         android:orientation="vertical"
         android:visibility="visible">
 
-        <TextClock
-            android:id="@+id/text_clock"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="32dp"
-            android:layout_marginTop="30dp"
-            android:fontFamily="@null"
-            android:format12Hour="hh:mm a"
-            android:format24Hour="HH:mm"
-            android:textAlignment="textStart"
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault"
-            android:textColor="#F3F3F3"
-            android:textSize="68sp" />
+            android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="37dp"
-            android:orientation="horizontal">
+            <TextClock
+                android:id="@+id/text_clock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="32dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="40dp"
+                android:fontFamily="@null"
+                android:format12Hour="hh:mm a"
+                android:format24Hour="HH:mm"
+                android:textAlignment="textStart"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+                android:textColor="#F3F3F3"
+                android:textSize="68sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextClock
                 android:id="@+id/text_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@null"
-                android:format12Hour="dd MMM yyyy | "
-                android:format24Hour="dd MMM yyyy | "
+                android:format12Hour="dd MMM yyyy"
+                android:format24Hour="dd MMM yyyy"
                 android:textAlignment="textStart"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault"
                 android:textColor="#F3F3F3"
-                android:textSize="20sp" />
+                android:textSize="20sp"
+                app:layout_constraintStart_toStartOf="@+id/text_clock"
+                app:layout_constraintTop_toBottomOf="@+id/text_clock" />
 
-            <TextView
-                android:id="@+id/battery_charge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="@android:style/TextAppearance.DeviceDefault"
-                android:textColor="#F3F3F3"
-                android:textSize="20sp" />
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Space
             android:layout_width="match_parent"

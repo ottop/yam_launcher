@@ -20,6 +20,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.TextClock
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -55,7 +56,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
     val cameraIntent = Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE)
     val phoneIntent = Intent(Intent.ACTION_DIAL)
     private lateinit var batteryReceiver: BatteryReceiver
-    private lateinit var batteryTextView: TextView
+    private lateinit var dateText: TextClock
 
     private var appActionMenu = AppActionMenu()
     private val sharedPreferenceManager = SharedPreferenceManager()
@@ -82,10 +83,9 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
 
         setupApps()
 
+        val dateText = findViewById<TextClock>(R.id.text_date)
 
-        batteryTextView = findViewById(R.id.battery_charge)
-
-        batteryReceiver = BatteryReceiver.register(this, batteryTextView)
+        batteryReceiver = BatteryReceiver.register(this, dateText)
 
         binding.homeView.setOnTouchListener { _, event ->
             gestureDetector.onTouchEvent(event)
