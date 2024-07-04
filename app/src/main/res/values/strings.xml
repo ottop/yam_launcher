@@ -49,4 +49,10 @@
     <string name="search">Search…</string>
     <string name="app">App</string>
     <string name="shortcut_default">App</string>
+    <string-array name="clock_alignment_options">
+        <item>Left</item>
+        <item>Center</item>
+        <item>Right</item>
+    </string-array>
+
 </resources>
