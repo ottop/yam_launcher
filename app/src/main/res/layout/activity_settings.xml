@@ -9,7 +9,7 @@
     tools:context=".SettingsActivity">
 
     <TextView
-        android:id="@+id/clock_alignment"
+        android:id="@+id/clock_alignment_label"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:clickable="false"
@@ -24,21 +24,21 @@
         android:textSize="20sp"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/spinner"
+        app:layout_constraintEnd_toStartOf="@+id/clock_alignment"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
     <Spinner
-        android:id="@+id/spinner"
+        android:id="@+id/clock_alignment"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:entries="@array/clock_alignment_options"
         android:spinnerMode="dropdown"
-        app:layout_constraintBottom_toBottomOf="@+id/clock_alignment"
+        app:layout_constraintBottom_toBottomOf="@+id/clock_alignment_label"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/clock_alignment"
-        app:layout_constraintTop_toTopOf="@+id/clock_alignment"
+        app:layout_constraintStart_toEndOf="@+id/clock_alignment_label"
+        app:layout_constraintTop_toTopOf="@+id/clock_alignment_label"
         app:layout_constraintVertical_bias="0.1" />
 
     <View
@@ -46,7 +46,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="?android:attr/listDivider"
-        app:layout_constraintBottom_toBottomOf="@+id/clock_alignment" />
+        app:layout_constraintBottom_toBottomOf="@+id/clock_alignment_label" />
 
     <TextView
         android:id="@+id/home_app_alignment"
@@ -64,7 +64,7 @@
         android:textSize="20sp"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/spinner"
+        app:layout_constraintEnd_toStartOf="@+id/clock_alignment"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider2"

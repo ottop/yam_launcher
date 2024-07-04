@@ -20,15 +20,19 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.Spinner
 import android.widget.TextClock
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.marginLeft
 import androidx.recyclerview.widget.RecyclerView
 import eu.ottop.yamlauncher.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
@@ -56,7 +60,6 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
     val cameraIntent = Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE)
     val phoneIntent = Intent(Intent.ACTION_DIAL)
     private lateinit var batteryReceiver: BatteryReceiver
-    private lateinit var dateText: TextClock
 
     private var appActionMenu = AppActionMenu()
     private val sharedPreferenceManager = SharedPreferenceManager()
@@ -64,10 +67,13 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
     private val appMenuLinearLayoutManager = AppMenuLinearLayoutManager(this@MainActivity)
     private val appMenuEdgeFactory = AppMenuEdgeFactory(this@MainActivity)
     private val animations = Animations()
-    private val weatherSystem = WeatherSystem()
 
     private val swipeThreshold = 100
     private val swipeVelocityThreshold = 100
+
+    private lateinit var clock: TextClock
+    private var clockMargin = 0
+    private lateinit var constraintLayout: ConstraintLayout
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,6 +86,12 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
 
         gestureDetector = GestureDetector(this, GestureListener())
         shortcutGestureDetector = GestureDetector(this, TextGestureListener())
+
+        clock = findViewById(R.id.text_clock)
+
+        clockMargin = clock.marginLeft
+
+        constraintLayout = findViewById(R.id.clock_layout)
 
         setupApps()
 
@@ -105,6 +117,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         super.onNewIntent(intent)
 
     }
+
     override fun onStop() {
         super.onStop()
         job?.cancel()
@@ -118,11 +131,15 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
 
     override fun onStart() {
         super.onStart()
-
         startTask()
 
         // Keyboard is sometimes open when going back to the app, so close it.
         closeKeyboard()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setClockAlignment()
     }
 
     open inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
@@ -511,6 +528,49 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         }
 
         return true
+    }
+
+    private fun setClockAlignment() {
+        val clockAlignment = sharedPreferenceManager.getClockAlignment(this@MainActivity)
+
+        val constraintSet = ConstraintSet()
+        constraintSet.clone(constraintLayout)
+        println(clockAlignment)
+
+        /*
+        0 = left
+        1 = center
+        2 = right
+        */
+
+        if (clockAlignment == 2) {
+            constraintSet.clear(clock.id, ConstraintSet.START)
+        }
+        else if (clockAlignment == 0) {
+            constraintSet.clear(clock.id, ConstraintSet.END)
+        }
+
+        if (clockAlignment == 1 || clockAlignment == 0) {
+            constraintSet.connect(
+                clock.id,
+                ConstraintSet.START,
+                ConstraintSet.PARENT_ID,
+                ConstraintSet.START,
+                clockMargin
+            )
+        }
+
+        if (clockAlignment != 0) {
+            constraintSet.connect(
+                clock.id,
+                ConstraintSet.END,
+                ConstraintSet.PARENT_ID,
+                ConstraintSet.END,
+                clockMargin
+            )
+        }
+
+        constraintSet.applyTo(constraintLayout)
     }
 
     fun isJobActive(): Boolean {
