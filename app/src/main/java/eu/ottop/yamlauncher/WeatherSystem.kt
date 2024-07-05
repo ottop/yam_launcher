@@ -4,11 +4,9 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.Criteria
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import android.os.Bundle
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -19,7 +17,6 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
-import java.util.function.Consumer
 
 class WeatherSystem {
 
@@ -33,10 +30,6 @@ class WeatherSystem {
                 println("Location obtained")
                 locationManager.removeUpdates(this)
             }
-
-            override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
-            override fun onProviderEnabled(provider: String) {}
-            override fun onProviderDisabled(provider: String) {}
         }
 
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

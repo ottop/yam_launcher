@@ -446,6 +446,8 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
             shortcutView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_empty, null),null,null,null)
         }
 
+        setShortCutAlignment()
+
         shortcutView.text = textView.text.toString()
         shortcutView.setOnClickListener {
             val mainActivity = launcherApps.getActivityList(appInfo.applicationInfo.packageName, userHandle).firstOrNull()
