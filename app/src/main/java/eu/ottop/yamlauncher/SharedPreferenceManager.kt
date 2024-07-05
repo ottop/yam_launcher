@@ -111,4 +111,17 @@ class SharedPreferenceManager {
         val key = "app_menu_alignment"
         return sharedPreferences.getInt(key, 0)
     }
+
+    fun setAppSize(cont: Context, alignment: Int) {
+        val editor = cont.getSharedPreferences("preferences", AppCompatActivity.MODE_PRIVATE).edit()
+        val key = "app_size"
+        editor.putInt(key, alignment)
+        editor.apply()
+    }
+
+    fun getAppSize(cont: Context) : Int {
+        val sharedPreferences = cont.getSharedPreferences("preferences", AppCompatActivity.MODE_PRIVATE)
+        val key = "app_size"
+        return sharedPreferences.getInt(key, 2)
+    }
 }

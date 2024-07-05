@@ -33,7 +33,7 @@
         android:id="@+id/clock_alignment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:entries="@array/clock_alignment_options"
+        android:entries="@array/h_alignment_options"
         android:spinnerMode="dropdown"
         app:layout_constraintBottom_toBottomOf="@+id/clock_alignment_label"
         app:layout_constraintEnd_toEndOf="parent"
@@ -74,7 +74,7 @@
         android:id="@+id/home_app_alignment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:entries="@array/clock_alignment_options"
+        android:entries="@array/h_alignment_options"
         android:spinnerMode="dropdown"
         app:layout_constraintBottom_toBottomOf="@+id/home_app_alignment_label"
         app:layout_constraintEnd_toEndOf="parent"
@@ -114,7 +114,7 @@
         android:id="@+id/app_alignment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:entries="@array/clock_alignment_options"
+        android:entries="@array/h_alignment_options"
         android:spinnerMode="dropdown"
         app:layout_constraintBottom_toBottomOf="@+id/app_alignment_label"
         app:layout_constraintEnd_toEndOf="parent"
@@ -129,5 +129,46 @@
         android:layout_height="1dp"
         android:background="?android:attr/listDivider"
         app:layout_constraintTop_toBottomOf="@+id/app_alignment_label" />
+
+    <TextView
+        android:id="@+id/app_size_label"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:gravity="start"
+        android:paddingLeft="20dp"
+        android:paddingTop="20dp"
+        android:paddingRight="20dp"
+        android:paddingBottom="20dp"
+        android:text="App Title Size"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+        android:textColor="#F3F3F3"
+        android:textSize="20sp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/app_alignment_label"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Spinner
+        android:id="@+id/app_size"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:entries="@array/size_options"
+        android:spinnerMode="dropdown"
+        app:layout_constraintBottom_toBottomOf="@+id/app_size_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/app_size_label"
+        app:layout_constraintTop_toBottomOf="@+id/app_alignment_label" />
+
+    <View
+        android:id="@+id/divider4"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintTop_toBottomOf="@+id/app_size_label"
+        tools:layout_editor_absoluteX="46dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

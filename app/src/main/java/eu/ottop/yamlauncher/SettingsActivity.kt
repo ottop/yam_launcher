@@ -50,5 +50,17 @@ class SettingsActivity : AppCompatActivity() {
             override fun onNothingSelected(parent: AdapterView<*>) {
             }
         }
+
+        binding.appSize.setSelection(sharedPreferenceManager.getAppSize(this@SettingsActivity))
+
+        binding.appSize.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                // Get the selected item
+                sharedPreferenceManager.setAppSize(this@SettingsActivity, position)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+            }
+        }
     }
 }

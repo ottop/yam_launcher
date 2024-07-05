@@ -17,6 +17,7 @@ import android.view.GestureDetector
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewTreeObserver
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -115,7 +116,6 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
     override fun onNewIntent(intent: Intent?) {
         backToHome()
         super.onNewIntent(intent)
-
     }
 
     override fun onStop() {
@@ -131,6 +131,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onStart() {
+        setShortcutSize(binding.homeView)
         super.onStart()
         startTask()
 
@@ -142,6 +143,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         adapter?.notifyDataSetChanged()
 
     }
+
 
 
     open inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
@@ -209,8 +211,6 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
             setupSearch()
         }
 
-
-
     }
 
     private fun handleListItems() {
@@ -225,7 +225,9 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
             if (savedView?.get(1) != "e") {
                 selectedSetup(textView, savedView)
             }
+
         }
+
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -579,6 +581,48 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
 
     private fun setShortCutAlignment() {
         setLinearAlignment(binding.homeView)
+    }
+
+    private fun setShortcutSize(shortcuts: LinearLayout) {
+        val viewTreeObserver = shortcuts.viewTreeObserver
+        if (viewTreeObserver.isAlive) {
+            viewTreeObserver.addOnGlobalLayoutListener {
+                shortcuts.children.forEach {
+                    if (it is TextView) {
+
+                        /*
+                        0 = small
+                        1 = medium
+                        2 = large
+                        */
+                        when (sharedPreferenceManager.getAppSize(this@MainActivity)) {
+                            0 -> {
+                                it.setPadding(
+                                    it.paddingLeft,
+                                    it.height / 4,
+                                    it.paddingRight,
+                                    it.height / 4
+                                )
+                            }
+
+                            1 -> {
+                                it.setPadding(
+                                    it.paddingLeft,
+                                    it.height / 5,
+                                    it.paddingRight,
+                                    it.height / 5
+                                )
+                            }
+
+                            2 -> {
+                                it.setPadding(it.paddingLeft, 0, it.paddingRight, 0)
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
     }
 
     private fun setLinearAlignment(shortcuts: LinearLayout) {
