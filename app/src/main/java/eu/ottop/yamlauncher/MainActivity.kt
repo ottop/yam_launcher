@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
-import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -15,12 +14,12 @@ import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.GestureDetector
+import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.LinearLayout
-import android.widget.Spinner
 import android.widget.TextClock
 import android.widget.TextView
 import android.widget.Toast
@@ -29,9 +28,8 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.children
 import androidx.core.view.marginLeft
 import androidx.recyclerview.widget.RecyclerView
 import eu.ottop.yamlauncher.databinding.ActivityMainBinding
@@ -55,7 +53,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var searchView: EditText
-    private lateinit var adapter: AppMenuAdapter
+    private var adapter: AppMenuAdapter? = null
     private var job: Job? = null
     val cameraIntent = Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE)
     val phoneIntent = Intent(Intent.ACTION_DIAL)
@@ -74,6 +72,8 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
     private lateinit var clock: TextClock
     private var clockMargin = 0
     private lateinit var constraintLayout: ConstraintLayout
+
+    private lateinit var dateText: TextClock
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
 
         setupApps()
 
-        val dateText = findViewById<TextClock>(R.id.text_date)
+        dateText = findViewById(R.id.text_date)
 
         batteryReceiver = BatteryReceiver.register(this, dateText)
 
@@ -129,18 +129,20 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         unregisterReceiver(batteryReceiver)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onStart() {
         super.onStart()
         startTask()
 
         // Keyboard is sometimes open when going back to the app, so close it.
         closeKeyboard()
+        setClockAlignment()
+        setShortCutAlignment()
+
+        adapter?.notifyDataSetChanged()
+
     }
 
-    override fun onResume() {
-        super.onResume()
-        setClockAlignment()
-    }
 
     open inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
 
@@ -235,7 +237,6 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
 
         textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_empty, null),null,null,null)
 
-        textView.compoundDrawablePadding = 0
         unselectedListeners(textView)
     }
 
@@ -255,8 +256,8 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
             Toast.makeText(this, "Long click to select an app", Toast.LENGTH_SHORT).show()
         }
         textView.setOnLongClickListener {
-            adapter.menuMode = "shortcut"
-            adapter.shortcutTextView = textView
+            adapter?.menuMode = "shortcut"
+            adapter?.shortcutTextView = textView
             toAppMenu()
 
             return@setOnLongClickListener true
@@ -382,7 +383,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
     }
 
     fun openAppMenuActivity() {
-        adapter.menuMode = "app"
+        adapter?.menuMode = "app"
         binding.menutitle.visibility = View.GONE
         toAppMenu()
     }
@@ -441,9 +442,10 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         if (userProfile != 0) {
             shortcutView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_work_app, null),null,null,null)
         }
-        else {
+        else if (shortcutView.gravity != Gravity.CENTER) {
             shortcutView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_empty, null),null,null,null)
         }
+
         shortcutView.text = textView.text.toString()
         shortcutView.setOnClickListener {
             val mainActivity = launcherApps.getActivityList(appInfo.applicationInfo.packageName, userHandle).firstOrNull()
@@ -510,11 +512,8 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
     }
 
-
-
-    @SuppressLint("NotifyDataSetChanged")
     private fun updateMenu(updatedApps : List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
-        adapter.updateApps(updatedApps)
+        adapter?.updateApps(updatedApps)
         println("moved")
     }
 
@@ -531,46 +530,83 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
     }
 
     private fun setClockAlignment() {
-        val clockAlignment = sharedPreferenceManager.getClockAlignment(this@MainActivity)
+        setConstraintAlignment(sharedPreferenceManager.getClockAlignment(this@MainActivity), clock.id, clockMargin)
+    }
+
+    private fun setConstraintAlignment(alignment: Int, widgetId: Int, margin: Int) {
 
         val constraintSet = ConstraintSet()
         constraintSet.clone(constraintLayout)
-        println(clockAlignment)
+        println(alignment)
 
         /*
         0 = left
         1 = center
         2 = right
         */
-
-        if (clockAlignment == 2) {
-            constraintSet.clear(clock.id, ConstraintSet.START)
+        if (alignment == 2) {
+            constraintSet.clear(widgetId, ConstraintSet.START)
         }
-        else if (clockAlignment == 0) {
-            constraintSet.clear(clock.id, ConstraintSet.END)
+        else if (alignment == 0) {
+            constraintSet.clear(widgetId, ConstraintSet.END)
         }
 
-        if (clockAlignment == 1 || clockAlignment == 0) {
+        if (alignment == 1 || alignment == 0) {
             constraintSet.connect(
-                clock.id,
+                widgetId,
                 ConstraintSet.START,
                 ConstraintSet.PARENT_ID,
                 ConstraintSet.START,
-                clockMargin
+                margin
             )
+
         }
 
-        if (clockAlignment != 0) {
+        if (alignment != 0) {
             constraintSet.connect(
-                clock.id,
+                widgetId,
                 ConstraintSet.END,
                 ConstraintSet.PARENT_ID,
                 ConstraintSet.END,
-                clockMargin
+                margin
             )
         }
 
         constraintSet.applyTo(constraintLayout)
+    }
+
+    private fun setShortCutAlignment() {
+        setLinearAlignment(binding.homeView)
+    }
+
+    private fun setLinearAlignment(shortcuts: LinearLayout) {
+        shortcuts.children.forEach {
+
+            if (it is TextView) {
+
+                /*
+                0 = left
+                1 = center
+                2 = right
+                */
+
+                when (sharedPreferenceManager.getHomeAppAlignment(this@MainActivity)) {
+                    0 -> {
+                        it.setCompoundDrawablesWithIntrinsicBounds(it.compoundDrawables.filterNotNull().first(),null, null, null)
+                        it.gravity = Gravity.CENTER_VERTICAL or Gravity.START
+                    }
+                    1 -> {
+                        it.setCompoundDrawablesWithIntrinsicBounds(it.compoundDrawables.filterNotNull().first(),null,it.compoundDrawables.filterNotNull().first(), null)
+                        it.gravity = Gravity.CENTER
+                    }
+                    2 -> {
+                        it.setCompoundDrawablesWithIntrinsicBounds(null,null, it.compoundDrawables.filterNotNull().first(), null)
+                        it.gravity = Gravity.CENTER_VERTICAL or Gravity.END
+                    }
+                }
+
+            }
+        }
     }
 
     fun isJobActive(): Boolean {

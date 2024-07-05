@@ -85,4 +85,30 @@ class SharedPreferenceManager {
         val key = "clock_alignment"
         return sharedPreferences.getInt(key, 0)
     }
+
+    fun setHomeAppAlignment(cont: Context, alignment: Int) {
+        val editor = cont.getSharedPreferences("preferences", AppCompatActivity.MODE_PRIVATE).edit()
+        val key = "home_app_alignment"
+        editor.putInt(key, alignment)
+        editor.apply()
+    }
+
+    fun getHomeAppAlignment(cont: Context) : Int {
+        val sharedPreferences = cont.getSharedPreferences("preferences", AppCompatActivity.MODE_PRIVATE)
+        val key = "home_app_alignment"
+        return sharedPreferences.getInt(key, 0)
+    }
+
+    fun setAppMenuAlignment(cont: Context, alignment: Int) {
+        val editor = cont.getSharedPreferences("preferences", AppCompatActivity.MODE_PRIVATE).edit()
+        val key = "app_menu_alignment"
+        editor.putInt(key, alignment)
+        editor.apply()
+    }
+
+    fun getAppMenuAlignment(cont: Context) : Int {
+        val sharedPreferences = cont.getSharedPreferences("preferences", AppCompatActivity.MODE_PRIVATE)
+        val key = "app_menu_alignment"
+        return sharedPreferences.getInt(key, 0)
+    }
 }

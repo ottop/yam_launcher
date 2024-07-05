@@ -7,9 +7,9 @@
     android:alpha="1">
     <group android:scaleX="0.5"
         android:scaleY="0.5"
-        android:translateX="0
-"
+        android:translateX="6"
         android:translateY="6">
+
         <path
             android:fillColor="@android:color/white"
             android:pathData="M12,2C6.47,2 2,6.47 2,12s4.47,10 10,10 10,-4.47 10,-10S17.53,2 12,2z"/>

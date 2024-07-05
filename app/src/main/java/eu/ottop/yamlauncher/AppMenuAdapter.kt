@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.LauncherActivityInfo
 import android.os.UserHandle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -103,15 +104,33 @@ class AppMenuAdapter(
     override fun onBindViewHolder(holder: AppViewHolder, position: Int) {
         val app = apps[position]
 
-        holder.textView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
-
         if (app.second.second != 0) {
             holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_work_app, null),null,null,null)
         }
         else {
             holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null),null,null,null)
         }
-        holder.textView.compoundDrawablePadding = 0
+
+        /*
+        0 = left
+        1 = center
+        2 = right
+        */
+
+        when (sharedPreferenceManager.getAppMenuAlignment(activity)) {
+            0 -> {
+                holder.textView.setCompoundDrawablesWithIntrinsicBounds(holder.textView.compoundDrawables.filterNotNull().first(),null, null, null)
+                holder.textView.gravity = Gravity.CENTER_VERTICAL or Gravity.START
+            }
+            1 -> {
+                holder.textView.setCompoundDrawablesWithIntrinsicBounds(holder.textView.compoundDrawables.filterNotNull().first(),null,holder.textView.compoundDrawables.filterNotNull().first(), null)
+                holder.textView.gravity = Gravity.CENTER
+            }
+            2 -> {
+                holder.textView.setCompoundDrawablesWithIntrinsicBounds(null,null, holder.textView.compoundDrawables.filterNotNull().first(), null)
+                holder.textView.gravity = Gravity.CENTER_VERTICAL or Gravity.END
+            }
+        }
 
         val appInfo = app.first.activityInfo.applicationInfo
         holder.textView.text = sharedPreferenceManager.getAppName(activity, app.first.applicationInfo.packageName,app.second.second, holder.itemView.context.packageManager.getApplicationLabel(appInfo))
@@ -119,10 +138,29 @@ class AppMenuAdapter(
         holder.textView.visibility = View.VISIBLE
     }
 
+    override fun onViewAttachedToWindow(holder: AppViewHolder) {
+        super.onViewAttachedToWindow(holder)
+        when (sharedPreferenceManager.getAppMenuAlignment(activity)) {
+            0 -> {
+                holder.textView.setCompoundDrawablesWithIntrinsicBounds(holder.textView.compoundDrawables.filterNotNull().first(),null, null, null)
+                holder.textView.gravity = Gravity.CENTER_VERTICAL or Gravity.START
+            }
+            1 -> {
+                holder.textView.setCompoundDrawablesWithIntrinsicBounds(holder.textView.compoundDrawables.filterNotNull().first(),null,holder.textView.compoundDrawables.filterNotNull().first(), null)
+                holder.textView.gravity = Gravity.CENTER
+            }
+            2 -> {
+                holder.textView.setCompoundDrawablesWithIntrinsicBounds(null,null, holder.textView.compoundDrawables.filterNotNull().first(), null)
+                holder.textView.gravity = Gravity.CENTER_VERTICAL or Gravity.END
+            }
+        }
+    }
+
     override fun getItemCount(): Int {
         return apps.size
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun updateApps(newApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
         apps = newApps.toMutableList()
         notifyDataSetChanged()

@@ -22,7 +22,30 @@ class SettingsActivity : AppCompatActivity() {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 // Get the selected item
                 sharedPreferenceManager.setClockAlignment(this@SettingsActivity, position)
-                println(position)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+            }
+        }
+
+        binding.homeAppAlignment.setSelection(sharedPreferenceManager.getHomeAppAlignment(this@SettingsActivity))
+
+        binding.homeAppAlignment.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                // Get the selected item
+                sharedPreferenceManager.setHomeAppAlignment(this@SettingsActivity, position)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+            }
+        }
+
+        binding.appAlignment.setSelection(sharedPreferenceManager.getAppMenuAlignment(this@SettingsActivity))
+
+        binding.appAlignment.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                // Get the selected item
+                sharedPreferenceManager.setAppMenuAlignment(this@SettingsActivity, position)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
