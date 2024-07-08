@@ -189,4 +189,30 @@ class SharedPreferenceManager {
         val key = "search_size"
         return sharedPreferences.getInt(key, 2)
     }
+
+    fun setCameraEnabled(cont: Context, isEnabled: Boolean) {
+        val editor = cont.getSharedPreferences("preferences", AppCompatActivity.MODE_PRIVATE).edit()
+        val key = "camera_enabled"
+        editor.putBoolean(key, isEnabled)
+        editor.apply()
+    }
+
+    fun getCameraEnabled(cont: Context) : Boolean {
+        val sharedPreferences = cont.getSharedPreferences("preferences", AppCompatActivity.MODE_PRIVATE)
+        val key = "camera_enabled"
+        return sharedPreferences.getBoolean(key, true)
+    }
+
+    fun setContactsEnabled(cont: Context, isEnabled: Boolean) {
+        val editor = cont.getSharedPreferences("preferences", AppCompatActivity.MODE_PRIVATE).edit()
+        val key = "contacts_enabled"
+        editor.putBoolean(key, isEnabled)
+        editor.apply()
+    }
+
+    fun getContactsEnabled(cont: Context) : Boolean {
+        val sharedPreferences = cont.getSharedPreferences("preferences", AppCompatActivity.MODE_PRIVATE)
+        val key = "contacts_enabled"
+        return sharedPreferences.getBoolean(key, true)
+    }
 }

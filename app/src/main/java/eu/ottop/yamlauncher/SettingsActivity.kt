@@ -122,5 +122,18 @@ class SettingsActivity : AppCompatActivity() {
             override fun onNothingSelected(parent: AdapterView<*>) {
             }
         }
+
+        binding.camera.isChecked = sharedPreferenceManager.getCameraEnabled(this@SettingsActivity)
+
+        binding.camera.setOnCheckedChangeListener { _, isChecked ->
+            sharedPreferenceManager.setCameraEnabled(this@SettingsActivity, isChecked)
+        }
+
+        binding.contacts.isChecked = sharedPreferenceManager.getContactsEnabled(this@SettingsActivity)
+
+        binding.contacts.setOnCheckedChangeListener { _, isChecked ->
+            sharedPreferenceManager.setContactsEnabled(this@SettingsActivity, isChecked)
+        }
+
     }
 }

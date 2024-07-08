@@ -75,6 +75,9 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
 
     private lateinit var dateText: TextClock
 
+    private var cameraSwipeEnabled = true
+    private var contactsSwipeEnabled = true
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -143,6 +146,8 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         setShortCutAlignment()
         setSearchAlignment()
 
+        setGestures()
+
         adapter?.notifyDataSetChanged()
 
     }
@@ -177,12 +182,12 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
                 }
 
                 // Detect swipe left
-                else if (deltaX < -swipeThreshold && abs(velocityX) > swipeVelocityThreshold){
+                else if (cameraSwipeEnabled && deltaX < -swipeThreshold && abs(velocityX) > swipeVelocityThreshold){
                     startActivity(cameraIntent)
                 }
 
                 // Detect swipe right
-                else if (deltaX > -swipeThreshold && abs(velocityX) > swipeVelocityThreshold) {
+                else if (contactsSwipeEnabled && deltaX > -swipeThreshold && abs(velocityX) > swipeVelocityThreshold) {
                     startActivity(phoneIntent)
                 }
             }
@@ -720,6 +725,15 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
                 searchView.textSize = 25F
             }
         }
+    }
+
+    private fun setGestures() {
+        val cameraGesture = sharedPreferenceManager.getCameraEnabled(this@MainActivity)
+        val contactsGesture = sharedPreferenceManager.getContactsEnabled(this@MainActivity)
+
+        cameraSwipeEnabled = cameraGesture
+
+        contactsSwipeEnabled = contactsGesture
     }
 
     fun isJobActive(): Boolean {

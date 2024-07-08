@@ -371,4 +371,82 @@
         app:layout_constraintTop_toBottomOf="@+id/search_size_label"
         tools:layout_editor_absoluteX="46dp" />
 
+    <TextView
+        android:id="@+id/camera_label"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:gravity="start"
+        android:paddingLeft="20dp"
+        android:paddingTop="20dp"
+        android:paddingRight="20dp"
+        android:paddingBottom="20dp"
+        android:text="Camera Swipe Left"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+        android:textColor="#F3F3F3"
+        android:textSize="20sp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search_size_label" />
+
+    <Switch
+        android:id="@+id/camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        app:layout_constraintBottom_toBottomOf="@+id/camera_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.08"
+        app:layout_constraintStart_toEndOf="@+id/camera_label"
+        app:layout_constraintTop_toBottomOf="@+id/search_size_label" />
+
+    <View
+        android:id="@+id/divider10"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintTop_toBottomOf="@+id/camera_label"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <TextView
+        android:id="@+id/contacts_label"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:gravity="start"
+        android:paddingLeft="20dp"
+        android:paddingTop="20dp"
+        android:paddingRight="20dp"
+        android:paddingBottom="20dp"
+        android:text="Phone Swipe Right"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+        android:textColor="#F3F3F3"
+        android:textSize="20sp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/camera_label" />
+
+    <Switch
+        android:id="@+id/contacts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        app:layout_constraintBottom_toBottomOf="@+id/contacts_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.08"
+        app:layout_constraintStart_toEndOf="@+id/camera_label"
+        app:layout_constraintTop_toBottomOf="@+id/camera_label" />
+
+    <View
+        android:id="@+id/divider11"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintTop_toBottomOf="@+id/contacts_label"
+        tools:layout_editor_absoluteX="0dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
