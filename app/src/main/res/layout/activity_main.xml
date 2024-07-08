@@ -65,6 +65,7 @@
             android:editTextColor="#f3f3f3"
             android:hint="@string/search"
             android:singleLine="true"
+            android:textAlignment="viewStart"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault"
             android:textSize="25sp" />
 
@@ -92,13 +93,16 @@
                 android:layout_marginHorizontal="32dp"
                 android:layout_marginStart="32dp"
                 android:layout_marginTop="40dp"
+                android:layout_marginBottom="27dp"
                 android:fontFamily="@null"
                 android:format12Hour="hh:mm a"
                 android:format24Hour="HH:mm"
+                android:gravity="bottom"
                 android:textAlignment="textStart"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault"
                 android:textColor="#F3F3F3"
                 android:textSize="68sp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -122,7 +126,7 @@
         <Space
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.23" />
+            android:layout_weight="0.25" />
 
         <TextView
             android:id="@+id/app1"

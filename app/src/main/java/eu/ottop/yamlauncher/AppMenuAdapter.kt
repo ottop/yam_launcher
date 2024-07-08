@@ -2,6 +2,7 @@ package eu.ottop.yamlauncher
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.ApplicationInfo
 import android.content.pm.LauncherActivityInfo
 import android.os.UserHandle
 import android.view.Gravity
@@ -12,9 +13,11 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.Space
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.marginLeft
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 
@@ -55,8 +58,9 @@ class AppMenuAdapter(
     inner class AppViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val listItem: FrameLayout = itemView.findViewById(R.id.list_item)
         val textView: TextView = listItem.findViewById(R.id.app_name)
-        private val actionMenuLayout: LinearLayout = listItem.findViewById(R.id.action_menu)
-        val editView: LinearLayout = listItem.findViewById(R.id.rename_view)
+        val actionMenuLayout: LinearLayout = listItem.findViewById(R.id.action_menu)
+        private val editView: LinearLayout = listItem.findViewById(R.id.rename_view)
+        val editText: EditText = editView.findViewById(R.id.app_name_edit)
 
         init {
             actionMenuLayout.visibility = View.INVISIBLE
@@ -116,7 +120,6 @@ class AppMenuAdapter(
         1 = center
         2 = right
         */
-
         when (sharedPreferenceManager.getAppMenuAlignment(activity)) {
             0 -> {
                 holder.textView.setCompoundDrawablesWithIntrinsicBounds(holder.textView.compoundDrawables.filterNotNull().first(),null, null, null)
@@ -125,35 +128,50 @@ class AppMenuAdapter(
             1 -> {
                 holder.textView.setCompoundDrawablesWithIntrinsicBounds(holder.textView.compoundDrawables.filterNotNull().first(),null,holder.textView.compoundDrawables.filterNotNull().first(), null)
                 holder.textView.gravity = Gravity.CENTER
+
             }
             2 -> {
                 holder.textView.setCompoundDrawablesWithIntrinsicBounds(null,null, holder.textView.compoundDrawables.filterNotNull().first(), null)
                 holder.textView.gravity = Gravity.CENTER_VERTICAL or Gravity.END
+            }
+        }
+
+        /*
+        0 = small
+        1 = medium
+        2 = large
+
+        Text sizes hardcoded because code returns 77 instead of 28
+        */
+        when (sharedPreferenceManager.getAppSize(activity)) {
+            0 -> {
+                holder.textView.textSize = 24F
+                holder.editText.textSize = 24F
+            }
+
+            1 -> {
+                holder.textView.textSize = 26F
+                holder.editText.textSize = 26F
+            }
+
+            2 -> {
+                holder.textView.textSize = 28F
+                holder.editText.textSize = 28F
             }
         }
 
         val appInfo = app.first.activityInfo.applicationInfo
         holder.textView.text = sharedPreferenceManager.getAppName(activity, app.first.applicationInfo.packageName,app.second.second, holder.itemView.context.packageManager.getApplicationLabel(appInfo))
-        holder.editView.findViewById<EditText>(R.id.app_name_edit).setText(holder.textView.text)
-        holder.textView.visibility = View.VISIBLE
-    }
+        holder.editText.setText(holder.textView.text)
 
-    override fun onViewAttachedToWindow(holder: AppViewHolder) {
-        super.onViewAttachedToWindow(holder)
-        when (sharedPreferenceManager.getAppMenuAlignment(activity)) {
-            0 -> {
-                holder.textView.setCompoundDrawablesWithIntrinsicBounds(holder.textView.compoundDrawables.filterNotNull().first(),null, null, null)
-                holder.textView.gravity = Gravity.CENTER_VERTICAL or Gravity.START
-            }
-            1 -> {
-                holder.textView.setCompoundDrawablesWithIntrinsicBounds(holder.textView.compoundDrawables.filterNotNull().first(),null,holder.textView.compoundDrawables.filterNotNull().first(), null)
-                holder.textView.gravity = Gravity.CENTER
-            }
-            2 -> {
-                holder.textView.setCompoundDrawablesWithIntrinsicBounds(null,null, holder.textView.compoundDrawables.filterNotNull().first(), null)
-                holder.textView.gravity = Gravity.CENTER_VERTICAL or Gravity.END
-            }
+        if (appInfo.flags and ApplicationInfo.FLAG_SYSTEM != 0) {
+            holder.actionMenuLayout.findViewById<TextView>(R.id.uninstall).visibility = View.GONE
         }
+        else {
+            holder.actionMenuLayout.findViewById<TextView>(R.id.uninstall).visibility = View.VISIBLE
+        }
+
+        holder.textView.visibility = View.VISIBLE
     }
 
     override fun getItemCount(): Int {

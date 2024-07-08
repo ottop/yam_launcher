@@ -112,6 +112,58 @@ class SharedPreferenceManager {
         return sharedPreferences.getInt(key, 0)
     }
 
+    fun setSearchAlignment(cont: Context, alignment: Int) {
+        val editor = cont.getSharedPreferences("preferences", AppCompatActivity.MODE_PRIVATE).edit()
+        val key = "search_alignment"
+        editor.putInt(key, alignment)
+        editor.apply()
+    }
+
+    fun getSearchAlignment(cont: Context) : Int {
+        val sharedPreferences = cont.getSharedPreferences("preferences", AppCompatActivity.MODE_PRIVATE)
+        val key = "search_alignment"
+        return sharedPreferences.getInt(key, 0)
+    }
+
+    fun setClockSize(cont: Context, alignment: Int) {
+        val editor = cont.getSharedPreferences("preferences", AppCompatActivity.MODE_PRIVATE).edit()
+        val key = "clock_size"
+        editor.putInt(key, alignment)
+        editor.apply()
+    }
+
+    fun getClockSize(cont: Context) : Int {
+        val sharedPreferences = cont.getSharedPreferences("preferences", AppCompatActivity.MODE_PRIVATE)
+        val key = "clock_size"
+        return sharedPreferences.getInt(key, 2)
+    }
+
+    fun setDateSize(cont: Context, alignment: Int) {
+        val editor = cont.getSharedPreferences("preferences", AppCompatActivity.MODE_PRIVATE).edit()
+        val key = "date_size"
+        editor.putInt(key, alignment)
+        editor.apply()
+    }
+
+    fun getDateSize(cont: Context) : Int {
+        val sharedPreferences = cont.getSharedPreferences("preferences", AppCompatActivity.MODE_PRIVATE)
+        val key = "date_size"
+        return sharedPreferences.getInt(key, 2)
+    }
+
+    fun setShortcutSize(cont: Context, alignment: Int) {
+        val editor = cont.getSharedPreferences("preferences", AppCompatActivity.MODE_PRIVATE).edit()
+        val key = "shortcut_size"
+        editor.putInt(key, alignment)
+        editor.apply()
+    }
+
+    fun getShortcutSize(cont: Context) : Int {
+        val sharedPreferences = cont.getSharedPreferences("preferences", AppCompatActivity.MODE_PRIVATE)
+        val key = "shortcut_size"
+        return sharedPreferences.getInt(key, 2)
+    }
+
     fun setAppSize(cont: Context, alignment: Int) {
         val editor = cont.getSharedPreferences("preferences", AppCompatActivity.MODE_PRIVATE).edit()
         val key = "app_size"
@@ -122,6 +174,19 @@ class SharedPreferenceManager {
     fun getAppSize(cont: Context) : Int {
         val sharedPreferences = cont.getSharedPreferences("preferences", AppCompatActivity.MODE_PRIVATE)
         val key = "app_size"
+        return sharedPreferences.getInt(key, 2)
+    }
+
+    fun setSearchSize(cont: Context, alignment: Int) {
+        val editor = cont.getSharedPreferences("preferences", AppCompatActivity.MODE_PRIVATE).edit()
+        val key = "search_size"
+        editor.putInt(key, alignment)
+        editor.apply()
+    }
+
+    fun getSearchSize(cont: Context) : Int {
+        val sharedPreferences = cont.getSharedPreferences("preferences", AppCompatActivity.MODE_PRIVATE)
+        val key = "search_size"
         return sharedPreferences.getInt(key, 2)
     }
 }

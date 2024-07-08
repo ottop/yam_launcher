@@ -20,12 +20,10 @@ import eu.ottop.yamlauncher.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class AppActionMenu {
 
     private val sharedPreferenceManager = SharedPreferenceManager()
-    private val appUtils = AppUtils()
     private val animations = Animations()
 
     fun setActionListeners(
@@ -39,8 +37,7 @@ class AppActionMenu {
         userHandle: UserHandle,
         workProfile: Int,
         launcherApps: LauncherApps,
-        mainActivity: LauncherActivityInfo?,
-        position: Int
+        mainActivity: LauncherActivityInfo?
     ){
 
         actionMenu.findViewById<TextView>(R.id.info).setOnClickListener {

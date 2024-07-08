@@ -17,7 +17,6 @@ import android.view.GestureDetector
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewTreeObserver
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -83,6 +82,8 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         setContentView(binding.root)
         setSupportActionBar(null)
 
+        searchView = findViewById(R.id.searchView)
+
         launcherApps = getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
 
         gestureDetector = GestureDetector(this, GestureListener())
@@ -131,14 +132,16 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onStart() {
-        setShortcutSize(binding.homeView)
+        setTextSizes()
         super.onStart()
         startTask()
 
         // Keyboard is sometimes open when going back to the app, so close it.
         closeKeyboard()
+
         setClockAlignment()
         setShortCutAlignment()
+        setSearchAlignment()
 
         adapter?.notifyDataSetChanged()
 
@@ -207,7 +210,6 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
 
             setupRecyclerView(newApps)
 
-            searchView = findViewById(R.id.searchView)
             setupSearch()
         }
 
@@ -489,8 +491,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
             userHandle,
             userProfile,
             launcherApps,
-            mainActivity,
-            position
+            mainActivity
         )
     }
 
@@ -595,7 +596,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
                         1 = medium
                         2 = large
                         */
-                        when (sharedPreferenceManager.getAppSize(this@MainActivity)) {
+                        when (sharedPreferenceManager.getShortcutSize(this@MainActivity)) {
                             0 -> {
                                 it.setPadding(
                                     it.paddingLeft,
@@ -608,9 +609,9 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
                             1 -> {
                                 it.setPadding(
                                     it.paddingLeft,
-                                    it.height / 5,
+                                    (it.height / 4.5).toInt(),
                                     it.paddingRight,
-                                    it.height / 5
+                                    (it.height / 4.5).toInt()
                                 )
                             }
 
@@ -651,6 +652,72 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
                     }
                 }
 
+            }
+        }
+    }
+
+    private fun setSearchAlignment() {
+
+        /*
+        0 = left
+        1 = center
+        2 = right
+        */
+        when (sharedPreferenceManager.getSearchAlignment(this@MainActivity)) {
+            0 -> {
+                searchView.textAlignment = View.TEXT_ALIGNMENT_VIEW_START
+            }
+            1 -> {
+                searchView.textAlignment = View.TEXT_ALIGNMENT_CENTER
+            }
+            2 -> {
+                searchView.textAlignment = View.TEXT_ALIGNMENT_VIEW_END
+            }
+        }
+    }
+
+    private fun setTextSizes() {
+        setShortcutSize(binding.homeView)
+
+        /*
+        0 = small
+        1 = medium
+        2 = large
+        */
+
+        when (sharedPreferenceManager.getClockSize(this@MainActivity)) {
+            0 -> {
+                clock.textSize = 48F
+            }
+            1 -> {
+                clock.textSize = 58F
+            }
+            2 -> {
+                clock.textSize = 68F
+            }
+        }
+
+        when (sharedPreferenceManager.getDateSize(this@MainActivity)) {
+            0 -> {
+                dateText.textSize = 17F
+            }
+            1 -> {
+                dateText.textSize = 20F
+            }
+            2 -> {
+                dateText.textSize = 23F
+            }
+        }
+
+        when (sharedPreferenceManager.getSearchSize(this@MainActivity)) {
+            0 -> {
+                searchView.textSize = 21F
+            }
+            1 -> {
+                searchView.textSize = 23F
+            }
+            2 -> {
+                searchView.textSize = 25F
             }
         }
     }

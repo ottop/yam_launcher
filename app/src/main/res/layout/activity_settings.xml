@@ -131,7 +131,7 @@
         app:layout_constraintTop_toBottomOf="@+id/app_alignment_label" />
 
     <TextView
-        android:id="@+id/app_size_label"
+        android:id="@+id/search_alignment_label"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:clickable="false"
@@ -140,7 +140,7 @@
         android:paddingTop="20dp"
         android:paddingRight="20dp"
         android:paddingBottom="20dp"
-        android:text="App Title Size"
+        android:text="Search Bar Alignment"
         android:textAppearance="@android:style/TextAppearance.DeviceDefault"
         android:textColor="#F3F3F3"
         android:textSize="20sp"
@@ -153,6 +153,167 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <Spinner
+        android:id="@+id/search_alignment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:entries="@array/h_alignment_options"
+        android:spinnerMode="dropdown"
+        app:layout_constraintBottom_toBottomOf="@+id/search_alignment_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/shortcut_size_label"
+        app:layout_constraintTop_toTopOf="@+id/search_alignment_label" />
+
+    <View
+        android:id="@+id/divider5"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintTop_toBottomOf="@+id/search_alignment_label"
+        tools:layout_editor_absoluteX="46dp" />
+
+    <TextView
+        android:id="@+id/clock_size_label"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:gravity="start"
+        android:paddingLeft="20dp"
+        android:paddingTop="20dp"
+        android:paddingRight="20dp"
+        android:paddingBottom="20dp"
+        android:text="Clock Size"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+        android:textColor="#F3F3F3"
+        android:textSize="20sp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search_alignment_label" />
+
+    <Spinner
+        android:id="@+id/clock_size"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:entries="@array/size_options"
+        android:spinnerMode="dropdown"
+        app:layout_constraintBottom_toBottomOf="@+id/clock_size_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/shortcut_size_label"
+        app:layout_constraintTop_toBottomOf="@+id/search_alignment_label" />
+
+    <View
+        android:id="@+id/divider7"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintTop_toBottomOf="@+id/clock_size_label"
+        tools:layout_editor_absoluteX="46dp" />
+
+    <TextView
+        android:id="@+id/date_size_label"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="188dp"
+        android:clickable="false"
+        android:gravity="start"
+        android:paddingLeft="20dp"
+        android:paddingTop="20dp"
+        android:paddingRight="20dp"
+        android:paddingBottom="20dp"
+        android:text="Date Size"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+        android:textColor="#F3F3F3"
+        android:textSize="20sp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/clock_size_label"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Spinner
+        android:id="@+id/date_size"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:entries="@array/size_options"
+        android:spinnerMode="dropdown"
+        app:layout_constraintBottom_toBottomOf="@+id/date_size_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/shortcut_size_label"
+        app:layout_constraintTop_toTopOf="@+id/date_size_label" />
+
+    <View
+        android:id="@+id/divider8"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintTop_toBottomOf="@+id/date_size_label"
+        tools:layout_editor_absoluteX="46dp" />
+
+    <TextView
+        android:id="@+id/shortcut_size_label"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:gravity="start"
+        android:paddingLeft="20dp"
+        android:paddingTop="20dp"
+        android:paddingRight="20dp"
+        android:paddingBottom="20dp"
+        android:text="Shortcut Title Size"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+        android:textColor="#F3F3F3"
+        android:textSize="20sp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/date_size_label"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Spinner
+        android:id="@+id/shortcut_size"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:entries="@array/size_options"
+        android:spinnerMode="dropdown"
+        app:layout_constraintBottom_toBottomOf="@+id/shortcut_size_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/shortcut_size_label"
+        app:layout_constraintTop_toTopOf="@+id/shortcut_size_label" />
+
+    <View
+        android:id="@+id/divider4"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintTop_toBottomOf="@+id/shortcut_size_label"
+        tools:layout_editor_absoluteX="46dp" />
+
+    <TextView
+        android:id="@+id/app_size_label"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:gravity="start"
+        android:paddingLeft="20dp"
+        android:paddingTop="20dp"
+        android:paddingRight="20dp"
+        android:paddingBottom="20dp"
+        android:text="App Menu Title Size"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+        android:textColor="#F3F3F3"
+        android:textSize="20sp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/shortcut_size_label" />
+
+    <Spinner
         android:id="@+id/app_size"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -160,15 +321,54 @@
         android:spinnerMode="dropdown"
         app:layout_constraintBottom_toBottomOf="@+id/app_size_label"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/app_size_label"
-        app:layout_constraintTop_toBottomOf="@+id/app_alignment_label" />
+        app:layout_constraintStart_toEndOf="@+id/shortcut_size_label"
+        app:layout_constraintTop_toTopOf="@+id/app_size_label" />
 
     <View
-        android:id="@+id/divider4"
+        android:id="@+id/divider6"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="?android:attr/listDivider"
         app:layout_constraintTop_toBottomOf="@+id/app_size_label"
+        tools:layout_editor_absoluteX="46dp" />
+
+    <TextView
+        android:id="@+id/search_size_label"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:gravity="start"
+        android:paddingLeft="20dp"
+        android:paddingTop="20dp"
+        android:paddingRight="20dp"
+        android:paddingBottom="20dp"
+        android:text="Search Bar Size"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+        android:textColor="#F3F3F3"
+        android:textSize="20sp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/app_size_label" />
+
+    <Spinner
+        android:id="@+id/search_size"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:entries="@array/size_options"
+        android:spinnerMode="dropdown"
+        app:layout_constraintBottom_toBottomOf="@+id/search_size_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/shortcut_size_label"
+        app:layout_constraintTop_toBottomOf="@+id/app_size_label" />
+
+    <View
+        android:id="@+id/divider9"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintTop_toBottomOf="@+id/search_size_label"
         tools:layout_editor_absoluteX="46dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
