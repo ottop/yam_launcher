@@ -118,8 +118,8 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
     }
 
     override fun onNewIntent(intent: Intent?) {
-        backToHome()
         super.onNewIntent(intent)
+        backToHome()
     }
 
     override fun onStop() {
@@ -133,14 +133,18 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         unregisterReceiver(batteryReceiver)
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun onStart() {
-        setTextSizes()
         super.onStart()
         startTask()
 
         // Keyboard is sometimes open when going back to the app, so close it.
         closeKeyboard()
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    override fun onResume() {
+        super.onResume()
+        setTextSizes()
 
         setClockAlignment()
         setShortCutAlignment()
@@ -149,10 +153,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         setGestures()
 
         adapter?.notifyDataSetChanged()
-
     }
-
-
 
     open inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
 
