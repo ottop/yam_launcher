@@ -1,0 +1,58 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="Alignment">
+
+        <ListPreference
+            app:defaultValue="left"
+            app:entries="@array/h_alignment_options"
+            app:entryValues="@array/h_alignment_values"
+            app:key="clockAlignment"
+            app:title="Clock Alignment"
+            app:useSimpleSummaryProvider="true" />
+        <ListPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:defaultValue="left"
+            app:entries="@array/h_alignment_options"
+            app:entryValues="@array/h_alignment_values"
+            app:key="shortcutAlignment"
+            app:title="Home App Alignment"
+            app:useSimpleSummaryProvider="true" />
+        <ListPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:defaultValue="left"
+            app:entries="@array/h_alignment_options"
+            app:entryValues="@array/h_alignment_values"
+            app:key="aappMenuAlignment"
+            app:title="App Menu Alignment"
+            app:useSimpleSummaryProvider="true" />
+        <ListPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:defaultValue="left"
+            app:entries="@array/h_alignment_options"
+            app:entryValues="@array/h_alignment_values"
+            app:key="searchAlignment"
+            app:title="Search Alignment"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/sync_header">
+
+        <SwitchPreferenceCompat
+            app:key="sync"
+            app:title="@string/sync_title" />
+
+        <SwitchPreferenceCompat
+            app:dependency="sync"
+            app:key="attachment"
+            app:summaryOff="@string/attachment_summary_off"
+            app:summaryOn="@string/attachment_summary_on"
+            app:title="@string/attachment_title" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

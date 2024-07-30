@@ -7,7 +7,21 @@ import android.widget.AdapterView
 import eu.ottop.yamlauncher.databinding.ActivitySettingsBinding
 
 class SettingsActivity : AppCompatActivity() {
+    private lateinit var binding: ActivitySettingsBinding
 
+
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            binding = ActivitySettingsBinding.inflate(layoutInflater)
+            setContentView(binding.root)
+            supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.settingsLayout, SettingsFragment())
+                .commit()
+        }
+
+
+    /*
     private lateinit var binding: ActivitySettingsBinding
     private val sharedPreferenceManager = SharedPreferenceManager()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -136,4 +150,6 @@ class SettingsActivity : AppCompatActivity() {
         }
 
     }
+
+     */
 }

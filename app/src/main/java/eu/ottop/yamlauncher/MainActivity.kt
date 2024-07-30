@@ -3,6 +3,7 @@ package eu.ottop.yamlauncher
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
 import android.os.Build
@@ -24,6 +25,7 @@ import android.widget.TextClock
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -31,6 +33,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.children
 import androidx.core.view.marginLeft
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import eu.ottop.yamlauncher.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
@@ -43,7 +46,7 @@ import kotlin.math.abs
 import java.lang.reflect.Method
 
 
-class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, AppMenuAdapter.OnShortcutListener, AppMenuAdapter.OnItemLongClickListener {
+class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener, AppMenuAdapter.OnItemClickListener, AppMenuAdapter.OnShortcutListener, AppMenuAdapter.OnItemLongClickListener {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var gestureDetector: GestureDetector
@@ -78,12 +81,18 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
     private var cameraSwipeEnabled = true
     private var contactsSwipeEnabled = true
 
+    private lateinit var preferences: SharedPreferences
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(null)
+
+        preferences = PreferenceManager.getDefaultSharedPreferences(this)
+
+        preferences.registerOnSharedPreferenceChangeListener(this)
 
         searchView = findViewById(R.id.searchView)
 
@@ -98,7 +107,11 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
 
         constraintLayout = findViewById(R.id.clock_layout)
 
+        setClockAlignment(preferences.getString("clockAlignment", "left"), clock.id, clockMargin)
+
         setupApps()
+
+        setShortcutAlignment(preferences.getString("shortcutAlignment", "left"), binding.homeView)
 
         dateText = findViewById(R.id.text_date)
 
@@ -115,6 +128,20 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
                 backToHome()
             }
         })
+
+    }
+
+    override fun onSharedPreferenceChanged(preferences: SharedPreferences?, key: String?) {
+
+        when (key) {
+            "clockAlignment" -> {
+                setClockAlignment(preferences?.getString(key, "left"), clock.id, clockMargin)
+            }
+
+            "shortcutAlignment" -> {
+                setShortcutAlignment(preferences?.getString("shortcutAlignment", "left"), binding.homeView)
+            }
+        }
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -131,6 +158,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         super.onDestroy()
         job?.cancel()
         unregisterReceiver(batteryReceiver)
+        preferences.unregisterOnSharedPreferenceChangeListener(this)
     }
 
     override fun onStart() {
@@ -145,9 +173,6 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
     override fun onResume() {
         super.onResume()
         setTextSizes()
-
-        setClockAlignment()
-        setShortCutAlignment()
         setSearchAlignment()
 
         setGestures()
@@ -456,8 +481,6 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
             shortcutView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_empty, null),null,null,null)
         }
 
-        setShortCutAlignment()
-
         shortcutView.text = textView.text.toString()
         shortcutView.setOnClickListener {
             val mainActivity = launcherApps.getActivityList(appInfo.applicationInfo.packageName, userHandle).firstOrNull()
@@ -540,29 +563,20 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         return true
     }
 
-    private fun setClockAlignment() {
-        setConstraintAlignment(sharedPreferenceManager.getClockAlignment(this@MainActivity), clock.id, clockMargin)
-    }
-
-    private fun setConstraintAlignment(alignment: Int, widgetId: Int, margin: Int) {
+    private fun setClockAlignment(alignment: String?, widgetId: Int, margin: Int) {
 
         val constraintSet = ConstraintSet()
         constraintSet.clone(constraintLayout)
         println(alignment)
 
-        /*
-        0 = left
-        1 = center
-        2 = right
-        */
-        if (alignment == 2) {
+        if (alignment == "right") {
             constraintSet.clear(widgetId, ConstraintSet.START)
         }
-        else if (alignment == 0) {
+        else if (alignment == "left") {
             constraintSet.clear(widgetId, ConstraintSet.END)
         }
 
-        if (alignment == 1 || alignment == 0) {
+        if (alignment == "center" || alignment == "left") {
             constraintSet.connect(
                 widgetId,
                 ConstraintSet.START,
@@ -573,7 +587,7 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
 
         }
 
-        if (alignment != 0) {
+        if (alignment != "left") {
             constraintSet.connect(
                 widgetId,
                 ConstraintSet.END,
@@ -586,8 +600,49 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
         constraintSet.applyTo(constraintLayout)
     }
 
-    private fun setShortCutAlignment() {
-        setLinearAlignment(binding.homeView)
+    private fun setShortcutAlignment(alignment: String?, shortcuts: LinearLayout) {
+        shortcuts.children.forEach {
+
+            if (it is TextView) {
+
+
+                when (alignment) {
+                    "left" -> {
+                        it.setCompoundDrawablesWithIntrinsicBounds(it.compoundDrawables.filterNotNull().first(),null, null, null)
+                        it.gravity = Gravity.CENTER_VERTICAL or Gravity.START
+                    }
+                    "center" -> {
+                        it.setCompoundDrawablesWithIntrinsicBounds(it.compoundDrawables.filterNotNull().first(),null,it.compoundDrawables.filterNotNull().first(), null)
+                        it.gravity = Gravity.CENTER
+                    }
+                    "right" -> {
+                        it.setCompoundDrawablesWithIntrinsicBounds(null,null, it.compoundDrawables.filterNotNull().first(), null)
+                        it.gravity = Gravity.CENTER_VERTICAL or Gravity.END
+                    }
+                }
+
+            }
+        }
+    }
+
+    private fun setSearchAlignment() {
+
+        /*
+        0 = left
+        1 = center
+        2 = right
+        */
+        when (sharedPreferenceManager.getSearchAlignment(this@MainActivity)) {
+            0 -> {
+                searchView.textAlignment = View.TEXT_ALIGNMENT_VIEW_START
+            }
+            1 -> {
+                searchView.textAlignment = View.TEXT_ALIGNMENT_CENTER
+            }
+            2 -> {
+                searchView.textAlignment = View.TEXT_ALIGNMENT_VIEW_END
+            }
+        }
     }
 
     private fun setShortcutSize(shortcuts: LinearLayout) {
@@ -628,56 +683,6 @@ class MainActivity : AppCompatActivity(), AppMenuAdapter.OnItemClickListener, Ap
 
                     }
                 }
-            }
-        }
-    }
-
-    private fun setLinearAlignment(shortcuts: LinearLayout) {
-        shortcuts.children.forEach {
-
-            if (it is TextView) {
-
-                /*
-                0 = left
-                1 = center
-                2 = right
-                */
-
-                when (sharedPreferenceManager.getHomeAppAlignment(this@MainActivity)) {
-                    0 -> {
-                        it.setCompoundDrawablesWithIntrinsicBounds(it.compoundDrawables.filterNotNull().first(),null, null, null)
-                        it.gravity = Gravity.CENTER_VERTICAL or Gravity.START
-                    }
-                    1 -> {
-                        it.setCompoundDrawablesWithIntrinsicBounds(it.compoundDrawables.filterNotNull().first(),null,it.compoundDrawables.filterNotNull().first(), null)
-                        it.gravity = Gravity.CENTER
-                    }
-                    2 -> {
-                        it.setCompoundDrawablesWithIntrinsicBounds(null,null, it.compoundDrawables.filterNotNull().first(), null)
-                        it.gravity = Gravity.CENTER_VERTICAL or Gravity.END
-                    }
-                }
-
-            }
-        }
-    }
-
-    private fun setSearchAlignment() {
-
-        /*
-        0 = left
-        1 = center
-        2 = right
-        */
-        when (sharedPreferenceManager.getSearchAlignment(this@MainActivity)) {
-            0 -> {
-                searchView.textAlignment = View.TEXT_ALIGNMENT_VIEW_START
-            }
-            1 -> {
-                searchView.textAlignment = View.TEXT_ALIGNMENT_CENTER
-            }
-            2 -> {
-                searchView.textAlignment = View.TEXT_ALIGNMENT_VIEW_END
             }
         }
     }
