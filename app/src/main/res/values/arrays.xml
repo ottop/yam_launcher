@@ -27,4 +27,10 @@
         <item>Medium</item>
         <item>Large</item>
     </string-array>
+
+    <string-array name="size_values">
+        <item>small</item>
+        <item>medium</item>
+        <item>large</item>
+    </string-array>
 </resources>

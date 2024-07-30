@@ -1,7 +1,9 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory app:title="Alignment">
+    <PreferenceCategory
+        app:allowDividerAbove="false"
+        app:title="Alignment">
 
         <ListPreference
             app:defaultValue="left"
@@ -25,7 +27,7 @@
             app:defaultValue="left"
             app:entries="@array/h_alignment_options"
             app:entryValues="@array/h_alignment_values"
-            app:key="aappMenuAlignment"
+            app:key="appMenuAlignment"
             app:title="App Menu Alignment"
             app:useSimpleSummaryProvider="true" />
         <ListPreference
@@ -40,19 +42,102 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/sync_header">
-
-        <SwitchPreferenceCompat
-            app:key="sync"
-            app:title="@string/sync_title" />
-
-        <SwitchPreferenceCompat
-            app:dependency="sync"
-            app:key="attachment"
-            app:summaryOff="@string/attachment_summary_off"
-            app:summaryOn="@string/attachment_summary_on"
-            app:title="@string/attachment_title" />
-
+    <PreferenceCategory
+        app:allowDividerAbove="false"
+        app:title="Dimensions">
+        <ListPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:defaultValue="medium"
+            app:entries="@array/size_options"
+            app:entryValues="@array/size_values"
+            app:key="clockSize"
+            app:title="Clock Size"
+            app:useSimpleSummaryProvider="true" />
+        <ListPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:defaultValue="medium"
+            app:entries="@array/size_options"
+            app:entryValues="@array/size_values"
+            app:key="dateSize"
+            app:title="Date Size"
+            app:useSimpleSummaryProvider="true" />
+        <ListPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:defaultValue="medium"
+            app:entries="@array/size_options"
+            app:entryValues="@array/size_values"
+            app:key="shortcutSize"
+            app:title="Home App Size"
+            app:useSimpleSummaryProvider="true" />
+        <ListPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:defaultValue="medium"
+            app:entries="@array/size_options"
+            app:entryValues="@array/size_values"
+            app:key="appMenuSize"
+            app:title="App Menu Size"
+            app:useSimpleSummaryProvider="true" />
+        <ListPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:defaultValue="medium"
+            app:entries="@array/size_options"
+            app:entryValues="@array/size_values"
+            app:key="searchSize"
+            app:title="Search Size"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:allowDividerAbove="false"
+        app:title="Gestures">
+        <SwitchPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="true"
+            android:title="Camera Swipe Left"
+            app:key="cameraSwipe" />
+        <SwitchPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="true"
+            android:title="Phone Swipe Right"
+            app:key="phoneSwipe" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:allowDividerAbove="false"
+        app:title="Weather">
+        <SwitchPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="false"
+            android:title="GPS Location"
+            app:key="gps_location" />
+        <eu.ottop.yamlauncher.ButtonPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:key="manual_location"
+            app:selectable="true"
+            app:title="Set Manual Location" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:allowDividerAbove="false"
+        app:title="Hidden Apps">
+        <eu.ottop.yamlauncher.ButtonPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:key="hidden_apps"
+            app:selectable="true"
+            app:title="Manage Hidden Apps" />
     </PreferenceCategory>
 
 </PreferenceScreen>
