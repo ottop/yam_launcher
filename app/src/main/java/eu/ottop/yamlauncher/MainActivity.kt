@@ -25,7 +25,6 @@ import android.widget.TextClock
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -74,12 +73,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private lateinit var clock: TextClock
     private var clockMargin = 0
-    private lateinit var constraintLayout: ConstraintLayout
+    private lateinit var clockLayout: ConstraintLayout
 
     private lateinit var dateText: TextClock
 
     private var cameraSwipeEnabled = true
-    private var contactsSwipeEnabled = true
+    private var phoneSwipeEnabled = true
 
     private lateinit var preferences: SharedPreferences
 
@@ -105,7 +104,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         clockMargin = clock.marginLeft
 
-        constraintLayout = findViewById(R.id.clock_layout)
+        clockLayout = findViewById(R.id.clock_layout)
+
+        dateText = findViewById(R.id.text_date)
 
         setClockAlignment(preferences.getString("clockAlignment", "left"), clock.id, clockMargin)
 
@@ -113,7 +114,15 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         setShortcutAlignment(preferences.getString("shortcutAlignment", "left"), binding.homeView)
 
-        dateText = findViewById(R.id.text_date)
+        setSearchAlignment(preferences.getString("searchAlignment", "left"))
+
+        setClockSize(preferences.getString("clockSize","medium"))
+
+        setDateSize(preferences.getString("dateSize", "medium"))
+
+        setShortcutSize(binding.homeView, preferences.getString("shortcutSize", "medium"))
+
+        setSearchSize(preferences.getString("searchSize", "medium"))
 
         batteryReceiver = BatteryReceiver.register(this, dateText)
 
@@ -140,6 +149,26 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
             "shortcutAlignment" -> {
                 setShortcutAlignment(preferences?.getString("shortcutAlignment", "left"), binding.homeView)
+            }
+
+            "searchAlignment" -> {
+                setSearchAlignment(preferences?.getString("searchAlignment", "left"))
+            }
+
+            "clockSize" -> {
+                setClockSize(preferences?.getString("clockSize","medium"))
+            }
+
+            "dateSize" -> {
+                setDateSize(preferences?.getString("dateSize", "medium"))
+            }
+
+            "shortcutSize" -> {
+                setShortcutSize(binding.homeView, preferences?.getString("shortcutSize", "medium"))
+            }
+
+            "searchSize" -> {
+                setSearchSize(preferences?.getString("searchSize", "medium"))
             }
         }
     }
@@ -172,10 +201,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     @SuppressLint("NotifyDataSetChanged")
     override fun onResume() {
         super.onResume()
-        setTextSizes()
-        setSearchAlignment()
-
-        setGestures()
 
         adapter?.notifyDataSetChanged()
     }
@@ -208,12 +233,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 }
 
                 // Detect swipe left
-                else if (cameraSwipeEnabled && deltaX < -swipeThreshold && abs(velocityX) > swipeVelocityThreshold){
+                else if (deltaX < -swipeThreshold && abs(velocityX) > swipeVelocityThreshold && preferences.getBoolean("cameraSwipe", true)){
                     startActivity(cameraIntent)
                 }
 
                 // Detect swipe right
-                else if (contactsSwipeEnabled && deltaX > -swipeThreshold && abs(velocityX) > swipeVelocityThreshold) {
+                else if (deltaX > -swipeThreshold && abs(velocityX) > swipeVelocityThreshold && preferences.getBoolean("phoneSwipe", true)) {
                     startActivity(phoneIntent)
                 }
             }
@@ -566,7 +591,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private fun setClockAlignment(alignment: String?, widgetId: Int, margin: Int) {
 
         val constraintSet = ConstraintSet()
-        constraintSet.clone(constraintLayout)
+        constraintSet.clone(clockLayout)
         println(alignment)
 
         if (alignment == "right") {
@@ -597,7 +622,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             )
         }
 
-        constraintSet.applyTo(constraintLayout)
+        constraintSet.applyTo(clockLayout)
     }
 
     private fun setShortcutAlignment(alignment: String?, shortcuts: LinearLayout) {
@@ -625,40 +650,30 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
     }
 
-    private fun setSearchAlignment() {
+    private fun setSearchAlignment(alignment: String?) {
 
-        /*
-        0 = left
-        1 = center
-        2 = right
-        */
-        when (sharedPreferenceManager.getSearchAlignment(this@MainActivity)) {
-            0 -> {
+        when (alignment) {
+            "left" -> {
                 searchView.textAlignment = View.TEXT_ALIGNMENT_VIEW_START
             }
-            1 -> {
+            "center" -> {
                 searchView.textAlignment = View.TEXT_ALIGNMENT_CENTER
             }
-            2 -> {
+            "right" -> {
                 searchView.textAlignment = View.TEXT_ALIGNMENT_VIEW_END
             }
         }
     }
 
-    private fun setShortcutSize(shortcuts: LinearLayout) {
+    private fun setShortcutSize(shortcuts: LinearLayout, size: String?) {
         val viewTreeObserver = shortcuts.viewTreeObserver
         if (viewTreeObserver.isAlive) {
             viewTreeObserver.addOnGlobalLayoutListener {
                 shortcuts.children.forEach {
                     if (it is TextView) {
 
-                        /*
-                        0 = small
-                        1 = medium
-                        2 = large
-                        */
-                        when (sharedPreferenceManager.getShortcutSize(this@MainActivity)) {
-                            0 -> {
+                        when (size) {
+                            "small" -> {
                                 it.setPadding(
                                     it.paddingLeft,
                                     it.height / 4,
@@ -667,7 +682,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                                 )
                             }
 
-                            1 -> {
+                            "medium" -> {
                                 it.setPadding(
                                     it.paddingLeft,
                                     (it.height / 4.5).toInt(),
@@ -676,7 +691,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                                 )
                             }
 
-                            2 -> {
+                            "large" -> {
                                 it.setPadding(it.paddingLeft, 0, it.paddingRight, 0)
                             }
                         }
@@ -687,59 +702,46 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
     }
 
-    private fun setTextSizes() {
-        setShortcutSize(binding.homeView)
-
-        /*
-        0 = small
-        1 = medium
-        2 = large
-        */
-
-        when (sharedPreferenceManager.getClockSize(this@MainActivity)) {
-            0 -> {
+    private fun setClockSize(size: String?) {
+        when (size) {
+            "small" -> {
                 clock.textSize = 48F
             }
-            1 -> {
+            "medium" -> {
                 clock.textSize = 58F
             }
-            2 -> {
+            "large" -> {
                 clock.textSize = 68F
-            }
-        }
-
-        when (sharedPreferenceManager.getDateSize(this@MainActivity)) {
-            0 -> {
-                dateText.textSize = 17F
-            }
-            1 -> {
-                dateText.textSize = 20F
-            }
-            2 -> {
-                dateText.textSize = 23F
-            }
-        }
-
-        when (sharedPreferenceManager.getSearchSize(this@MainActivity)) {
-            0 -> {
-                searchView.textSize = 21F
-            }
-            1 -> {
-                searchView.textSize = 23F
-            }
-            2 -> {
-                searchView.textSize = 25F
             }
         }
     }
 
-    private fun setGestures() {
-        val cameraGesture = sharedPreferenceManager.getCameraEnabled(this@MainActivity)
-        val contactsGesture = sharedPreferenceManager.getContactsEnabled(this@MainActivity)
+    private fun setDateSize(size: String?) {
+        when (size) {
+            "small" -> {
+                dateText.textSize = 17F
+            }
+            "medium" -> {
+                dateText.textSize = 20F
+            }
+            "large" -> {
+                dateText.textSize = 23F
+            }
+        }
+    }
 
-        cameraSwipeEnabled = cameraGesture
-
-        contactsSwipeEnabled = contactsGesture
+    private fun setSearchSize(size: String?) {
+        when (size) {
+            "small" -> {
+                searchView.textSize = 21F
+            }
+            "medium" -> {
+                searchView.textSize = 23F
+            }
+            "large" -> {
+                searchView.textSize = 25F
+            }
+        }
     }
 
     fun isJobActive(): Boolean {

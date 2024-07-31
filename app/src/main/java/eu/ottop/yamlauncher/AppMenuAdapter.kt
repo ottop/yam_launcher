@@ -19,6 +19,7 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.marginLeft
 import androidx.fragment.app.FragmentActivity
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 
 class AppMenuAdapter(
@@ -34,6 +35,7 @@ class AppMenuAdapter(
         var shortcutTextView: TextView? = null
 
         private val sharedPreferenceManager = SharedPreferenceManager()
+        private var preferences = PreferenceManager.getDefaultSharedPreferences(activity)
 
     interface OnItemClickListener {
         fun onItemClick(appInfo: LauncherActivityInfo, userHandle: UserHandle)
@@ -115,46 +117,34 @@ class AppMenuAdapter(
             holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null),null,null,null)
         }
 
-        /*
-        0 = left
-        1 = center
-        2 = right
-        */
-        when (sharedPreferenceManager.getAppMenuAlignment(activity)) {
-            0 -> {
+        when (preferences.getString("appMenuAlignment", "left")) {
+            "left" -> {
                 holder.textView.setCompoundDrawablesWithIntrinsicBounds(holder.textView.compoundDrawables.filterNotNull().first(),null, null, null)
                 holder.textView.gravity = Gravity.CENTER_VERTICAL or Gravity.START
             }
-            1 -> {
+            "center" -> {
                 holder.textView.setCompoundDrawablesWithIntrinsicBounds(holder.textView.compoundDrawables.filterNotNull().first(),null,holder.textView.compoundDrawables.filterNotNull().first(), null)
                 holder.textView.gravity = Gravity.CENTER
 
             }
-            2 -> {
+            "right" -> {
                 holder.textView.setCompoundDrawablesWithIntrinsicBounds(null,null, holder.textView.compoundDrawables.filterNotNull().first(), null)
                 holder.textView.gravity = Gravity.CENTER_VERTICAL or Gravity.END
             }
         }
 
-        /*
-        0 = small
-        1 = medium
-        2 = large
-
-        Text sizes hardcoded because code returns 77 instead of 28
-        */
-        when (sharedPreferenceManager.getAppSize(activity)) {
-            0 -> {
+        when (preferences.getString("appMenuSize", "medium")) {
+            "small" -> {
                 holder.textView.textSize = 24F
                 holder.editText.textSize = 24F
             }
 
-            1 -> {
+            "medium" -> {
                 holder.textView.textSize = 26F
                 holder.editText.textSize = 26F
             }
 
-            2 -> {
+            "large" -> {
                 holder.textView.textSize = 28F
                 holder.editText.textSize = 28F
             }

@@ -24,6 +24,20 @@ class AppUtils {
             sharedPreferenceManager.getAppName(activity, it.first.applicationInfo.packageName,it.second.second, activity.packageManager.getApplicationLabel(it.first.applicationInfo)).toString().lowercase()
         }
 
+    }
 
+    fun getHiddenApps(activity: Activity): List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>> {
+        val allApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
+        val launcherApps = activity.getSystemService(AppCompatActivity.LAUNCHER_APPS_SERVICE) as LauncherApps
+        for (i in launcherApps.profiles.indices) {
+            launcherApps.getActivityList(null, launcherApps.profiles[i]).forEach { app ->
+                if (sharedPreferenceManager.isAppHidden(activity, app.applicationInfo.packageName, i)) {
+                    allApps.add(Pair(app, Pair(launcherApps.profiles[i], i)))
+                }
+            }
+        }
+        return allApps.sortedBy {
+            sharedPreferenceManager.getAppName(activity, it.first.applicationInfo.packageName,it.second.second, activity.packageManager.getApplicationLabel(it.first.applicationInfo)).toString().lowercase()
+        }
     }
 }
