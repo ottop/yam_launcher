@@ -77,9 +77,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private lateinit var dateText: TextClock
 
-    private var cameraSwipeEnabled = true
-    private var phoneSwipeEnabled = true
-
     private lateinit var preferences: SharedPreferences
 
     @SuppressLint("ClickableViewAccessibility")

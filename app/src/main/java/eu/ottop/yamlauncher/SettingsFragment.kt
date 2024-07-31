@@ -11,7 +11,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
 
         val gpsLocationPref: SwitchPreference? = findPreference("gps_location")
-        val manualLocationPref: ButtonPreference? = findPreference("manual_location")
+        val manualLocationPref: Preference? = findPreference("manual_location")
 
         if (gpsLocationPref != null && manualLocationPref != null) {
             // Initial setup
@@ -25,5 +25,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     true // Returning true means the change is persisted
                 }
         }
+
+        findPreference<Preference?>("hidden_apps")?.onPreferenceClickListener =
+            Preference.OnPreferenceClickListener {
+                activity?.supportFragmentManager
+                    ?.beginTransaction()
+                    ?.replace(R.id.settings_layout, HiddenAppsFragment())
+                    ?.addToBackStack(null)
+                    ?.commit()
+                true }
     }
 }

@@ -1,7 +1,6 @@
 package eu.ottop.yamlauncher
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.LauncherActivityInfo
@@ -10,27 +9,23 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.LinearLayout
-import android.widget.Space
 import android.widget.TextView
-import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.marginLeft
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 
-class AppMenuAdapter(
-    private val activity: MainActivity,
+class HiddenAppsAdapter(
+    private val activity: Context,
     var apps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>,
     private val itemClickListener: OnItemClickListener,
     private val shortcutListener: OnShortcutListener,
     private val itemLongClickListener: OnItemLongClickListener
 ) :
-    RecyclerView.Adapter<AppMenuAdapter.AppViewHolder>() {
+    RecyclerView.Adapter<HiddenAppsAdapter.AppViewHolder>() {
 
         var menuMode: String = "app"
         var shortcutTextView: TextView? = null

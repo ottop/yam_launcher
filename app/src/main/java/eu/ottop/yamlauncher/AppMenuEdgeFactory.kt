@@ -1,15 +1,16 @@
 package eu.ottop.yamlauncher
 
+import android.app.Activity
 import android.widget.EdgeEffect
 import androidx.recyclerview.widget.RecyclerView
 
-class AppMenuEdgeFactory(private val activity: MainActivity) : RecyclerView.EdgeEffectFactory() {
+class AppMenuEdgeFactory(private val activity: Activity) : RecyclerView.EdgeEffectFactory() {
 
     override fun createEdgeEffect(view: RecyclerView, direction: Int): EdgeEffect {
         return AppMenuEdgeEffect(activity)
     }
 
-    inner class AppMenuEdgeEffect(activity: MainActivity) : EdgeEffect(activity) {
+    inner class AppMenuEdgeEffect(activity: Activity) : EdgeEffect(activity) {
         private val animationSpeedFactor = 0.75f
         override fun onAbsorb(velocity: Int) {
             super.onAbsorb((velocity * animationSpeedFactor).toInt())

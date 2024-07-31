@@ -120,7 +120,7 @@
             android:defaultValue="false"
             android:title="GPS Location"
             app:key="gps_location" />
-        <eu.ottop.yamlauncher.ButtonPreference
+        <Preference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:key="manual_location"
@@ -132,7 +132,7 @@
         android:layout_height="wrap_content"
         app:allowDividerAbove="false"
         app:title="Hidden Apps">
-        <eu.ottop.yamlauncher.ButtonPreference
+        <Preference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:key="hidden_apps"

@@ -20,6 +20,10 @@ class SettingsActivity : AppCompatActivity() {
                 .commit()
         }
 
+    fun showHiddenApps() {
+
+    }
+
 
     /*
     private lateinit var binding: ActivitySettingsBinding
