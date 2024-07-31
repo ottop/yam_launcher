@@ -16,20 +16,40 @@ import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlin.time.Duration.Companion.seconds
 
-class HiddenAppsAdapter(
+class LocationListAdapter(
     private val activity: Context,
     var apps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>,
-    private val itemClickListener: OnItemClickListener
+    private val itemClickListener: OnItemClickListener,
+    private val shortcutListener: OnShortcutListener,
+    private val itemLongClickListener: OnItemLongClickListener
 ) :
-    RecyclerView.Adapter<HiddenAppsAdapter.AppViewHolder>() {
+    RecyclerView.Adapter<LocationListAdapter.AppViewHolder>() {
+
+        var menuMode: String = "app"
+        var shortcutTextView: TextView? = null
 
         private val sharedPreferenceManager = SharedPreferenceManager()
         private var preferences = PreferenceManager.getDefaultSharedPreferences(activity)
 
     interface OnItemClickListener {
-        fun onItemClick(appInfo: LauncherActivityInfo, profile: Int)
+        fun onItemClick(appInfo: LauncherActivityInfo, userHandle: UserHandle)
+    }
+
+    interface OnShortcutListener {
+        fun onShortcut(appInfo: LauncherActivityInfo, userHandle: UserHandle, textView: TextView, userProfile: Int, shortcutView: TextView)
+    }
+
+    interface OnItemLongClickListener {
+        fun onItemLongClick(
+            appInfo: LauncherActivityInfo,
+            userHandle: UserHandle,
+            userProfile: Int,
+            textView: TextView,
+            actionMenuLayout: LinearLayout,
+            editView: LinearLayout,
+            position: Int
+        )
     }
 
     inner class AppViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -44,9 +64,33 @@ class HiddenAppsAdapter(
             editView.visibility = View.INVISIBLE
 
             textView.setOnClickListener {
-                val position = bindingAdapterPosition
-                val app = apps[position].first
-                itemClickListener.onItemClick(app, apps[position].second.second)
+                    val position = bindingAdapterPosition
+                    val app = apps[position].first
+                    if (menuMode == "shortcut") {
+                        shortcutListener.onShortcut(app, apps[position].second.first, textView, apps[position].second.second, shortcutTextView!!)
+                    }
+                    else if (menuMode == "app") {
+                        itemClickListener.onItemClick(app, apps[position].second.first)
+                    }
+            }
+
+            if (menuMode == "app") {
+                textView.setOnLongClickListener {
+                        val position = bindingAdapterPosition
+
+                        val app = apps[position].first
+                        itemLongClickListener.onItemLongClick(
+                            app,
+                            apps[position].second.first,
+                            apps[position].second.second,
+                            textView,
+                            actionMenuLayout,
+                            editView,
+                            position
+                        )
+                        return@setOnLongClickListener true
+                    }
+
 
             }
         }
