@@ -57,6 +57,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private lateinit var searchView: EditText
     private var adapter: AppMenuAdapter? = null
     private var job: Job? = null
+    private var weatherJob: Job? = null
     val cameraIntent = Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE)
     val phoneIntent = Intent(Intent.ACTION_DIAL)
     private lateinit var batteryReceiver: BatteryReceiver
@@ -78,6 +79,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private lateinit var dateText: TextClock
 
     private lateinit var preferences: SharedPreferences
+
+    private val stringUtils = StringUtils()
+
+    private var dateElements = mutableListOf<String>()
+
+    private val weatherSystem = WeatherSystem()
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -105,6 +112,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         dateText = findViewById(R.id.text_date)
 
+        dateElements = mutableListOf(dateText.format12Hour.toString(), dateText.format24Hour.toString(), "", "")
+
         setClockAlignment(preferences.getString("clockAlignment", "left"), clock.id, clockMargin)
 
         setupApps()
@@ -121,7 +130,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         setSearchSize(preferences.getString("searchSize", "medium"))
 
-        batteryReceiver = BatteryReceiver.register(this, dateText)
+        batteryReceiver = BatteryReceiver.register(this, this@MainActivity)
 
         binding.homeView.setOnTouchListener { _, event ->
             gestureDetector.onTouchEvent(event)
@@ -135,6 +144,25 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             }
         })
 
+    }
+
+    fun modifyDate(value: String, index: Int) {
+        dateElements[index] = value
+        dateText.format12Hour = "${dateElements[0]}${stringUtils.addStartTextIfNotEmpty(dateElements[2], " | ")}${stringUtils.addStartTextIfNotEmpty(dateElements[3], " | ")}"
+        dateText.format24Hour = "${dateElements[1]}${stringUtils.addStartTextIfNotEmpty(dateElements[2], " | ")}${stringUtils.addStartTextIfNotEmpty(dateElements[3], " | ")}"
+    }
+
+    private fun startWeatherMonitor() {
+        weatherJob?.cancel()
+        weatherJob = CoroutineScope(Dispatchers.IO).launch {
+            while (true) {
+                val currentWeather = weatherSystem.getTemp(this@MainActivity)
+                withContext(Dispatchers.Main) {
+                    modifyDate(stringUtils.addEndTextIfNotEmpty(currentWeather, "°C"), 3)
+                }
+                delay(300000)
+            }
+        }
     }
 
     override fun onSharedPreferenceChanged(preferences: SharedPreferences?, key: String?) {
@@ -190,6 +218,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     override fun onStart() {
         super.onStart()
         startTask()
+        startWeatherMonitor()
 
         // Keyboard is sometimes open when going back to the app, so close it.
         closeKeyboard()
@@ -392,7 +421,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private suspend fun filterItems(query: String?) {
 
-            val cleanQuery = query?.clean()
+            val cleanQuery = stringUtils.cleanString(query)
             val newFilteredApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
             val updatedApps = appUtils.getInstalledApps(this@MainActivity)
 
@@ -408,9 +437,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             newFilteredApps.addAll(installedApps)
         } else {
             updatedApps.forEach {
-                val cleanItemText = sharedPreferenceManager.getAppName(this@MainActivity, it.first.applicationInfo.packageName, it.second.second, packageManager.getApplicationLabel(it.first.applicationInfo)).toString().clean()
-                if (cleanItemText.contains(cleanQuery, ignoreCase = true)) {
-                    newFilteredApps.add(it)
+                val cleanItemText = stringUtils.cleanString(sharedPreferenceManager.getAppName(this@MainActivity, it.first.applicationInfo.packageName, it.second.second, packageManager.getApplicationLabel(it.first.applicationInfo)).toString())
+                if (cleanItemText != null) {
+                    if (cleanItemText.contains(cleanQuery, ignoreCase = true)) {
+                        newFilteredApps.add(it)
+                    }
                 }
             }
         }
@@ -423,10 +454,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             }
             installedApps = newFilteredApps
         }
-    }
-
-    private fun String.clean(): String {
-        return this.replace("[^a-zA-Z0-9]".toRegex(), "")
     }
 
     private fun startTask() {

@@ -35,7 +35,7 @@ class HiddenAppsAdapter(
     inner class AppViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val listItem: FrameLayout = itemView.findViewById(R.id.list_item)
         val textView: TextView = listItem.findViewById(R.id.app_name)
-        val actionMenuLayout: LinearLayout = listItem.findViewById(R.id.action_menu)
+        private val actionMenuLayout: LinearLayout = listItem.findViewById(R.id.action_menu)
         private val editView: LinearLayout = listItem.findViewById(R.id.rename_view)
         val editText: EditText = editView.findViewById(R.id.app_name_edit)
 
@@ -103,14 +103,6 @@ class HiddenAppsAdapter(
 
         val appInfo = app.first.activityInfo.applicationInfo
         holder.textView.text = sharedPreferenceManager.getAppName(activity, app.first.applicationInfo.packageName,app.second.second, holder.itemView.context.packageManager.getApplicationLabel(appInfo))
-        holder.editText.setText(holder.textView.text)
-
-        if (appInfo.flags and ApplicationInfo.FLAG_SYSTEM != 0) {
-            holder.actionMenuLayout.findViewById<TextView>(R.id.uninstall).visibility = View.GONE
-        }
-        else {
-            holder.actionMenuLayout.findViewById<TextView>(R.id.uninstall).visibility = View.VISIBLE
-        }
 
         holder.textView.visibility = View.VISIBLE
     }

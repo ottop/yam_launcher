@@ -31,6 +31,7 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
     private val appUtils = AppUtils()
     private val sharedPreferenceManager = SharedPreferenceManager()
     private var adapter: HiddenAppsAdapter? = null
+    private var stringUtils = StringUtils()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,7 +90,7 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
 
     private fun filterItems(query: String?) {
 
-        val cleanQuery = query?.clean()
+        val cleanQuery = stringUtils.cleanString(query)
         val newFilteredApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
         val updatedApps = appUtils.getHiddenApps(requireActivity())
 
@@ -104,9 +105,11 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
             newFilteredApps.addAll(updatedApps)
         } else {
             updatedApps.forEach {
-                val cleanItemText = sharedPreferenceManager.getAppName(requireActivity(), it.first.applicationInfo.packageName, it.second.second, requireActivity().packageManager.getApplicationLabel(it.first.applicationInfo)).toString().clean()
-                if (cleanItemText.contains(cleanQuery, ignoreCase = true)) {
-                    newFilteredApps.add(it)
+                val cleanItemText = stringUtils.cleanString(sharedPreferenceManager.getAppName(requireActivity(), it.first.applicationInfo.packageName, it.second.second, requireActivity().packageManager.getApplicationLabel(it.first.applicationInfo)).toString())
+                if (cleanItemText != null) {
+                    if (cleanItemText.contains(cleanQuery, ignoreCase = true)) {
+                        newFilteredApps.add(it)
+                    }
                 }
             }
         }
@@ -114,10 +117,6 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
 
     private fun applySearch(newFilteredApps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
         adapter?.updateApps(newFilteredApps)
-    }
-
-    private fun String.clean(): String {
-        return this.replace("[^a-zA-Z0-9]".toRegex(), "")
     }
 
     private fun showConfirmationDialog(appInfo: LauncherActivityInfo, appName: String, profile: Int) {
