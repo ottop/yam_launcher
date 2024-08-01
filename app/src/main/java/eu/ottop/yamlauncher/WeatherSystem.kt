@@ -10,6 +10,7 @@ import android.location.LocationManager
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.preference.PreferenceManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -90,11 +91,16 @@ class WeatherSystem {
         return foundLocations
     }
 
-    suspend fun getTemp(context: Context) : String {
+    fun getTemp(context: Context) : String {
+
+            val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+            val tempUnits = preferences.getString("tempUnits", "celsius")
+            var currentWeather = ""
 
             val location = sharedPreferenceManager.getWeatherLocation(context)
-            if (location != null) {
-                val url = URL("https://api.open-meteo.com/v1/forecast?$location&current=temperature_2m")
+        if (location != null) {
+            if (location.isNotEmpty()) {
+                val url = URL("https://api.open-meteo.com/v1/forecast?$location&temperature_unit=${tempUnits}&current=temperature_2m")
                 with(url.openConnection() as HttpURLConnection) {
                     requestMethod = "GET"
 
@@ -105,18 +111,26 @@ class WeatherSystem {
 
                         val currentData = jsonObject.getJSONObject("current")
 
-                        return currentData.getInt("temperature_2m").toString()
+                        currentWeather = currentData.getInt("temperature_2m").toString()
 
                     }
                 }
             }
-            else {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(context, "No weather location set", Toast.LENGTH_SHORT).show()
-                }
+        }
+
+        return when (tempUnits) {
+            "celsius" -> {
+                stringUtils.addEndTextIfNotEmpty(currentWeather, "°C")
             }
 
-        return ""
+            "fahrenheit" -> {
+                stringUtils.addEndTextIfNotEmpty(currentWeather, "°F")
+            }
+
+            else -> {
+                ""
+            }
+        }
 
     }
 }

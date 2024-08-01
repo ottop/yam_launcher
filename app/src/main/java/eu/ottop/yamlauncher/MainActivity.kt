@@ -18,6 +18,9 @@ import android.view.GestureDetector
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
+import android.view.View.TEXT_ALIGNMENT_CENTER
+import android.view.View.TEXT_ALIGNMENT_TEXT_END
+import android.view.View.TEXT_ALIGNMENT_TEXT_START
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -28,7 +31,6 @@ import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.children
 import androidx.core.view.marginLeft
@@ -74,7 +76,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private lateinit var clock: TextClock
     private var clockMargin = 0
-    private lateinit var clockLayout: ConstraintLayout
 
     private lateinit var dateText: TextClock
 
@@ -108,13 +109,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         clockMargin = clock.marginLeft
 
-        clockLayout = findViewById(R.id.clock_layout)
-
         dateText = findViewById(R.id.text_date)
 
         dateElements = mutableListOf(dateText.format12Hour.toString(), dateText.format24Hour.toString(), "", "")
 
-        setClockAlignment(preferences.getString("clockAlignment", "left"), clock.id, clockMargin)
+        setClockAlignment(preferences.getString("clockAlignment", "left"))
 
         setupApps()
 
@@ -158,7 +157,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             while (true) {
                 val currentWeather = weatherSystem.getTemp(this@MainActivity)
                 withContext(Dispatchers.Main) {
-                    modifyDate(stringUtils.addEndTextIfNotEmpty(currentWeather, "°C"), 3)
+                    modifyDate(currentWeather, 3)
                 }
                 delay(300000)
             }
@@ -169,7 +168,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         when (key) {
             "clockAlignment" -> {
-                setClockAlignment(preferences?.getString(key, "left"), clock.id, clockMargin)
+                setClockAlignment(preferences?.getString(key, "left"))
             }
 
             "shortcutAlignment" -> {
@@ -612,41 +611,22 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         return true
     }
 
-    private fun setClockAlignment(alignment: String?, widgetId: Int, margin: Int) {
+    private fun setClockAlignment(alignment: String?) {
 
-        val constraintSet = ConstraintSet()
-        constraintSet.clone(clockLayout)
-        println(alignment)
-
-        if (alignment == "right") {
-            constraintSet.clear(widgetId, ConstraintSet.START)
+        when (alignment) {
+            "left" -> {
+                clock.textAlignment = TEXT_ALIGNMENT_TEXT_START
+                dateText.textAlignment = TEXT_ALIGNMENT_TEXT_START
+            }
+            "center" -> {
+                clock.textAlignment = TEXT_ALIGNMENT_CENTER
+                dateText.textAlignment = TEXT_ALIGNMENT_CENTER
+            }
+            "right" -> {
+                clock.textAlignment = TEXT_ALIGNMENT_TEXT_END
+                dateText.textAlignment = TEXT_ALIGNMENT_TEXT_END
+            }
         }
-        else if (alignment == "left") {
-            constraintSet.clear(widgetId, ConstraintSet.END)
-        }
-
-        if (alignment == "center" || alignment == "left") {
-            constraintSet.connect(
-                widgetId,
-                ConstraintSet.START,
-                ConstraintSet.PARENT_ID,
-                ConstraintSet.START,
-                margin
-            )
-
-        }
-
-        if (alignment != "left") {
-            constraintSet.connect(
-                widgetId,
-                ConstraintSet.END,
-                ConstraintSet.PARENT_ID,
-                ConstraintSet.END,
-                margin
-            )
-        }
-
-        constraintSet.applyTo(clockLayout)
     }
 
     private fun setShortcutAlignment(alignment: String?, shortcuts: LinearLayout) {

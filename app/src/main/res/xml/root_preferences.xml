@@ -126,6 +126,15 @@
             app:key="manual_location"
             app:selectable="true"
             app:title="Set Manual Location" />
+        <ListPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:defaultValue="celsius"
+            app:entries="@array/temp_units"
+            app:entryValues="@array/unit_values"
+            app:key="tempUnits"
+            app:title="Units"
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
     <PreferenceCategory
         android:layout_width="wrap_content"

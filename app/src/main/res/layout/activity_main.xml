@@ -88,10 +88,9 @@
 
             <TextClock
                 android:id="@+id/text_clock"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="32dp"
-                android:layout_marginStart="32dp"
                 android:layout_marginTop="40dp"
                 android:layout_marginBottom="27dp"
                 android:fontFamily="@null"
@@ -103,16 +102,18 @@
                 android:textColor="#F3F3F3"
                 android:textSize="68sp"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextClock
                 android:id="@+id/text_date"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:fontFamily="@null"
                 android:format12Hour="dd MMM yyyy"
                 android:format24Hour="dd MMM yyyy"
+                android:paddingHorizontal="2dp"
                 android:textAlignment="textStart"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault"
                 android:textColor="#F3F3F3"
