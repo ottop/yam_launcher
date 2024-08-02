@@ -6,6 +6,7 @@ import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.app.Activity
+import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.View
 import android.view.WindowManager
@@ -31,9 +32,13 @@ class Animations () {
         binding.appView.slideInFromBottom()
     }
 
-    fun backgroundIn(activity: Activity, duration: Long = 100) {
-        val originalColor = ContextCompat.getColor(activity, R.color.original_color)
-        val newColor = ContextCompat.getColor(activity, R.color.new_color)
+    fun backgroundIn(activity: Activity, originalColor: Int, duration: Long = 100) {
+
+        val newColor: Int = if (originalColor == Color.parseColor("#00000000")) {
+            Color.parseColor("#3F000000")
+        } else {
+            originalColor
+        }
 
         val colorDrawable = ColorDrawable(originalColor)
         activity.window.setBackgroundDrawable(colorDrawable)
@@ -47,9 +52,13 @@ class Animations () {
         backgroundColorAnimator.start()
     }
 
-    fun backgroundOut(activity: Activity, duration: Long = 100) {
-        val originalColor = ContextCompat.getColor(activity, R.color.new_color)
-        val newColor = ContextCompat.getColor(activity, R.color.original_color)
+    fun backgroundOut(activity: Activity, newColor: Int, duration: Long = 100) {
+
+        val originalColor: Int = if (newColor == Color.parseColor("#00000000")) {
+            Color.parseColor("#3F000000")
+        } else {
+            newColor
+        }
 
         val colorDrawable = ColorDrawable(originalColor)
         activity.window.setBackgroundDrawable(colorDrawable)

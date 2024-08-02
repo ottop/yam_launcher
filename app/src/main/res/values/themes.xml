@@ -14,6 +14,7 @@
 
     <style name="SettingsTheme" parent="Base.Theme.YamLauncher">
         <item name="android:windowBackground">@color/settings_bg</item>
+        <item name="android:windowShowWallpaper">false</item>
     </style>
 
     <style name="AppSearchView" parent="Widget.AppCompat.SearchView" >

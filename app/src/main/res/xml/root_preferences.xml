@@ -2,6 +2,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:allowDividerAbove="false"
+        app:title="Colors">
+        <ListPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:defaultValue="#00000000"
+            app:entries="@array/bg_options"
+            app:entryValues="@array/bg_values"
+            app:key="bgColor"
+            app:title="Background Color"
+            app:useSimpleSummaryProvider="true" />
+        <ListPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:defaultValue="#FFF3F3F3"
+            app:entries="@array/color_options"
+            app:entryValues="@array/color_values"
+            app:key="textColor"
+            app:title="Text Color"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+    <PreferenceCategory
         app:allowDividerAbove="false"
         app:title="Alignment">
 

@@ -1,27 +1,26 @@
 package eu.ottop.yamlauncher
 
+import android.R.color
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.LauncherActivityInfo
+import android.graphics.BlendMode
+import android.graphics.BlendModeColorFilter
+import android.graphics.Color
 import android.os.UserHandle
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.LinearLayout
-import android.widget.Space
 import android.widget.TextView
-import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.marginLeft
-import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
+
 
 class AppMenuAdapter(
     private val activity: Context,
@@ -113,6 +112,8 @@ class AppMenuAdapter(
 
         if (app.second.second != 0) {
             holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_work_app, null),null, ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null),null)
+            holder.textView.compoundDrawables[0].colorFilter =
+                BlendModeColorFilter(Color.parseColor(preferences?.getString("textColor",  "#FFF3F3F3")), BlendMode.SRC_ATOP)
         }
         else {
             holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null),null,ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null),null)
@@ -152,6 +153,7 @@ class AppMenuAdapter(
         }
 
         val appInfo = app.first.activityInfo.applicationInfo
+        holder.textView.setTextColor(Color.parseColor(preferences?.getString("textColor",  "#FFF3F3F3")))
         holder.textView.text = sharedPreferenceManager.getAppName(activity, app.first.applicationInfo.packageName,app.second.second, holder.itemView.context.packageManager.getApplicationLabel(appInfo))
         holder.editText.setText(holder.textView.text)
 

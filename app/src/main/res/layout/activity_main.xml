@@ -69,7 +69,6 @@
             android:textAppearance="@android:style/TextAppearance.DeviceDefault"
             android:textSize="25sp" />
 
-
     </LinearLayout>
 
     <LinearLayout

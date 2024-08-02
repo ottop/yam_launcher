@@ -6,7 +6,10 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
+import android.graphics.BlendMode
+import android.graphics.BlendModeColorFilter
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -22,6 +25,9 @@ import android.view.View
 import android.view.View.TEXT_ALIGNMENT_CENTER
 import android.view.View.TEXT_ALIGNMENT_TEXT_END
 import android.view.View.TEXT_ALIGNMENT_TEXT_START
+import android.view.ViewGroup
+import android.view.ViewTreeObserver
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -32,11 +38,13 @@ import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.children
 import androidx.core.view.marginLeft
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.textfield.TextInputEditText
 import eu.ottop.yamlauncher.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -57,7 +65,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private lateinit var installedApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var searchView: EditText
+    private lateinit var searchView: TextInputEditText
     private var adapter: AppMenuAdapter? = null
     private var job: Job? = null
     private var weatherJob: Job? = null
@@ -88,6 +96,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private val weatherSystem = WeatherSystem()
 
+    private val uiUtils = UIUtils()
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,6 +108,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         preferences = PreferenceManager.getDefaultSharedPreferences(this)
 
         preferences.registerOnSharedPreferenceChangeListener(this)
+
+        window.setBackgroundDrawable(
+            ColorDrawable(
+                Color.parseColor(preferences.getString("bgColor",  "#00000000"))
+            )
+        )
 
         searchView = findViewById(R.id.searchView)
 
@@ -126,9 +142,13 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         setDateSize(preferences.getString("dateSize", "medium"))
 
-        setShortcutSize(binding.homeView, preferences.getString("shortcutSize", "medium"))
+        setShortcutSize(binding.homeView)
 
         setSearchSize(preferences.getString("searchSize", "medium"))
+
+        setSearchColors()
+
+        uiUtils.setAllColors(binding.homeView, Color.parseColor(preferences.getString("textColor",  "#FFF3F3F3")))
 
         batteryReceiver = BatteryReceiver.register(this, this@MainActivity)
 
@@ -173,28 +193,63 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             }
 
             "shortcutAlignment" -> {
-                setShortcutAlignment(preferences?.getString("shortcutAlignment", "left"), binding.homeView)
+                setShortcutAlignment(preferences?.getString(key, "left"), binding.homeView)
             }
 
             "searchAlignment" -> {
-                setSearchAlignment(preferences?.getString("searchAlignment", "left"))
+                setSearchAlignment(preferences?.getString(key, "left"))
             }
 
             "clockSize" -> {
-                setClockSize(preferences?.getString("clockSize","medium"))
+                setClockSize(preferences?.getString(key,"medium"))
             }
 
             "dateSize" -> {
-                setDateSize(preferences?.getString("dateSize", "medium"))
+                setDateSize(preferences?.getString(key, "medium"))
             }
 
             "shortcutSize" -> {
-                setShortcutSize(binding.homeView, preferences?.getString("shortcutSize", "medium"))
+                setShortcutSize(binding.homeView)
             }
 
             "searchSize" -> {
-                setSearchSize(preferences?.getString("searchSize", "medium"))
+                setSearchSize(preferences?.getString(key, "medium"))
             }
+
+            "bgColor" -> {
+                window.setBackgroundDrawable(
+                    ColorDrawable(
+                        Color.parseColor(preferences?.getString(key,  "#00000000"))
+                    )
+                )
+            }
+
+            "textColor" -> {
+                uiUtils.setAllColors(binding.homeView, Color.parseColor(preferences?.getString(key,  "#FFF3F3F3")))
+                setSearchColors()
+            }
+        }
+    }
+
+    private fun setSearchColors() {
+        val viewTreeObserver = searchView.viewTreeObserver
+        val globalLayoutListener = object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                // Your code here
+                searchView.setTextColor(Color.parseColor(preferences.getString("textColor", "#FFF3F3F3")))
+                searchView.setHintTextColor(uiUtils.setAlpha(Color.parseColor(preferences.getString("textColor", "#FFF3F3F3")), "A9"))
+                searchView.compoundDrawables[0].colorFilter =
+                    BlendModeColorFilter(Color.parseColor(preferences.getString("textColor", "#FFF3F3F3")), BlendMode.SRC_ATOP)
+
+                // Remove the listener
+                if (viewTreeObserver.isAlive) {
+                    viewTreeObserver.removeOnGlobalLayoutListener(this)
+                }
+            }
+        }
+
+        if (viewTreeObserver.isAlive) {
+            viewTreeObserver.addOnGlobalLayoutListener(globalLayoutListener)
         }
     }
 
@@ -475,7 +530,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     fun backToHome() {
         closeKeyboard()
         animations.showHome(binding)
-        animations.backgroundOut(this@MainActivity)
+        animations.backgroundOut(this@MainActivity, Color.parseColor(preferences.getString("bgColor",  "#00000000")))
         val handler = Handler(Looper.getMainLooper())
         handler.postDelayed({
             try {
@@ -504,7 +559,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private fun toAppMenu() {
         animations.showApps(binding)
-        animations.backgroundIn(this@MainActivity)
+        animations.backgroundIn(this@MainActivity, Color.parseColor(preferences.getString("bgColor",  "#00000000")))
     }
 
     override fun onItemClick(appInfo: LauncherActivityInfo, userHandle: UserHandle) {
@@ -670,14 +725,16 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
     }
 
-    private fun setShortcutSize(shortcuts: LinearLayout, size: String?) {
+    private fun setShortcutSize(shortcuts: LinearLayout) {
+
         val viewTreeObserver = shortcuts.viewTreeObserver
-        if (viewTreeObserver.isAlive) {
-            viewTreeObserver.addOnGlobalLayoutListener {
+        val globalLayoutListener = object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+
                 shortcuts.children.forEach {
                     if (it is TextView) {
 
-                        when (size) {
+                        when (preferences?.getString("shortcutSize", "medium")) {
                             "small" -> {
                                 it.setPadding(
                                     it.paddingLeft,
@@ -703,7 +760,14 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
                     }
                 }
+                if (viewTreeObserver.isAlive) {
+                    viewTreeObserver.removeOnGlobalLayoutListener(this)
+                }
             }
+        }
+
+        if (viewTreeObserver.isAlive) {
+            viewTreeObserver.addOnGlobalLayoutListener(globalLayoutListener)
         }
     }
 
