@@ -1,9 +1,11 @@
 package eu.ottop.yamlauncher
 
 import android.os.Bundle
+import androidx.fragment.app.clearFragmentResultListener
 import androidx.fragment.app.setFragmentResultListener
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceManager
 import androidx.preference.SwitchPreference
 
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -18,8 +20,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         val gpsLocationPref: SwitchPreference? = findPreference("gps_location")
         manualLocationPref = findPreference("manual_location")
+        val leftSwipePref = findPreference<Preference?>("leftSwipeApp")
+        val rightSwipePref = findPreference<Preference?>("rightSwipeApp")
 
         manualLocationPref?.summary = sharedPreferenceManager.getWeatherRegion(requireContext())
+        leftSwipePref?.summary = sharedPreferenceManager.getGestureName(requireContext(), "left")
+        rightSwipePref?.summary = sharedPreferenceManager.getGestureName(requireContext(), "right")
 
         if (gpsLocationPref != null && manualLocationPref != null) {
             // Initial setup
@@ -55,10 +61,65 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     .addToBackStack(null)
                     .commit()
                 true }
+
+        leftSwipePref?.onPreferenceClickListener =
+            Preference.OnPreferenceClickListener {
+                requireActivity().supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.settings_layout, GestureAppsFragment())
+                    .addToBackStack(null)
+                    .commit()
+                setFragmentResultListener("request_key") { requestKey, bundle ->
+                    clearFragmentResultListener("request_key")
+                    val result = bundle.getString("gesture_app")
+                    val appDetails = result?.split("-")
+                    if (leftSwipePref != null && result != null) {
+                        setPreference("leftSwipeApp", result)
+                    }
+                    sharedPreferenceManager.setGestures(requireContext(), "left",
+                        appDetails?.get(0), appDetails?.get(1), appDetails?.get(2)
+                    )
+                    val appName = appDetails?.get(0)
+                    leftSwipePref?.summary = appName
+                }
+                true }
+
+        rightSwipePref?.onPreferenceClickListener =
+            Preference.OnPreferenceClickListener {
+                requireActivity().supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.settings_layout, GestureAppsFragment())
+                    .addToBackStack(null)
+                    .commit()
+                setFragmentResultListener("request_key") { requestKey, bundle ->
+                    clearFragmentResultListener("request_key")
+                    val result = bundle.getString("gesture_app")
+                    val appDetails = result?.split("-")
+                    if (rightSwipePref != null && result != null) {
+                        setPreference("rightSwipeApp", result)
+                    }
+                    sharedPreferenceManager.setGestures(requireContext(), "right",
+                        appDetails?.get(0), appDetails?.get(1), appDetails?.get(2)
+                    )
+                    val appName = appDetails?.get(0)
+                    rightSwipePref?.summary = appName
+                }
+                true }
     }
 
     override fun onResume() {
         super.onResume()
         manualLocationPref?.summary = sharedPreferenceManager.getWeatherRegion(requireContext())
+    }
+
+    private fun setPreference(key: String, value: String) {
+        // Get the SharedPreferences instance
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
+
+        // Edit the SharedPreferences to update the value
+        with(sharedPreferences.edit()) {
+            putString(key, value)
+            apply()
+        }
     }
 }

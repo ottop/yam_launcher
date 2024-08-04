@@ -12,65 +12,88 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.Toast
+import androidx.fragment.app.setFragmentResult
+import androidx.preference.Preference
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
-    private val appUtils = AppUtils()
+class GestureAppsFragment : Fragment(), GestureAppsAdapter.OnItemClickListener {
+
+    private var adapter: GestureAppsAdapter? = null
     private val sharedPreferenceManager = SharedPreferenceManager()
-    private var adapter: HiddenAppsAdapter? = null
     private var stringUtils = StringUtils()
+    private val appUtils = AppUtils()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_hidden_apps, container, false)
+        return inflater.inflate(R.layout.fragment_gesture_apps, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-         adapter = HiddenAppsAdapter(requireContext(), appUtils.getHiddenApps(activity as Activity).toMutableList(), this)
-        val recyclerView = view.findViewById<RecyclerView>(R.id.hidden_app_recycler)
-        val appMenuEdgeFactory = AppMenuEdgeFactory(requireActivity())
+        CoroutineScope(Dispatchers.Main).launch {
 
-        recyclerView.edgeEffectFactory = appMenuEdgeFactory
-        recyclerView.adapter = adapter
+            withContext(Dispatchers.Default) {
 
-        recyclerView.scrollToPosition(0)
-
-        val searchView = view.findViewById<EditText>(R.id.hiddenAppSearch)
-
-        recyclerView.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
-
-            if (bottom - top > oldBottom - oldTop) {
-                searchView.clearFocus()
+                adapter = GestureAppsAdapter(
+                    requireContext(),
+                    appUtils.getInstalledApps(activity as Activity).toMutableList(),
+                    this@GestureAppsFragment
+                )
             }
+            val recyclerView = view.findViewById<RecyclerView>(R.id.gesture_app_recycler)
+            val appMenuEdgeFactory = AppMenuEdgeFactory(requireActivity())
+
+            recyclerView.edgeEffectFactory = appMenuEdgeFactory
+            recyclerView.adapter = adapter
+
+            recyclerView.scrollToPosition(0)
+
+            val searchView = view.findViewById<EditText>(R.id.gestureAppSearch)
+
+            recyclerView.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
+
+                if (bottom - top > oldBottom - oldTop) {
+                    searchView.clearFocus()
+                }
+            }
+
+            searchView.addTextChangedListener(object :
+                TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+                }
+
+                override fun afterTextChanged(s: Editable?) {
+
+                    filterItems(searchView.text.toString())
+
+                }
+            })
         }
-
-        searchView.addTextChangedListener(object :
-            TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-
-                filterItems(searchView.text.toString())
-
-            }
-        })
     }
 
     private fun filterItems(query: String?) {
 
         val cleanQuery = stringUtils.cleanString(query)
         val newFilteredApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
-        val updatedApps = appUtils.getHiddenApps(requireActivity())
+        val updatedApps = appUtils.getInstalledApps(requireActivity())
 
         getFilteredApps(cleanQuery, newFilteredApps, updatedApps)
 
@@ -100,25 +123,30 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
     private fun showConfirmationDialog(appInfo: LauncherActivityInfo, appName: String, profile: Int) {
         AlertDialog.Builder(requireContext()).apply {
             setTitle("Confirmation")
-            setMessage("Are you sure you want to unhide $appName?")
+            setMessage("Are you sure you want to set $appName? as the gesture app")
             setPositiveButton("Yes") { _, _ ->
                 // Perform action on confirmation
                 performConfirmedAction(appInfo, appName, profile)
             }
+
+            setNegativeButton("Cancel") { _, _ ->
+            }
+
         }.create().show()
     }
 
     private fun performConfirmedAction(appInfo: LauncherActivityInfo, appName: String, profile: Int) {
-        sharedPreferenceManager.setAppVisible(requireContext(), appInfo.applicationInfo.packageName, profile)
-        adapter?.updateApps(appUtils.getHiddenApps(requireActivity()))
+        val result = Bundle().apply {
+            putString("gesture_app", "$appName-${appInfo.applicationInfo.packageName}-$profile")
+        }
+        setFragmentResult("request_key", result)
+        requireActivity().supportFragmentManager.popBackStack()
     }
 
-    private fun handleCancellation() {
-        // Handle the cancellation of the dialog
-    }
 
     override fun onItemClick(appInfo: LauncherActivityInfo, profile: Int) {
         showConfirmationDialog(appInfo, sharedPreferenceManager.getAppName(requireContext(), appInfo.applicationInfo.packageName,profile, requireContext().packageManager.getApplicationLabel(appInfo.applicationInfo)).toString(), profile)
     }
+
 
 }

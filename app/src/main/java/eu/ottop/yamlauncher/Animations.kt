@@ -95,7 +95,7 @@ class Animations () {
                 .setDuration(duration)
                 .setListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator) {
-                        visibility = View.GONE
+                        visibility = View.INVISIBLE
                     }
                 })
         }

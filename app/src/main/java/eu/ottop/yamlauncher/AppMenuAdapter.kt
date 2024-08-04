@@ -31,7 +31,6 @@ class AppMenuAdapter(
 ) :
     RecyclerView.Adapter<AppMenuAdapter.AppViewHolder>() {
 
-        var menuMode: String = "app"
         var shortcutTextView: TextView? = null
 
         private val sharedPreferenceManager = SharedPreferenceManager()
@@ -71,15 +70,15 @@ class AppMenuAdapter(
             textView.setOnClickListener {
                     val position = bindingAdapterPosition
                     val app = apps[position].first
-                    if (menuMode == "shortcut") {
+                    if (shortcutTextView != null) {
                         shortcutListener.onShortcut(app, apps[position].second.first, textView, apps[position].second.second, shortcutTextView!!)
                     }
-                    else if (menuMode == "app") {
+                    else {
                         itemClickListener.onItemClick(app, apps[position].second.first)
                     }
             }
 
-            if (menuMode == "app") {
+            if (shortcutTextView == null) {
                 textView.setOnLongClickListener {
                         val position = bindingAdapterPosition
 

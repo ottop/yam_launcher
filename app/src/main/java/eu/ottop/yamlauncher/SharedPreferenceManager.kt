@@ -81,4 +81,24 @@ class SharedPreferenceManager {
         return sharedPreferences.getString(key, "")
     }
 
+    fun setGestures(cont: Context, direction: String, appName: String?, packageName: String?, profile: String?) {
+        val editor = cont.getSharedPreferences("gestures", AppCompatActivity.MODE_PRIVATE).edit()
+        val nameKey = "$direction-name"
+        editor.putString(direction, "$packageName-$profile")
+        editor.putString(nameKey, appName)
+        editor.apply()
+    }
+
+
+    fun getGestureApp(cont: Context, direction: String) : String? {
+        val sharedPreferences = cont.getSharedPreferences("gestures", AppCompatActivity.MODE_PRIVATE)
+        return sharedPreferences.getString(direction, "")
+    }
+
+    fun getGestureName(cont: Context, direction: String) : String? {
+        val sharedPreferences = cont.getSharedPreferences("gestures", AppCompatActivity.MODE_PRIVATE)
+        val key = "$direction-name"
+        return sharedPreferences.getString(key, "")
+    }
+
 }

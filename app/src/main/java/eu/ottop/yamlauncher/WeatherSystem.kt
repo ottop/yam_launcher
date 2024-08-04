@@ -31,9 +31,6 @@ class WeatherSystem {
                 locationManager.removeUpdates(this)
             }
 
-            override fun onFlushComplete(requestCode: Int) {
-                super.onFlushComplete(requestCode)
-            }
         }
 
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -99,6 +96,7 @@ class WeatherSystem {
             var currentWeather = ""
 
             val location = sharedPreferenceManager.getWeatherLocation(context)
+
         if (location != null) {
             if (location.isNotEmpty()) {
                 val url = URL("https://api.open-meteo.com/v1/forecast?$location&temperature_unit=${tempUnits}&current=temperature_2m,weather_code")

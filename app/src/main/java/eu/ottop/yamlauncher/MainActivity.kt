@@ -69,8 +69,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private var adapter: AppMenuAdapter? = null
     private var job: Job? = null
     private var weatherJob: Job? = null
-    val cameraIntent = Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE)
-    val phoneIntent = Intent(Intent.ACTION_DIAL)
     private var batteryReceiver: BatteryReceiver? = null
 
     private var appActionMenu = AppActionMenu()
@@ -100,6 +98,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private var isBatteryReceiverRegistered = false
 
+    private lateinit var leftSwipeActivity: Pair<LauncherActivityInfo?, Int?>
+    private lateinit var rightSwipeActivity: Pair<LauncherActivityInfo?, Int?>
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -118,6 +119,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         searchView = findViewById(R.id.searchView)
 
         launcherApps = getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
+
+        leftSwipeActivity = getSwipeInfo("left")
+        rightSwipeActivity = getSwipeInfo("right")
 
         gestureDetector = GestureDetector(this, GestureListener())
         shortcutGestureDetector = GestureDetector(this, TextGestureListener())
@@ -257,6 +261,14 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     modifyDate("", 3)
                 }
             }
+
+            "leftSwipeApp" -> {
+                leftSwipeActivity = getSwipeInfo("left")
+            }
+
+            "rightSwipeApp" -> {
+                rightSwipeActivity = getSwipeInfo("right")
+            }
         }
     }
 
@@ -328,8 +340,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     @SuppressLint("NotifyDataSetChanged")
     override fun onResume() {
         super.onResume()
-        binding.homeView.visibility = View.VISIBLE
-        binding.appView.visibility = View.INVISIBLE
         adapter?.notifyDataSetChanged()
     }
 
@@ -361,13 +371,23 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 }
 
                 // Detect swipe left
-                else if (deltaX < -swipeThreshold && abs(velocityX) > swipeVelocityThreshold && preferences.getBoolean("cameraSwipe", true)){
-                    startActivity(cameraIntent)
+                else if (deltaX < -swipeThreshold && abs(velocityX) > swipeVelocityThreshold && preferences.getBoolean("leftSwipe", true)){
+
+                    if (leftSwipeActivity.first != null && leftSwipeActivity.second != null) {
+                        launcherApps.startMainActivity(leftSwipeActivity.first!!.componentName,  launcherApps.profiles[leftSwipeActivity.second!!], null, null)
+                    } else {
+                        Toast.makeText(this@MainActivity, "Cannot launch app", Toast.LENGTH_SHORT).show()
+                    }
                 }
 
+
                 // Detect swipe right
-                else if (deltaX > -swipeThreshold && abs(velocityX) > swipeVelocityThreshold && preferences.getBoolean("phoneSwipe", true)) {
-                    startActivity(phoneIntent)
+                else if (deltaX > -swipeThreshold && abs(velocityX) > swipeVelocityThreshold && preferences.getBoolean("rightSwipe", true)) {
+                    if (rightSwipeActivity.first != null && rightSwipeActivity.second != null) {
+                        launcherApps.startMainActivity(rightSwipeActivity.first!!.componentName,  launcherApps.profiles[rightSwipeActivity.second!!], null, null)
+                    } else {
+                        Toast.makeText(this@MainActivity, "Cannot launch app", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
             return true
@@ -384,6 +404,22 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         override fun onLongPress(e: MotionEvent) {
 
         }
+    }
+
+    private fun getSwipeInfo(direction: String): Pair<LauncherActivityInfo?, Int?> {
+        val app = preferences.getString("${direction}SwipeApp", "")?.split("-")
+
+        if (app != null) {
+            if (app.size >= 3)
+
+            return Pair(
+                launcherApps.getActivityList(
+                    app?.get(1), launcherApps.profiles[app.get(2)!!
+                        .toInt()]
+                ).firstOrNull(), app[2].toInt()
+            )
+        }
+        return Pair(null, null)
     }
 
     private fun setupApps() {
@@ -444,7 +480,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             Toast.makeText(this, "Long click to select an app", Toast.LENGTH_SHORT).show()
         }
         textView.setOnLongClickListener {
-            adapter?.menuMode = "shortcut"
             adapter?.shortcutTextView = textView
             toAppMenu()
 
@@ -569,7 +604,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     fun openAppMenuActivity() {
-        adapter?.menuMode = "app"
+        adapter?.shortcutTextView = null
         binding.menutitle.visibility = View.GONE
         toAppMenu()
     }
