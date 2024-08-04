@@ -111,10 +111,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         preferences.registerOnSharedPreferenceChangeListener(this)
 
-        window.setBackgroundDrawable(
-            ColorDrawable(
-                Color.parseColor(preferences.getString("bgColor",  "#00000000"))
-            )
+        window.decorView.setBackgroundColor(
+            Color.parseColor(preferences.getString("bgColor",  "#00000000"))
         )
 
         searchView = findViewById(R.id.searchView)
@@ -159,8 +157,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
 
         binding.homeView.setOnTouchListener { _, event ->
-            gestureDetector.onTouchEvent(event)
             super.onTouchEvent(event)
+            gestureDetector.onTouchEvent(event)
             true // Return true if the touch event is handled
         }
 
@@ -229,11 +227,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             }
 
             "bgColor" -> {
-                window.setBackgroundDrawable(
-                    ColorDrawable(
+                window.setBackgroundDrawable(ColorDrawable(Color.parseColor("#00000000")))
+                window.decorView.setBackgroundColor(
                         Color.parseColor(preferences?.getString(key,  "#00000000"))
                     )
-                )
             }
 
             "textColor" -> {
@@ -331,7 +328,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     @SuppressLint("NotifyDataSetChanged")
     override fun onResume() {
         super.onResume()
-
+        binding.homeView.visibility = View.VISIBLE
+        binding.appView.visibility = View.INVISIBLE
         adapter?.notifyDataSetChanged()
     }
 
@@ -372,7 +370,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     startActivity(phoneIntent)
                 }
             }
-            return false
+            return true
         }
 
         override fun onLongPress(e: MotionEvent) {

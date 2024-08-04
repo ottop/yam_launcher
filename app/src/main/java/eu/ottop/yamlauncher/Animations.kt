@@ -28,8 +28,8 @@ class Animations () {
     }
 
     fun showApps(binding: ActivityMainBinding) {
-        binding.homeView.fadeOut()
         binding.appView.slideInFromBottom()
+        binding.homeView.fadeOut()
     }
 
     fun backgroundIn(activity: Activity, originalColor: Int, duration: Long = 100) {
@@ -95,7 +95,7 @@ class Animations () {
                 .setDuration(duration)
                 .setListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator) {
-                        visibility = View.INVISIBLE
+                        visibility = View.GONE
                     }
                 })
         }
@@ -122,7 +122,7 @@ class Animations () {
                 .setDuration(duration)
                 .setListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator) {
-                        visibility = View.INVISIBLE
+                        visibility = View.GONE
                     }
                 })}
     }
