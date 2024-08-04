@@ -112,6 +112,7 @@
                 android:fontFamily="@null"
                 android:format12Hour="dd MMM yyyy"
                 android:format24Hour="dd MMM yyyy"
+                android:lineSpacingExtra="8sp"
                 android:paddingHorizontal="2dp"
                 android:textAlignment="textStart"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault"

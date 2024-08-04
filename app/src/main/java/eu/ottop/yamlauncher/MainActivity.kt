@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private var weatherJob: Job? = null
     val cameraIntent = Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE)
     val phoneIntent = Intent(Intent.ACTION_DIAL)
-    private lateinit var batteryReceiver: BatteryReceiver
+    private var batteryReceiver: BatteryReceiver? = null
 
     private var appActionMenu = AppActionMenu()
     private val sharedPreferenceManager = SharedPreferenceManager()
@@ -97,6 +97,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private val weatherSystem = WeatherSystem()
 
     private val uiUtils = UIUtils()
+
+    private var isBatteryReceiverRegistered = false
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -150,7 +152,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         uiUtils.setAllColors(binding.homeView, Color.parseColor(preferences.getString("textColor",  "#FFF3F3F3")))
 
-        batteryReceiver = BatteryReceiver.register(this, this@MainActivity)
+        registerBatteryReceiver()
+
+        if (!preferences.getBoolean("battery_enabled", false)) {
+            unregisterBatteryReceiver()
+        }
 
         binding.homeView.setOnTouchListener { _, event ->
             gestureDetector.onTouchEvent(event)
@@ -176,9 +182,15 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         weatherJob?.cancel()
         weatherJob = CoroutineScope(Dispatchers.IO).launch {
             while (true) {
+                if (preferences.getBoolean("gps_location", false)) {
+                    withContext(Dispatchers.Main) {
+                        weatherSystem.setGpsLocation(this@MainActivity)
+                    }
+                }
+
                 val currentWeather = weatherSystem.getTemp(this@MainActivity)
                 withContext(Dispatchers.Main) {
-                    modifyDate(currentWeather, 3)
+                    modifyDate(currentWeather, 2)
                 }
                 delay(300000)
             }
@@ -228,6 +240,40 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 uiUtils.setAllColors(binding.homeView, Color.parseColor(preferences?.getString(key,  "#FFF3F3F3")))
                 setSearchColors()
             }
+
+            "weather_enabled" -> {
+                if (preferences?.getBoolean(key, false) == true) {
+                    startWeatherMonitor()
+                }
+                else {
+                    weatherJob?.cancel()
+                    modifyDate("", 2)
+                }
+            }
+
+            "battery_enabled" -> {
+                if (preferences?.getBoolean(key, false) == true) {
+                    registerBatteryReceiver()
+                }
+                else {
+                    unregisterBatteryReceiver()
+                    modifyDate("", 3)
+                }
+            }
+        }
+    }
+
+    private fun registerBatteryReceiver() {
+        if (!isBatteryReceiverRegistered) {
+            batteryReceiver = BatteryReceiver.register(this, this@MainActivity)
+            isBatteryReceiverRegistered = true
+        }
+    }
+
+    private fun unregisterBatteryReceiver() {
+        if (isBatteryReceiverRegistered) {
+            unregisterReceiver(batteryReceiver)
+            isBatteryReceiverRegistered = false
         }
     }
 
@@ -238,7 +284,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 // Your code here
                 searchView.setTextColor(Color.parseColor(preferences.getString("textColor", "#FFF3F3F3")))
                 searchView.setHintTextColor(uiUtils.setAlpha(Color.parseColor(preferences.getString("textColor", "#FFF3F3F3")), "A9"))
-                searchView.compoundDrawables[0].colorFilter =
+                searchView.compoundDrawables[0].mutate().colorFilter =
                     BlendModeColorFilter(Color.parseColor(preferences.getString("textColor", "#FFF3F3F3")), BlendMode.SRC_ATOP)
 
                 // Remove the listener
@@ -261,19 +307,22 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     override fun onStop() {
         super.onStop()
         job?.cancel()
+        weatherJob?.cancel()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         job?.cancel()
-        unregisterReceiver(batteryReceiver)
+        unregisterBatteryReceiver()
         preferences.unregisterOnSharedPreferenceChangeListener(this)
     }
 
     override fun onStart() {
         super.onStart()
         startTask()
-        startWeatherMonitor()
+        if (preferences.getBoolean("weather_enabled", false)) {
+            startWeatherMonitor()
+        }
 
         // Keyboard is sometimes open when going back to the app, so close it.
         closeKeyboard()
@@ -734,7 +783,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 shortcuts.children.forEach {
                     if (it is TextView) {
 
-                        when (preferences?.getString("shortcutSize", "medium")) {
+                        when (preferences.getString("shortcutSize", "medium")) {
                             "small" -> {
                                 it.setPadding(
                                     it.paddingLeft,

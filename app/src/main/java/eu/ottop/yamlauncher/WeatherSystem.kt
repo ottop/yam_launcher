@@ -30,6 +30,10 @@ class WeatherSystem {
                 println("Location obtained")
                 locationManager.removeUpdates(this)
             }
+
+            override fun onFlushComplete(requestCode: Int) {
+                super.onFlushComplete(requestCode)
+            }
         }
 
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -42,19 +46,16 @@ class WeatherSystem {
         }
 
 
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0f, locationListener)
+        locationManager.requestLocationUpdates(LocationManager.FUSED_PROVIDER, 0, 0f, locationListener)
 
 
-        val currentLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+        val currentLocation = locationManager.getLastKnownLocation(LocationManager.FUSED_PROVIDER)
 
 
         if (currentLocation != null) {
             sharedPreferenceManager.setWeatherLocation(activity, "latitude=${currentLocation.latitude}&longitude=${currentLocation.longitude}", sharedPreferenceManager.getWeatherRegion(activity))
         }
 
-        else {
-            Toast.makeText(activity, "Unable to get location", Toast.LENGTH_SHORT).show()
-        }
 
     }
 
@@ -100,7 +101,7 @@ class WeatherSystem {
             val location = sharedPreferenceManager.getWeatherLocation(context)
         if (location != null) {
             if (location.isNotEmpty()) {
-                val url = URL("https://api.open-meteo.com/v1/forecast?$location&temperature_unit=${tempUnits}&current=temperature_2m")
+                val url = URL("https://api.open-meteo.com/v1/forecast?$location&temperature_unit=${tempUnits}&current=temperature_2m,weather_code")
                 with(url.openConnection() as HttpURLConnection) {
                     requestMethod = "GET"
 
@@ -111,7 +112,28 @@ class WeatherSystem {
 
                         val currentData = jsonObject.getJSONObject("current")
 
-                        currentWeather = currentData.getInt("temperature_2m").toString()
+                        var weatherType = ""
+
+                        when (currentData.getInt("weather_code")) {
+                            0, 1 -> {
+                                weatherType = "☀\uFE0E"
+                            }
+                            2, 3, 45, 48 -> {
+                                weatherType = "☁\uFE0E"
+                            }
+                            51, 53, 55, 56, 57, 61, 63, 65, 67, 80, 81, 82 -> {
+                                weatherType = "☂\uFE0E"
+                            }
+                            71, 73, 75, 77, 85, 86 -> {
+                                weatherType = "❄\uFE0E"
+                            }
+                            95, 96, 99 -> {
+                                weatherType = "⛈\uFE0E"
+                            }
+
+                        }
+
+                        currentWeather = "$weatherType ${currentData.getInt("temperature_2m").toString()}"
 
                     }
                 }

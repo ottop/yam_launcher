@@ -142,11 +142,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:defaultValue="false"
+            android:title="Weather"
+            app:key="weather_enabled" />
+        <SwitchPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="false"
             android:title="GPS Location"
+            app:dependency="weather_enabled"
             app:key="gps_location" />
         <Preference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:dependency="weather_enabled"
             app:key="manual_location"
             app:selectable="true"
             app:title="Set Manual Location" />
@@ -154,6 +162,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:defaultValue="celsius"
+            app:dependency="weather_enabled"
             app:entries="@array/temp_units"
             app:entryValues="@array/unit_values"
             app:key="tempUnits"
@@ -171,6 +180,18 @@
             app:key="hidden_apps"
             app:selectable="true"
             app:title="Manage Hidden Apps" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:allowDividerAbove="false"
+        app:title="Battery">
+        <SwitchPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="false"
+            android:title="Battery Indicator"
+            app:key="battery_enabled" />
     </PreferenceCategory>
 
 </PreferenceScreen>

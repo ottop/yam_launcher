@@ -35,9 +35,15 @@ class LocationFragment : Fragment(), LocationListAdapter.OnItemClickListener {
 
         val searchView = view.findViewById<EditText>(R.id.locationSearch)
 
-        adapter = LocationListAdapter(requireContext(), weatherSystem.getSearchedLocations(
-            searchView.text.toString()
-        ), this)
+        var locationList = mutableListOf<Map<String, String>>()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            locationList = weatherSystem.getSearchedLocations(
+                searchView.text.toString()
+            )
+        }
+
+        adapter = LocationListAdapter(requireContext(), locationList, this)
         val recyclerView = view.findViewById<RecyclerView>(R.id.locationrecycler)
         val appMenuEdgeFactory = AppMenuEdgeFactory(requireActivity())
 

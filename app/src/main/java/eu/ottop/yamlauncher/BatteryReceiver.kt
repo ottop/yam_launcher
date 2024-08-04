@@ -14,7 +14,7 @@ class BatteryReceiver(private val activity: MainActivity) : BroadcastReceiver() 
             val level = it.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
             val scale = it.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
             val batteryPct = level * 100 / scale.toFloat()
-            activity.modifyDate("${batteryPct.toInt()}%", 2)
+            activity.modifyDate("${batteryPct.toInt()}%", 3)
 
         }
     }

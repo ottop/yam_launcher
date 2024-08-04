@@ -47,12 +47,14 @@
     <string-array name="bg_options">
         <item>Transparent</item>
         <item>Black</item>
+        <item>Grey</item>
         <item>White</item>
     </string-array>
 
     <string-array name="bg_values">
         <item>#00000000</item>
         <item>#FF000000</item>
+        <item>#FF1B1B1B</item>
         <item>#FFD6D6D6</item>
     </string-array>
 
