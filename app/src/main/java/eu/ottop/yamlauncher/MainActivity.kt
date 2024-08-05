@@ -550,6 +550,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         })
     }
 
+    suspend fun applySearch() {
+        filterItems(searchView.text.toString())
+    }
+
     private suspend fun filterItems(query: String?) {
 
             val cleanQuery = stringUtils.cleanString(query)

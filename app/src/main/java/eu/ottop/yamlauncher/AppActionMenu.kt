@@ -106,7 +106,7 @@ class AppActionMenu {
                         editText.text.toString()
                     )
                     CoroutineScope(Dispatchers.Default).launch {
-                        activity.refreshAppMenu()
+                        activity.applySearch()
                     }
 
 
@@ -127,7 +127,7 @@ class AppActionMenu {
 
                 CoroutineScope(Dispatchers.Default).launch {
                     CoroutineScope(Dispatchers.Default).launch {
-                        activity.refreshAppMenu()
+                        activity.applySearch()
                     }
                 }
             }

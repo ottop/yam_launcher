@@ -105,6 +105,9 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
                 // Perform action on confirmation
                 performConfirmedAction(appInfo, appName, profile)
             }
+
+            setNegativeButton("Cancel") { _, _ ->
+            }
         }.create().show()
     }
 
