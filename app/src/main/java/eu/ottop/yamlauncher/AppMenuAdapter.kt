@@ -1,10 +1,10 @@
 package eu.ottop.yamlauncher
 
-import android.R.color
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.LauncherActivityInfo
+import android.content.pm.LauncherApps
 import android.graphics.BlendMode
 import android.graphics.BlendModeColorFilter
 import android.graphics.Color
@@ -27,7 +27,8 @@ class AppMenuAdapter(
     var apps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>,
     private val itemClickListener: OnItemClickListener,
     private val shortcutListener: OnShortcutListener,
-    private val itemLongClickListener: OnItemLongClickListener
+    private val itemLongClickListener: OnItemLongClickListener,
+    private val launcherApps: LauncherApps
 ) :
     RecyclerView.Adapter<AppMenuAdapter.AppViewHolder>() {
 
@@ -151,17 +152,38 @@ class AppMenuAdapter(
             }
         }
 
-        val appInfo = app.first.activityInfo.applicationInfo
-        holder.textView.setTextColor(Color.parseColor(preferences?.getString("textColor",  "#FFF3F3F3")))
-        holder.textView.text = sharedPreferenceManager.getAppName(activity, app.first.applicationInfo.packageName,app.second.second, holder.itemView.context.packageManager.getApplicationLabel(appInfo))
-        holder.editText.setText(holder.textView.text)
+        val appUtils = AppUtils()
+        var appInfo = appUtils.getAppInfo(
+            launcherApps,
+            app.first.applicationInfo.packageName,
+            app.second.second
+        )
 
-        if (appInfo.flags and ApplicationInfo.FLAG_SYSTEM != 0) {
-            holder.actionMenuLayout.findViewById<TextView>(R.id.uninstall).visibility = View.GONE
+        holder.textView.setTextColor(Color.parseColor(preferences?.getString("textColor",  "#FFF3F3F3")))
+        var appLabel: CharSequence = ""
+        appLabel = appInfo?.loadLabel(activity.packageManager) ?: "Removing..."
+
+        println(appLabel)
+
+        if (appInfo != null) {
+            holder.textView.text = sharedPreferenceManager.getAppName(
+                activity,
+                appInfo.packageName,
+                app.second.second,
+                appLabel
+            )
+
+            holder.editText.setText(holder.textView.text)
+
+            if (appInfo.flags and ApplicationInfo.FLAG_SYSTEM != 0) {
+                holder.actionMenuLayout.findViewById<TextView>(R.id.uninstall).visibility =
+                    View.GONE
+            } else {
+                holder.actionMenuLayout.findViewById<TextView>(R.id.uninstall).visibility =
+                    View.VISIBLE
+            }
         }
-        else {
-            holder.actionMenuLayout.findViewById<TextView>(R.id.uninstall).visibility = View.VISIBLE
-        }
+        else {holder.textView.text = appLabel}
 
         holder.textView.visibility = View.VISIBLE
     }
@@ -170,9 +192,28 @@ class AppMenuAdapter(
         return apps.size
     }
 
+    fun addApp(position: Int, app: Pair<LauncherActivityInfo, Pair<UserHandle, Int>>) {
+        apps.add(position, app)
+    }
+
+    fun removeApp(position: Int) {
+        apps.removeAt(position)
+    }
+
+    fun updateApp(position: Int, app: Pair<LauncherActivityInfo, Pair<UserHandle, Int>>) {
+        apps[position] = app
+    }
+
+    fun moveApp(position: Int, newPosition: Int) {
+        val app = apps.removeAt(position)
+        apps.add(newPosition, app)
+
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     fun updateApps(newApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
         apps = newApps.toMutableList()
         notifyDataSetChanged()
     }
+
 }

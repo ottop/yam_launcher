@@ -15,7 +15,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.UserHandle
-import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.GestureDetector
@@ -25,11 +24,8 @@ import android.view.View
 import android.view.View.TEXT_ALIGNMENT_CENTER
 import android.view.View.TEXT_ALIGNMENT_TEXT_END
 import android.view.View.TEXT_ALIGNMENT_TEXT_START
-import android.view.ViewGroup
 import android.view.ViewTreeObserver
-import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextClock
 import android.widget.TextView
@@ -37,8 +33,6 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.children
 import androidx.core.view.marginLeft
@@ -425,7 +419,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private fun setupApps() {
             handleListItems()
         CoroutineScope(Dispatchers.Default).launch {
-            installedApps = appUtils.getInstalledApps(this@MainActivity)
+            installedApps = appUtils.getInstalledApps(this@MainActivity, launcherApps)
             val newApps = installedApps.toMutableList()
 
             setupRecyclerView(newApps)
@@ -499,7 +493,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     private suspend fun setupRecyclerView(newApps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
-        adapter = AppMenuAdapter(this@MainActivity, newApps, this@MainActivity, this@MainActivity, this@MainActivity)
+        adapter = AppMenuAdapter(this@MainActivity, newApps, this@MainActivity, this@MainActivity, this@MainActivity, launcherApps)
         appMenuLinearLayoutManager.stackFromEnd = true
         recyclerView = findViewById(R.id.recycler_view)
         withContext(Dispatchers.Main) {
@@ -560,7 +554,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
             val cleanQuery = stringUtils.cleanString(query)
             val newFilteredApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
-            val updatedApps = appUtils.getInstalledApps(this@MainActivity)
+            val updatedApps = appUtils.getInstalledApps(this@MainActivity, launcherApps)
 
             getFilteredApps(cleanQuery, newFilteredApps, updatedApps)
 
@@ -625,7 +619,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }, 100)
         handler.postDelayed({
             CoroutineScope(Dispatchers.Default).launch {
-                refreshAppMenu()
+
 
             try {
                 withContext(Dispatchers.Main) {
@@ -711,18 +705,27 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     suspend fun refreshAppMenu() {
+        try {
+            val updatedApps = appUtils.getInstalledApps(this@MainActivity, launcherApps)
+            val changes = detectChanges(installedApps, updatedApps)
+            installedApps = updatedApps
+            withContext(Dispatchers.Main) {
+                applyChanges(changes, installedApps)
+            }
+        }
+        catch (_: UninitializedPropertyAccessException) {
+        }
+        /*
             try {
-                val updatedApps = appUtils.getInstalledApps(this@MainActivity)
+                val updatedApps = appUtils.getInstalledApps(this@MainActivity, launcherApps)
                 println("update running")
-                if (!listsEqual(installedApps, updatedApps)) {
-                    withContext(Dispatchers.Main) {
-                        updateMenu(updatedApps)
-                    }
-                    installedApps = updatedApps
+                withContext(Dispatchers.Main) {
+                    updateMenu(updatedApps)
                 }
+                installedApps = updatedApps
             }
             catch (_: UninitializedPropertyAccessException) {
-            }
+            }*/
 
         }
 
@@ -799,7 +802,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 searchView.textAlignment = View.TEXT_ALIGNMENT_VIEW_START
             }
             "center" -> {
-                searchView.textAlignment = View.TEXT_ALIGNMENT_CENTER
+                searchView.textAlignment = TEXT_ALIGNMENT_CENTER
             }
             "right" -> {
                 searchView.textAlignment = View.TEXT_ALIGNMENT_VIEW_END
@@ -902,4 +905,91 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             false
         }
     }
+
+    fun detectChanges(oldList: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>, newList: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>): List<Change> {
+        val changes = mutableListOf<Change>()
+        val removalChanges = mutableListOf<Change>()
+        val oldSet = oldList.map { Pair(it.first.applicationInfo.packageName, it.second.second) }.toSet()
+        val newSet = newList.map { Pair(it.first.applicationInfo.packageName, it.second.second) }.toSet()
+
+        // Detect removals
+        oldList.forEachIndexed { index, oldItem ->
+            if (!newSet.contains(Pair(oldItem.first.applicationInfo.packageName, oldItem.second.second))) {
+                removalChanges.add(Change(ChangeType.REMOVE, index))
+            }
+        }
+
+        // Detect insertions
+        newList.forEachIndexed { index, newItem ->
+            if (!oldSet.contains(Pair(newItem.first.applicationInfo.packageName, newItem.second.second))) {
+                changes.add(Change(ChangeType.INSERT, index))
+            }
+        }
+
+        oldList.forEachIndexed { index, oldItem ->
+            if (newSet.contains(Pair(oldItem.first.applicationInfo.packageName, oldItem.second.second))) {
+                val newIndex = newList.indexOfFirst { it.first.applicationInfo.packageName == oldItem.first.applicationInfo.packageName && it.second.second == oldItem.second.second }
+                if (oldItem.first.componentName != newList[newIndex].first.componentName) {
+                    changes.add(Change(ChangeType.UPDATE, index))
+                }
+                if (index != newIndex) {
+                    changes.add(Change(ChangeType.MOVE, index))
+                }
+
+            }
+        }
+
+        changes.addAll(removalChanges.reversed())
+
+        return changes
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun applyChanges(changes: List<Change>, updatedApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
+        changes.forEach { change ->
+            when (change.type) {
+                ChangeType.INSERT -> {
+                    insertItem(change.position, updatedApps[change.position])
+                }
+                ChangeType.REMOVE -> {
+                    try {
+                        removeItem(change.position)
+                    }
+                    catch (_: IndexOutOfBoundsException) {
+                    }
+                }
+                ChangeType.UPDATE -> {
+                    updateItem(change.position, updatedApps[change.position])
+                }
+
+                ChangeType.MOVE -> {
+                    adapter?.updateApps(updatedApps)
+                    adapter?.notifyDataSetChanged()
+                    println("moved")
+                }
+
+            }
+        }
+    }
+
+    private fun insertItem(position: Int, app: Pair<LauncherActivityInfo, Pair<UserHandle, Int>>) {
+        adapter?.addApp(position, app)
+        adapter?.notifyItemInserted(position)
+    }
+    private fun removeItem(position: Int) {
+        adapter?.removeApp(position)
+        adapter?.notifyItemRemoved(position)
+    }
+
+    private fun updateItem(position: Int, app: Pair<LauncherActivityInfo, Pair<UserHandle, Int>>) {
+        adapter?.updateApp(position, app)
+        adapter?.notifyItemChanged(position)
+    }
+
+}
+
+data class Change(val type: ChangeType, val position: Int, val newPosition: Int = 0)
+
+enum class ChangeType {
+    INSERT, REMOVE, UPDATE, MOVE
 }

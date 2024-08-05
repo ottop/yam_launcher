@@ -61,6 +61,7 @@ class AppActionMenu {
             activity.startActivity(intent)
 
             animations.fadeViewOut(actionMenu, 100)
+
             textView.visibility = View.VISIBLE
         }
 

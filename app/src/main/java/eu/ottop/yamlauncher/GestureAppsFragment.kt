@@ -2,7 +2,9 @@ package eu.ottop.yamlauncher
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.pm.LauncherActivityInfo
+import android.content.pm.LauncherApps
 import android.os.Bundle
 import android.os.UserHandle
 import android.text.Editable
@@ -13,6 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.setFragmentResult
 import androidx.preference.Preference
 import androidx.recyclerview.widget.RecyclerView
@@ -27,6 +30,7 @@ class GestureAppsFragment : Fragment(), GestureAppsAdapter.OnItemClickListener {
     private val sharedPreferenceManager = SharedPreferenceManager()
     private var stringUtils = StringUtils()
     private val appUtils = AppUtils()
+    private lateinit var launcherApps: LauncherApps
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,9 +47,11 @@ class GestureAppsFragment : Fragment(), GestureAppsAdapter.OnItemClickListener {
 
             withContext(Dispatchers.Default) {
 
+                launcherApps = requireContext().getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
+
                 adapter = GestureAppsAdapter(
                     requireContext(),
-                    appUtils.getInstalledApps(activity as Activity).toMutableList(),
+                    appUtils.getInstalledApps(activity as Activity, launcherApps).toMutableList(),
                     this@GestureAppsFragment
                 )
             }
@@ -93,7 +99,7 @@ class GestureAppsFragment : Fragment(), GestureAppsAdapter.OnItemClickListener {
 
         val cleanQuery = stringUtils.cleanString(query)
         val newFilteredApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
-        val updatedApps = appUtils.getInstalledApps(requireActivity())
+        val updatedApps = appUtils.getInstalledApps(requireActivity(), launcherApps)
 
         getFilteredApps(cleanQuery, newFilteredApps, updatedApps)
 
