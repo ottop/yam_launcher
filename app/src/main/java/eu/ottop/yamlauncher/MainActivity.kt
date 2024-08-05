@@ -619,7 +619,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }, 100)
         handler.postDelayed({
             CoroutineScope(Dispatchers.Default).launch {
-
+                refreshAppMenu()
 
             try {
                 withContext(Dispatchers.Main) {
@@ -705,29 +705,21 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     suspend fun refreshAppMenu() {
-        try {
-            val updatedApps = appUtils.getInstalledApps(this@MainActivity, launcherApps)
-            val changes = detectChanges(installedApps, updatedApps)
-            installedApps = updatedApps
-            withContext(Dispatchers.Main) {
-                applyChanges(changes, installedApps)
-            }
-        }
-        catch (_: UninitializedPropertyAccessException) {
-        }
-        /*
             try {
                 val updatedApps = appUtils.getInstalledApps(this@MainActivity, launcherApps)
                 println("update running")
-                withContext(Dispatchers.Main) {
-                    updateMenu(updatedApps)
+                if (!listsEqual(installedApps, updatedApps)) {
+                    withContext(Dispatchers.Main) {
+                        updateMenu(updatedApps)
+                    }
+                    installedApps = updatedApps
                 }
-                installedApps = updatedApps
             }
             catch (_: UninitializedPropertyAccessException) {
-            }*/
+            }
 
         }
+
 
     private fun closeKeyboard() {
         val imm =
@@ -802,7 +794,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 searchView.textAlignment = View.TEXT_ALIGNMENT_VIEW_START
             }
             "center" -> {
-                searchView.textAlignment = TEXT_ALIGNMENT_CENTER
+                searchView.textAlignment = View.TEXT_ALIGNMENT_CENTER
             }
             "right" -> {
                 searchView.textAlignment = View.TEXT_ALIGNMENT_VIEW_END
@@ -905,91 +897,4 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             false
         }
     }
-
-    fun detectChanges(oldList: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>, newList: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>): List<Change> {
-        val changes = mutableListOf<Change>()
-        val removalChanges = mutableListOf<Change>()
-        val oldSet = oldList.map { Pair(it.first.applicationInfo.packageName, it.second.second) }.toSet()
-        val newSet = newList.map { Pair(it.first.applicationInfo.packageName, it.second.second) }.toSet()
-
-        // Detect removals
-        oldList.forEachIndexed { index, oldItem ->
-            if (!newSet.contains(Pair(oldItem.first.applicationInfo.packageName, oldItem.second.second))) {
-                removalChanges.add(Change(ChangeType.REMOVE, index))
-            }
-        }
-
-        // Detect insertions
-        newList.forEachIndexed { index, newItem ->
-            if (!oldSet.contains(Pair(newItem.first.applicationInfo.packageName, newItem.second.second))) {
-                changes.add(Change(ChangeType.INSERT, index))
-            }
-        }
-
-        oldList.forEachIndexed { index, oldItem ->
-            if (newSet.contains(Pair(oldItem.first.applicationInfo.packageName, oldItem.second.second))) {
-                val newIndex = newList.indexOfFirst { it.first.applicationInfo.packageName == oldItem.first.applicationInfo.packageName && it.second.second == oldItem.second.second }
-                if (oldItem.first.componentName != newList[newIndex].first.componentName) {
-                    changes.add(Change(ChangeType.UPDATE, index))
-                }
-                if (index != newIndex) {
-                    changes.add(Change(ChangeType.MOVE, index))
-                }
-
-            }
-        }
-
-        changes.addAll(removalChanges.reversed())
-
-        return changes
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun applyChanges(changes: List<Change>, updatedApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
-        changes.forEach { change ->
-            when (change.type) {
-                ChangeType.INSERT -> {
-                    insertItem(change.position, updatedApps[change.position])
-                }
-                ChangeType.REMOVE -> {
-                    try {
-                        removeItem(change.position)
-                    }
-                    catch (_: IndexOutOfBoundsException) {
-                    }
-                }
-                ChangeType.UPDATE -> {
-                    updateItem(change.position, updatedApps[change.position])
-                }
-
-                ChangeType.MOVE -> {
-                    adapter?.updateApps(updatedApps)
-                    adapter?.notifyDataSetChanged()
-                    println("moved")
-                }
-
-            }
-        }
-    }
-
-    private fun insertItem(position: Int, app: Pair<LauncherActivityInfo, Pair<UserHandle, Int>>) {
-        adapter?.addApp(position, app)
-        adapter?.notifyItemInserted(position)
-    }
-    private fun removeItem(position: Int) {
-        adapter?.removeApp(position)
-        adapter?.notifyItemRemoved(position)
-    }
-
-    private fun updateItem(position: Int, app: Pair<LauncherActivityInfo, Pair<UserHandle, Int>>) {
-        adapter?.updateApp(position, app)
-        adapter?.notifyItemChanged(position)
-    }
-
-}
-
-data class Change(val type: ChangeType, val position: Int, val newPosition: Int = 0)
-
-enum class ChangeType {
-    INSERT, REMOVE, UPDATE, MOVE
 }

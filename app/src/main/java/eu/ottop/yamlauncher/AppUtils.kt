@@ -6,6 +6,7 @@ import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
 import android.os.UserHandle
 import androidx.appcompat.app.AppCompatActivity
+import java.lang.reflect.InvocationTargetException
 
 class AppUtils {
 
@@ -47,9 +48,11 @@ class AppUtils {
         packageName: String,
         profile: Int
     ): ApplicationInfo? {
+        return try {
+            launcherApps.getApplicationInfo(packageName, 0, launcherApps.profiles[profile])
+        } catch (_: Exception) {
+            null
+        }
 
-        return launcherApps.getActivityList(
-            packageName, launcherApps.profiles[profile]
-        ).firstOrNull()?.applicationInfo
     }
 }
