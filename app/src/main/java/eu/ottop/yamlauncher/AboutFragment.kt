@@ -23,6 +23,7 @@ class AboutFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        stringUtils.setLink(requireActivity().findViewById(R.id.creditText), getString(R.string.my_website_link))
         stringUtils.setLink(requireActivity().findViewById(R.id.codebergLink), getString(R.string.codeberg_link))
         stringUtils.setLink(requireActivity().findViewById(R.id.githubLink), getString(R.string.github_link))
         stringUtils.setLink(requireActivity().findViewById(R.id.stripeLink), getString(R.string.stripe_link))

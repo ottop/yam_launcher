@@ -65,6 +65,8 @@
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
 
+    <string name="my_website_link"><![CDATA[by <a href="https://ottop.eu">Otto Petäjä</a>]]></string>
+
     <string name="codeberg_link"><![CDATA[<a href="https://codeberg.org/ottoptj/yamlauncher">Codeberg</a>]]></string>
     <string name="github_link"><![CDATA[<a href="https://github.com">GitHub</a>]]></string>
 
