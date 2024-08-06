@@ -98,6 +98,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private lateinit var leftSwipeActivity: Pair<LauncherActivityInfo?, Int?>
     private lateinit var rightSwipeActivity: Pair<LauncherActivityInfo?, Int?>
 
+    private var windowInsetsController: WindowInsetsController? = null
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -113,13 +115,18 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             Color.parseColor(preferences.getString("bgColor",  "#00000000"))
         )
 
-        val windowInsetsController = window.insetsController
+        windowInsetsController = window.insetsController
+
         windowInsetsController?.let {
-            it.hide(WindowInsets.Type.statusBars()) // Hide system bars
-            it.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE // Set behavior
+            if (preferences.getBoolean("barVisibility", false)) {
+                it.show(WindowInsets.Type.statusBars())
+            }
+            else {
+                it.hide(WindowInsets.Type.statusBars())
+                it.systemBarsBehavior =
+                    WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            }
         }
-
-
 
         searchView = findViewById(R.id.searchView)
 
@@ -273,6 +280,19 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
             "rightSwipeApp" -> {
                 rightSwipeActivity = getSwipeInfo("right")
+            }
+
+            "barVisibility" -> {
+                windowInsetsController?.let {
+                    if (preferences?.getBoolean("barVisibility", false) == true) {
+                        it.show(WindowInsets.Type.statusBars())
+                    }
+                    else {
+                        it.hide(WindowInsets.Type.statusBars())
+                        it.systemBarsBehavior =
+                            WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                    }
+                }
             }
         }
     }
