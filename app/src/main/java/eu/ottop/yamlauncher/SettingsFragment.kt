@@ -22,6 +22,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         manualLocationPref = findPreference("manual_location")
         val leftSwipePref = findPreference<Preference?>("leftSwipeApp")
         val rightSwipePref = findPreference<Preference?>("rightSwipeApp")
+        val aboutPref = findPreference<Preference?>("about_page")
 
         manualLocationPref?.summary = sharedPreferenceManager.getWeatherRegion(requireContext())
         leftSwipePref?.summary = sharedPreferenceManager.getGestureName(requireContext(), "left")
@@ -104,6 +105,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     val appName = appDetails?.get(0)
                     rightSwipePref?.summary = appName
                 }
+                true }
+
+        aboutPref?.onPreferenceClickListener =
+            Preference.OnPreferenceClickListener {
+                requireActivity().supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.settings_layout, AboutFragment())
+                    .addToBackStack(null)
+                    .commit()
                 true }
     }
 

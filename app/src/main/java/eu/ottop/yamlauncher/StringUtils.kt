@@ -1,5 +1,9 @@
 package eu.ottop.yamlauncher
 
+import android.text.Html
+import android.text.method.LinkMovementMethod
+import android.widget.TextView
+
 class StringUtils {
 
     fun addEndTextIfNotEmpty(value: String, addition: String): String {
@@ -12,6 +16,11 @@ class StringUtils {
 
     fun cleanString(string: String?) : String? {
         return string?.replace("[^a-zA-Z0-9]".toRegex(), "")
+    }
+
+    fun setLink(view: TextView, link: String) {
+        view.text = Html.fromHtml(link, Html.FROM_HTML_MODE_LEGACY)
+        view.movementMethod = LinkMovementMethod.getInstance()
     }
 
 }

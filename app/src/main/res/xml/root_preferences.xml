@@ -207,5 +207,17 @@
             app:selectable="true"
             app:title="Manage Hidden Apps" />
     </PreferenceCategory>
+    <PreferenceCategory
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:allowDividerAbove="false"
+        app:title="About">
+        <Preference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:key="about_page"
+            app:selectable="true"
+            app:title="About YAM Launcher" />
+    </PreferenceCategory>
 
 </PreferenceScreen>

@@ -22,6 +22,7 @@ class LocationFragment : Fragment(), LocationListAdapter.OnItemClickListener {
     private var adapter: LocationListAdapter? = null
     private val weatherSystem = WeatherSystem()
     private val sharedPreferenceManager = SharedPreferenceManager()
+    private val stringUtils = StringUtils()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,6 +38,8 @@ class LocationFragment : Fragment(), LocationListAdapter.OnItemClickListener {
         val searchView = view.findViewById<EditText>(R.id.locationSearch)
 
         var locationList = mutableListOf<Map<String, String>>()
+
+        stringUtils.setLink(requireActivity().findViewById(R.id.locationLink), getString(R.string.location_link))
 
         CoroutineScope(Dispatchers.IO).launch {
             locationList = weatherSystem.getSearchedLocations(
