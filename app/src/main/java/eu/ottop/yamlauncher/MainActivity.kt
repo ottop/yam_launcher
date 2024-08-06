@@ -671,6 +671,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private fun toAppMenu() {
         animations.showApps(binding)
         animations.backgroundIn(this@MainActivity, Color.parseColor(preferences.getString("bgColor",  "#00000000")))
+        if (preferences.getBoolean("autoKeyboard", false)) {
+            val imm =
+                getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            searchView.requestFocus()
+            imm.showSoftInput(searchView, InputMethodManager.SHOW_IMPLICIT)
+        }
     }
 
     override fun onItemClick(appInfo: LauncherActivityInfo, userHandle: UserHandle) {

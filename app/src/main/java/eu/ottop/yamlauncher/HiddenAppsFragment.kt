@@ -2,6 +2,7 @@ package eu.ottop.yamlauncher
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.pm.LauncherActivityInfo
 import android.os.Bundle
 import android.os.UserHandle
@@ -11,7 +12,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 
 class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
@@ -64,6 +67,13 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
 
             }
         })
+
+        if (PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("autoKeyboard", false)) {
+            val imm =
+                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            searchView.requestFocus()
+            imm.showSoftInput(searchView, InputMethodManager.SHOW_IMPLICIT)
+        }
     }
 
     private fun filterItems(query: String?) {

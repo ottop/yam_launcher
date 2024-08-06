@@ -15,7 +15,7 @@ class StringUtils {
     }
 
     fun cleanString(string: String?) : String? {
-        return string?.replace("[^a-zA-Z0-9]".toRegex(), "")
+        return string?.replace("[^\\p{L}0-9]".toRegex(), "")
     }
 
     fun setLink(view: TextView, link: String) {

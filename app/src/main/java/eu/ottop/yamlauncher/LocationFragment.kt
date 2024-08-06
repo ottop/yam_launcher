@@ -1,6 +1,7 @@
 package eu.ottop.yamlauncher
 
 import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,9 +9,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.fragment.app.setFragmentResult
 import androidx.preference.Preference
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -87,6 +90,13 @@ class LocationFragment : Fragment(), LocationListAdapter.OnItemClickListener {
 
             }
         })
+
+        if (PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("autoKeyboard", false)) {
+            val imm =
+                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            searchView.requestFocus()
+            imm.showSoftInput(searchView, InputMethodManager.SHOW_IMPLICIT)
+        }
     }
 
     private fun showConfirmationDialog(appName: String?, latitude: String?, longitude: String?) {
