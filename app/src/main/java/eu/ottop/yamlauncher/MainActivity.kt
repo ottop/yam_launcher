@@ -1,11 +1,15 @@
 package eu.ottop.yamlauncher
 
+import android.accessibilityservice.AccessibilityService
+import android.accessibilityservice.AccessibilityServiceInfo
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
+import android.content.pm.ServiceInfo
 import android.graphics.BlendMode
 import android.graphics.BlendModeColorFilter
 import android.graphics.Color
@@ -15,6 +19,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.UserHandle
+import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.GestureDetector
@@ -27,7 +32,7 @@ import android.view.View.TEXT_ALIGNMENT_TEXT_START
 import android.view.ViewTreeObserver
 import android.view.WindowInsets
 import android.view.WindowInsetsController
-import android.view.WindowManager
+import android.view.accessibility.AccessibilityManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import android.widget.TextClock
@@ -49,8 +54,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.math.abs
 import java.lang.reflect.Method
+import kotlin.math.abs
 
 
 class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener, AppMenuAdapter.OnItemClickListener, AppMenuAdapter.OnShortcutListener, AppMenuAdapter.OnItemLongClickListener {
@@ -427,12 +432,66 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
         }
 
+        override fun onDoubleTap(e: MotionEvent): Boolean {
+            if (preferences.getBoolean("doubleTap", false)) {
+                if (isAccessibilityServiceEnabled(
+                        this@MainActivity,
+                        ScreenLockService::class.java
+                    )
+                ) {
+                    println("enabled")
+                    val intent = Intent(this@MainActivity, ScreenLockService::class.java)
+                    intent.action = "LOCK_SCREEN"
+                    startService(intent)
+                } else {
+                    promptEnableAccessibility()
+                }
+            }
+
+            return super.onDoubleTap(e)
+
+        }
+
     }
 
     inner class TextGestureListener : GestureListener() {
         override fun onLongPress(e: MotionEvent) {
 
         }
+    }
+
+
+    fun isAccessibilityServiceEnabled(context: Context, service: Class<out AccessibilityService>): Boolean {
+        val am = context.getSystemService(ACCESSIBILITY_SERVICE) as AccessibilityManager
+        val enabledServices =
+            am.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
+
+        for (enabledService in enabledServices) {
+            val enabledServiceInfo: ServiceInfo = enabledService.resolveInfo.serviceInfo
+            if (enabledServiceInfo.packageName.equals(context.packageName) && enabledServiceInfo.name.equals(
+                    service.name
+                )
+            ) return true
+        }
+
+        return false
+    }
+
+    private fun promptEnableAccessibility() {
+        AlertDialog.Builder(this@MainActivity).apply {
+            setTitle("Confirmation")
+            setMessage("To lock with double tap, enable YAM Launcher in accessibility settings.")
+            setPositiveButton("Yes") { _, _ ->
+                // Perform action on confirmation
+                val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
+            }
+            setNegativeButton("Cancel") { _, _ ->
+
+            }
+
+        }.create().show()
     }
 
     private fun getSwipeInfo(direction: String): Pair<LauncherActivityInfo?, Int?> {

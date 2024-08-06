@@ -177,6 +177,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:defaultValue="false"
+            android:title="Double Tap to Lock Screen"
+            app:key="doubleTap" />
+        <SwitchPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="false"
             android:title="Automatically Open Keyboard"
             app:key="autoKeyboard" />
     </PreferenceCategory>
