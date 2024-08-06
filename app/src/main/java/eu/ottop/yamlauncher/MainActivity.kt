@@ -25,6 +25,9 @@ import android.view.View.TEXT_ALIGNMENT_CENTER
 import android.view.View.TEXT_ALIGNMENT_TEXT_END
 import android.view.View.TEXT_ALIGNMENT_TEXT_START
 import android.view.ViewTreeObserver
+import android.view.WindowInsets
+import android.view.WindowInsetsController
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import android.widget.TextClock
@@ -109,6 +112,14 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         window.decorView.setBackgroundColor(
             Color.parseColor(preferences.getString("bgColor",  "#00000000"))
         )
+
+        val windowInsetsController = window.insetsController
+        windowInsetsController?.let {
+            it.hide(WindowInsets.Type.statusBars()) // Hide system bars
+            it.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE // Set behavior
+        }
+
+
 
         searchView = findViewById(R.id.searchView)
 
