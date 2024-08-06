@@ -70,15 +70,16 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     .replace(R.id.settings_layout, GestureAppsFragment())
                     .addToBackStack(null)
                     .commit()
-                setFragmentResultListener("request_key") { requestKey, bundle ->
+                setFragmentResultListener("request_key") { _, bundle ->
                     clearFragmentResultListener("request_key")
                     val result = bundle.getString("gesture_app")
-                    val appDetails = result?.split("-")
+                    val appDetails = result?.split("§splitter§")
                     if (leftSwipePref != null && result != null) {
                         setPreference("leftSwipeApp", result)
                     }
-                    sharedPreferenceManager.setGestures(requireContext(), "left",
-                        appDetails?.get(0), appDetails?.get(1), appDetails?.get(2)
+                    sharedPreferenceManager.setGestures(
+                        requireContext(), "left",
+                        appDetails?.get(0)
                     )
                     val appName = appDetails?.get(0)
                     leftSwipePref?.summary = appName
@@ -92,15 +93,16 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     .replace(R.id.settings_layout, GestureAppsFragment())
                     .addToBackStack(null)
                     .commit()
-                setFragmentResultListener("request_key") { requestKey, bundle ->
+                setFragmentResultListener("request_key") { _, bundle ->
                     clearFragmentResultListener("request_key")
                     val result = bundle.getString("gesture_app")
-                    val appDetails = result?.split("-")
+                    val appDetails = result?.split("§splitter§")
                     if (rightSwipePref != null && result != null) {
                         setPreference("rightSwipeApp", result)
                     }
-                    sharedPreferenceManager.setGestures(requireContext(), "right",
-                        appDetails?.get(0), appDetails?.get(1), appDetails?.get(2)
+                    sharedPreferenceManager.setGestures(
+                        requireContext(), "right",
+                        appDetails?.get(0)
                     )
                     val appName = appDetails?.get(0)
                     rightSwipePref?.summary = appName

@@ -5,6 +5,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:allowDividerAbove="false"
+        app:title="Shortcuts">
+        <ListPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:defaultValue="4"
+            app:entries="@array/shortcut_options"
+            app:entryValues="@array/shortcut_options"
+            app:key="shortcutNo"
+            app:title="Number of Shortcuts"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:allowDividerAbove="false"
         app:title="Colors">
         <ListPreference
             android:layout_width="wrap_content"
@@ -43,7 +58,7 @@
             app:entries="@array/h_alignment_options"
             app:entryValues="@array/h_alignment_values"
             app:key="shortcutAlignment"
-            app:title="Home App Alignment"
+            app:title="Shortcut Alignment"
             app:useSimpleSummaryProvider="true" />
         <ListPreference
             android:layout_width="wrap_content"

@@ -143,7 +143,7 @@ class GestureAppsFragment : Fragment(), GestureAppsAdapter.OnItemClickListener {
 
     private fun performConfirmedAction(appInfo: LauncherActivityInfo, appName: String, profile: Int) {
         val result = Bundle().apply {
-            putString("gesture_app", "$appName-${appInfo.applicationInfo.packageName}-$profile")
+            putString("gesture_app", "$appName§splitter§${appInfo.applicationInfo.packageName}§splitter§$profile")
         }
         setFragmentResult("request_key", result)
         requireActivity().supportFragmentManager.popBackStack()

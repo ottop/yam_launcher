@@ -294,6 +294,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     }
                 }
             }
+
+            "shortcutNo" -> {
+                handleListItems()
+            }
         }
     }
 
@@ -432,14 +436,14 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     private fun getSwipeInfo(direction: String): Pair<LauncherActivityInfo?, Int?> {
-        val app = preferences.getString("${direction}SwipeApp", "")?.split("-")
+        val app = preferences.getString("${direction}SwipeApp", "")?.split("§splitter§")
 
         if (app != null) {
             if (app.size >= 3)
 
             return Pair(
                 launcherApps.getActivityList(
-                    app?.get(1), launcherApps.profiles[app.get(2)!!
+                    app[1], launcherApps.profiles[app[2]
                         .toInt()]
                 ).firstOrNull(), app[2].toInt()
             )
@@ -461,16 +465,30 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     private fun handleListItems() {
-        for (i in arrayOf(R.id.app1, R.id.app2, R.id.app3, R.id.app4, R.id.app5, R.id.app6, R.id.app7, R.id.app8)) {
+        val shortcuts = arrayOf(R.id.app1, R.id.app2, R.id.app3, R.id.app4, R.id.app5, R.id.app6, R.id.app7, R.id.app8)
 
-            val textView = findViewById<TextView>(i)
+        for (i in shortcuts.indices) {
 
-            unselectedSetup(textView)
+            val textView = findViewById<TextView>(shortcuts[i])
 
-            val savedView = sharedPreferenceManager.getShortcut(this, textView)
+            val shortcutNo = preferences.getString("shortcutNo", "4")?.toInt()
 
-            if (savedView?.get(1) != "e") {
-                selectedSetup(textView, savedView)
+            if (i >= shortcutNo!!) {
+                textView.visibility = View.GONE
+            }
+
+            else {
+                textView.visibility = View.VISIBLE
+
+                unselectedSetup(textView)
+
+                val savedView = sharedPreferenceManager.getShortcut(this, textView)
+
+                if (savedView?.get(1) != "e") {
+                    selectedSetup(textView, savedView)
+                }
+
+                setShortcutAlignment(preferences.getString("shortcutAlignment", "left"), binding.homeView)
             }
 
         }
@@ -702,6 +720,35 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             shortcutView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_empty, null),null,null,null)
         }
 
+        when (preferences.getString("shortcutAlignment", "left")) {
+            "left" -> {
+                shortcutView.setCompoundDrawablesWithIntrinsicBounds(
+                    textView.compoundDrawables.filterNotNull().first(), null, null, null
+                )
+                shortcutView.gravity = Gravity.CENTER_VERTICAL or Gravity.START
+            }
+
+            "center" -> {
+                shortcutView.setCompoundDrawablesWithIntrinsicBounds(
+                    shortcutView.compoundDrawables.filterNotNull().first(),
+                    null,
+                    shortcutView.compoundDrawables.filterNotNull().first(),
+                    null
+                )
+                shortcutView.gravity = Gravity.CENTER
+            }
+
+            "right" -> {
+                shortcutView.setCompoundDrawablesWithIntrinsicBounds(
+                    null,
+                    null,
+                    shortcutView.compoundDrawables.filterNotNull().first(),
+                    null
+                )
+                shortcutView.gravity = Gravity.CENTER_VERTICAL or Gravity.END
+            }
+        }
+
         shortcutView.text = textView.text.toString()
         shortcutView.setOnClickListener {
             val mainActivity = launcherApps.getActivityList(appInfo.applicationInfo.packageName, userHandle).firstOrNull()
@@ -808,22 +855,36 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
             if (it is TextView) {
 
+                try {
+                    when (alignment) {
+                        "left" -> {
+                            it.setCompoundDrawablesWithIntrinsicBounds(
+                                it.compoundDrawables.filterNotNull().first(), null, null, null
+                            )
+                            it.gravity = Gravity.CENTER_VERTICAL or Gravity.START
+                        }
 
-                when (alignment) {
-                    "left" -> {
-                        it.setCompoundDrawablesWithIntrinsicBounds(it.compoundDrawables.filterNotNull().first(),null, null, null)
-                        it.gravity = Gravity.CENTER_VERTICAL or Gravity.START
-                    }
-                    "center" -> {
-                        it.setCompoundDrawablesWithIntrinsicBounds(it.compoundDrawables.filterNotNull().first(),null,it.compoundDrawables.filterNotNull().first(), null)
-                        it.gravity = Gravity.CENTER
-                    }
-                    "right" -> {
-                        it.setCompoundDrawablesWithIntrinsicBounds(null,null, it.compoundDrawables.filterNotNull().first(), null)
-                        it.gravity = Gravity.CENTER_VERTICAL or Gravity.END
-                    }
-                }
+                        "center" -> {
+                            it.setCompoundDrawablesWithIntrinsicBounds(
+                                it.compoundDrawables.filterNotNull().first(),
+                                null,
+                                it.compoundDrawables.filterNotNull().first(),
+                                null
+                            )
+                            it.gravity = Gravity.CENTER
+                        }
 
+                        "right" -> {
+                            it.setCompoundDrawablesWithIntrinsicBounds(
+                                null,
+                                null,
+                                it.compoundDrawables.filterNotNull().first(),
+                                null
+                            )
+                            it.gravity = Gravity.CENTER_VERTICAL or Gravity.END
+                        }
+                    }
+                } catch(_: Exception) {}
             }
         }
     }

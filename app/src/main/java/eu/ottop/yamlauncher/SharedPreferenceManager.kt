@@ -9,15 +9,15 @@ class SharedPreferenceManager {
     fun setShortcut(cont: Context, textView: TextView, packageName: String, profile: Int) {
         val editor = cont.getSharedPreferences("shortcuts", AppCompatActivity.MODE_PRIVATE).edit()
         val key = textView.id.toString()
-        editor.putString(key, "$packageName-$profile-${textView.text}")
+        editor.putString(key, "$packageName§splitter§$profile§splitter§${textView.text}")
         editor.apply()
     }
 
     fun getShortcut(cont: Context, textView: TextView): List<String>? {
         val sharedPref = cont.getSharedPreferences("shortcuts", AppCompatActivity.MODE_PRIVATE)
         val key = textView.id.toString()
-        val value = sharedPref.getString(key, "e-e")
-        return value?.split("-")
+        val value = sharedPref.getString(key, "e§splitter§e")
+        return value?.split("§splitter§")
     }
 
     fun setAppHidden(cont: Context, packageName: String, profile: Int, hidden: Boolean) {
@@ -81,19 +81,13 @@ class SharedPreferenceManager {
         return sharedPreferences.getString(key, "")
     }
 
-    fun setGestures(cont: Context, direction: String, appName: String?, packageName: String?, profile: String?) {
+    fun setGestures(cont: Context, direction: String, appName: String?) {
         val editor = cont.getSharedPreferences("gestures", AppCompatActivity.MODE_PRIVATE).edit()
         val nameKey = "$direction-name"
-        editor.putString(direction, "$packageName-$profile")
         editor.putString(nameKey, appName)
         editor.apply()
     }
 
-
-    fun getGestureApp(cont: Context, direction: String) : String? {
-        val sharedPreferences = cont.getSharedPreferences("gestures", AppCompatActivity.MODE_PRIVATE)
-        return sharedPreferences.getString(direction, "")
-    }
 
     fun getGestureName(cont: Context, direction: String) : String? {
         val sharedPreferences = cont.getSharedPreferences("gestures", AppCompatActivity.MODE_PRIVATE)

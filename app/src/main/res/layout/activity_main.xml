@@ -144,12 +144,7 @@
             android:text="@string/shortcut_default"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault"
             android:textColor="#F3F3F3"
-            android:visibility="visible" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.01" />
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/app2"
@@ -167,12 +162,7 @@
             android:textAppearance="@android:style/TextAppearance.DeviceDefault"
             android:textColor="#F3F3F3"
             android:textSize="28sp"
-            android:visibility="visible" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.01" />
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/app3"
@@ -190,12 +180,7 @@
             android:textAppearance="@android:style/TextAppearance.DeviceDefault"
             android:textColor="#F3F3F3"
             android:textSize="28sp"
-            android:visibility="visible" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.01" />
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/app4"
@@ -213,12 +198,6 @@
             android:textAppearance="@android:style/TextAppearance.DeviceDefault"
             android:textColor="#F3F3F3"
             android:textSize="28sp"
-            android:visibility="visible" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.01"
             android:visibility="gone" />
 
         <TextView
@@ -239,12 +218,6 @@
             android:textSize="28sp"
             android:visibility="gone" />
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.01"
-            android:visibility="gone" />
-
         <TextView
             android:id="@+id/app6"
             android:layout_width="match_parent"
@@ -263,12 +236,6 @@
             android:textSize="28sp"
             android:visibility="gone" />
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.01"
-            android:visibility="gone" />
-
         <TextView
             android:id="@+id/app7"
             android:layout_width="match_parent"
@@ -285,12 +252,6 @@
             android:textAppearance="@android:style/TextAppearance.DeviceDefault"
             android:textColor="#F3F3F3"
             android:textSize="28sp"
-            android:visibility="gone" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.01"
             android:visibility="gone" />
 
         <TextView
