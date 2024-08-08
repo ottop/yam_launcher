@@ -1,38 +1,22 @@
 package eu.ottop.yamlauncher
 
-import android.accessibilityservice.AccessibilityService
-import android.accessibilityservice.AccessibilityServiceInfo
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
-import android.content.pm.ServiceInfo
-import android.graphics.BlendMode
-import android.graphics.BlendModeColorFilter
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.UserHandle
-import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.GestureDetector
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
-import android.view.View.TEXT_ALIGNMENT_CENTER
-import android.view.View.TEXT_ALIGNMENT_TEXT_END
-import android.view.View.TEXT_ALIGNMENT_TEXT_START
-import android.view.ViewTreeObserver
-import android.view.WindowInsets
-import android.view.WindowInsetsController
-import android.view.accessibility.AccessibilityManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import android.widget.TextClock
@@ -42,19 +26,15 @@ import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.children
 import androidx.core.view.marginLeft
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import eu.ottop.yamlauncher.databinding.ActivityMainBinding
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -73,8 +53,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private lateinit var recyclerView: RecyclerView
     private lateinit var searchView: TextInputEditText
     private var adapter: AppMenuAdapter? = null
-    private var job: Job? = null
-    private var weatherJob: Job? = null
     private var batteryReceiver: BatteryReceiver? = null
 
     private var appActionMenu = AppActionMenu()
@@ -100,50 +78,52 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private val weatherSystem = WeatherSystem()
 
-    private val uiUtils = UIUtils()
+    private lateinit var uiUtils: UIUtils
+    private lateinit var gestureUtils: GestureUtils
 
     private var isBatteryReceiverRegistered = false
 
     private lateinit var leftSwipeActivity: Pair<LauncherActivityInfo?, Int?>
     private lateinit var rightSwipeActivity: Pair<LauncherActivityInfo?, Int?>
 
-    private var windowInsetsController: WindowInsetsController? = null
+    var isJobActive = true
 
-    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(null)
 
-        preferences = PreferenceManager.getDefaultSharedPreferences(this)
+        setMainVariables()
 
-        preferences.registerOnSharedPreferenceChangeListener(this)
+        setPreferences()
+        setShortcuts()
 
-        window.decorView.setBackgroundColor(
-            Color.parseColor(preferences.getString("bgColor",  "#00000000"))
-        )
+        setHomeListeners()
 
-        windowInsetsController = window.insetsController
-
-        windowInsetsController?.let {
-            if (preferences.getBoolean("barVisibility", false)) {
-                it.show(WindowInsets.Type.statusBars())
-            }
-            else {
-                it.hide(WindowInsets.Type.statusBars())
-                it.systemBarsBehavior =
-                    WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                while (true) {
+                    refreshAppMenu()
+                    delay(5000)
+                }
             }
         }
 
-        searchView = findViewById(R.id.searchView)
+        lifecycleScope.launch(Dispatchers.IO) {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                while (true) {
+                    updateWeather()
+                    delay(600000)
+                }
+            }
+        }
 
-        launcherApps = getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
+        setupApps()
 
-        leftSwipeActivity = getSwipeInfo("left")
-        rightSwipeActivity = getSwipeInfo("right")
+    }
 
+    private fun setMainVariables() {
         gestureDetector = GestureDetector(this, GestureListener())
         shortcutGestureDetector = GestureDetector(this, TextGestureListener())
 
@@ -155,36 +135,136 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         dateElements = mutableListOf(dateText.format12Hour.toString(), dateText.format24Hour.toString(), "", "")
 
-        setClockAlignment(preferences.getString("clockAlignment", "left"))
+        searchView = findViewById(R.id.searchView)
 
-        setupApps()
+        launcherApps = getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
 
-        setShortcutAlignment(preferences.getString("shortcutAlignment", "left"), binding.homeView)
+        preferences = PreferenceManager.getDefaultSharedPreferences(this)
+        uiUtils = UIUtils()
+        gestureUtils = GestureUtils()
+    }
 
-        setSearchAlignment(preferences.getString("searchAlignment", "left"))
+    private fun setPreferences() {
+        uiUtils.setBackground(window, preferences)
+        uiUtils.setTextColors(preferences, binding.homeView)
+        uiUtils.setSearchColors(preferences, searchView)
 
-        setClockSize(preferences.getString("clockSize","medium"))
+        uiUtils.setClockAlignment(preferences, clock, dateText)
+        uiUtils.setSearchAlignment(preferences, searchView)
 
-        setDateSize(preferences.getString("dateSize", "medium"))
+        uiUtils.setClockSize(preferences, clock)
+        uiUtils.setDateSize(preferences, dateText)
+        uiUtils.setShortcutSize(preferences, binding.homeView)
+        uiUtils.setSearchSize(preferences, searchView)
 
-        setShortcutSize(binding.homeView)
+        uiUtils.setStatusBar(window, preferences)
 
-        setSearchSize(preferences.getString("searchSize", "medium"))
+        leftSwipeActivity = gestureUtils.getSwipeInfo(preferences, launcherApps, "left")
+        rightSwipeActivity = gestureUtils.getSwipeInfo(preferences, launcherApps, "right")
+    }
 
-        setSearchColors()
+    private fun setShortcuts() {
+        val shortcuts = arrayOf(R.id.app1, R.id.app2, R.id.app3, R.id.app4, R.id.app5, R.id.app6, R.id.app7, R.id.app8)
 
-        uiUtils.setAllColors(binding.homeView, Color.parseColor(preferences.getString("textColor",  "#FFF3F3F3")))
+        for (i in shortcuts.indices) {
 
+            val textView = findViewById<TextView>(shortcuts[i])
+
+            val shortcutNo = preferences.getString("shortcutNo", "4")?.toInt()
+
+            if (i >= shortcutNo!!) {
+                textView.visibility = View.GONE
+            }
+
+            else {
+                textView.visibility = View.VISIBLE
+
+                unsetShortcutSetup(textView)
+
+                val savedView = sharedPreferenceManager.getShortcut(this, textView)
+
+                if (savedView?.get(1) != "e") {
+                    setShortcutSetup(textView, savedView)
+                }
+
+                uiUtils.setShortcutAlignment(preferences, binding.homeView)
+            }
+
+        }
+
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun unsetShortcutSetup(textView: TextView) {
+        textView.setOnTouchListener {_, event ->
+            shortcutGestureDetector.onTouchEvent(event)
+            super.onTouchEvent(event)
+        }
+
+        textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_empty, null),null,null,null)
+
+        unsetShortcutListeners(textView)
+    }
+
+    private fun unsetShortcutListeners(textView: TextView) {
+        textView.setOnClickListener {
+            Toast.makeText(this, "Long click to select an app", Toast.LENGTH_SHORT).show()
+        }
+        textView.setOnLongClickListener {
+            adapter?.shortcutTextView = textView
+            toAppMenu()
+
+            return@setOnLongClickListener true
+        }
+    }
+
+    private fun toAppMenu() {
+        animations.showApps(binding)
+        animations.backgroundIn(this@MainActivity, preferences)
+        if (preferences.getBoolean("autoKeyboard", false)) {
+            val imm =
+                getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            searchView.requestFocus()
+            imm.showSoftInput(searchView, InputMethodManager.SHOW_IMPLICIT)
+        }
+    }
+
+    private fun setShortcutSetup(textView: TextView, savedView: List<String>?) {
+        if (savedView?.get(1) != "0") {
+            textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_work_app, null),null,null,null)
+        }
+        else {
+            textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_empty, null),null,null,null)
+        }
+        textView.text = savedView?.get(2)
+        setShortcutListeners(textView, savedView)
+    }
+
+    private fun setShortcutListeners(textView: TextView, savedView: List<String>?) {
+        textView.setOnClickListener {
+            val mainActivity = launcherApps.getActivityList(savedView?.get(0).toString(), launcherApps.profiles[savedView?.get(1)!!.toInt()]).firstOrNull()
+            if (mainActivity != null) {
+                launcherApps.startMainActivity(mainActivity.componentName,  launcherApps.profiles[savedView[1].toInt()], null, null)
+            } else {
+                Toast.makeText(this, "Cannot launch app", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun setHomeListeners() {
         registerBatteryReceiver()
 
         if (!preferences.getBoolean("battery_enabled", false)) {
             unregisterBatteryReceiver()
         }
 
+        preferences.registerOnSharedPreferenceChangeListener(this)
+
         binding.homeView.setOnTouchListener { _, event ->
             super.onTouchEvent(event)
             gestureDetector.onTouchEvent(event)
-            true // Return true if the touch event is handled
+            true
         }
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
@@ -192,136 +272,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 backToHome()
             }
         })
-
-        lifecycleScope.launch(Dispatchers.IO) {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                while (true) {
-                    updateWeather()
-                    delay(600000)
-                }
-            }
-        }
-
-    }
-
-    private suspend fun updateWeather() {
-        withContext(Dispatchers.IO) {
-            if (preferences.getBoolean("weather_enabled", false)) {
-                if (preferences.getBoolean("gps_location", false)) {
-                        weatherSystem.setGpsLocation(this@MainActivity)
-                } else {
-
-                        updateWeatherText()
-                }
-            }
-        }
-    }
-
-    fun modifyDate(value: String, index: Int) {
-        dateElements[index] = value
-        dateText.format12Hour = "${dateElements[0]}${stringUtils.addStartTextIfNotEmpty(dateElements[2], " | ")}${stringUtils.addStartTextIfNotEmpty(dateElements[3], " | ")}"
-        dateText.format24Hour = "${dateElements[1]}${stringUtils.addStartTextIfNotEmpty(dateElements[2], " | ")}${stringUtils.addStartTextIfNotEmpty(dateElements[3], " | ")}"
-    }
-
-
-
-    suspend fun updateWeatherText() {
-        val temp = weatherSystem.getTemp(this@MainActivity)
-        withContext(Dispatchers.Main) {
-            modifyDate(temp, 2)
-        }
-    }
-
-    override fun onSharedPreferenceChanged(preferences: SharedPreferences?, key: String?) {
-
-        when (key) {
-            "clockAlignment" -> {
-                setClockAlignment(preferences?.getString(key, "left"))
-            }
-
-            "shortcutAlignment" -> {
-                setShortcutAlignment(preferences?.getString(key, "left"), binding.homeView)
-            }
-
-            "searchAlignment" -> {
-                setSearchAlignment(preferences?.getString(key, "left"))
-            }
-
-            "clockSize" -> {
-                setClockSize(preferences?.getString(key,"medium"))
-            }
-
-            "dateSize" -> {
-                setDateSize(preferences?.getString(key, "medium"))
-            }
-
-            "shortcutSize" -> {
-                setShortcutSize(binding.homeView)
-            }
-
-            "searchSize" -> {
-                setSearchSize(preferences?.getString(key, "medium"))
-            }
-
-            "bgColor" -> {
-                window.setBackgroundDrawable(ColorDrawable(Color.parseColor("#00000000")))
-                window.decorView.setBackgroundColor(
-                        Color.parseColor(preferences?.getString(key,  "#00000000"))
-                    )
-            }
-
-            "textColor" -> {
-                uiUtils.setAllColors(binding.homeView, Color.parseColor(preferences?.getString(key,  "#FFF3F3F3")))
-                setSearchColors()
-            }
-
-            "weather_enabled" -> {
-                if (preferences?.getBoolean(key, false) == true) {
-                    lifecycleScope.launch {
-                        updateWeather()
-                    }
-                }
-                else {
-                    weatherJob?.cancel()
-                    modifyDate("", 2)
-                }
-            }
-
-            "battery_enabled" -> {
-                if (preferences?.getBoolean(key, false) == true) {
-                    registerBatteryReceiver()
-                }
-                else {
-                    unregisterBatteryReceiver()
-                    modifyDate("", 3)
-                }
-            }
-
-            "leftSwipeApp" -> {
-                leftSwipeActivity = getSwipeInfo("left")
-            }
-
-            "rightSwipeApp" -> {
-                rightSwipeActivity = getSwipeInfo("right")
-            }
-
-            "barVisibility" -> {
-                windowInsetsController?.let {
-                    if (preferences?.getBoolean("barVisibility", false) == true) {
-                        it.show(WindowInsets.Type.statusBars())
-                    }
-                    else {
-                        it.hide(WindowInsets.Type.statusBars())
-                        it.systemBarsBehavior =
-                            WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-                    }
-                }
-            }
-
-            "shortcutNo" -> {
-                handleListItems()
-            }
-        }
     }
 
     private fun registerBatteryReceiver() {
@@ -338,196 +288,172 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
     }
 
-    private fun setSearchColors() {
-        val viewTreeObserver = searchView.viewTreeObserver
-        val globalLayoutListener = object : ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                // Your code here
-                searchView.setTextColor(Color.parseColor(preferences.getString("textColor", "#FFF3F3F3")))
-                searchView.setHintTextColor(uiUtils.setAlpha(Color.parseColor(preferences.getString("textColor", "#FFF3F3F3")), "A9"))
-                searchView.compoundDrawables[0].mutate().colorFilter =
-                    BlendModeColorFilter(Color.parseColor(preferences.getString("textColor", "#FFF3F3F3")), BlendMode.SRC_ATOP)
+    override fun onSharedPreferenceChanged(preferences: SharedPreferences?, key: String?) {
+        if (preferences != null) {
+            when (key) {
+                "bgColor" -> {
+                    uiUtils.setBackground(window, preferences)
+                }
 
-                // Remove the listener
-                if (viewTreeObserver.isAlive) {
-                    viewTreeObserver.removeOnGlobalLayoutListener(this)
+                "textColor" -> {
+                    uiUtils.setTextColors(preferences, binding.homeView)
+                    uiUtils.setSearchColors(preferences, searchView)
+                }
+
+                "clockAlignment" -> {
+                    uiUtils.setClockAlignment(preferences, clock, dateText)
+                }
+
+                "shortcutAlignment" -> {
+                    uiUtils.setShortcutSize(preferences, binding.homeView)
+                }
+
+                "searchAlignment" -> {
+                    uiUtils.setSearchAlignment(preferences, searchView)
+                }
+
+                "clockSize" -> {
+                    uiUtils.setClockSize(preferences, clock)
+                }
+
+                "dateSize" -> {
+                    uiUtils.setDateSize(preferences, dateText)
+                }
+
+                "shortcutSize" -> {
+                    uiUtils.setShortcutSize(preferences, binding.homeView)
+                }
+
+                "searchSize" -> {
+                    uiUtils.setSearchSize(preferences, searchView)
+                }
+
+                "barVisibility" -> {
+                    uiUtils.setStatusBar(window, preferences)
+                }
+
+                "leftSwipeApp" -> {
+                    leftSwipeActivity = gestureUtils.getSwipeInfo(preferences, launcherApps, "left")
+                }
+
+                "rightSwipeApp" -> {
+                    rightSwipeActivity = gestureUtils.getSwipeInfo(preferences, launcherApps, "right")
+                }
+
+                "battery_enabled" -> {
+                    if (preferences.getBoolean(key, false)) {
+                        registerBatteryReceiver()
+                    } else {
+                        unregisterBatteryReceiver()
+                        modifyDate("", 3)
+                    }
+                }
+
+                "shortcutNo" -> {
+                    setShortcuts()
                 }
             }
         }
-
-        if (viewTreeObserver.isAlive) {
-            viewTreeObserver.addOnGlobalLayoutListener(globalLayoutListener)
-        }
     }
 
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        backToHome()
+    fun modifyDate(value: String, index: Int) {
+        dateElements[index] = value
+        dateText.format12Hour = "${dateElements[0]}${stringUtils.addStartTextIfNotEmpty(dateElements[2], " | ")}${stringUtils.addStartTextIfNotEmpty(dateElements[3], " | ")}"
+        dateText.format24Hour = "${dateElements[1]}${stringUtils.addStartTextIfNotEmpty(dateElements[2], " | ")}${stringUtils.addStartTextIfNotEmpty(dateElements[3], " | ")}"
     }
 
-    override fun onStop() {
-        super.onStop()
-        job?.cancel()
-        weatherJob?.cancel()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        job?.cancel()
-        unregisterBatteryReceiver()
-        preferences.unregisterOnSharedPreferenceChangeListener(this)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        startTask()
-
-        // Keyboard is sometimes open when going back to the app, so close it.
+    fun backToHome() {
         closeKeyboard()
-    }
+        animations.showHome(binding)
+        animations.backgroundOut(this@MainActivity, preferences)
+        val handler = Handler(Looper.getMainLooper())
+        handler.postDelayed({
+            try {
+                binding.menutitle.visibility = View.VISIBLE
+                searchView.setText(R.string.empty)
+            }
+            catch (_: UninitializedPropertyAccessException) {
 
-    @SuppressLint("NotifyDataSetChanged")
-    override fun onResume() {
-        super.onResume()
-        adapter?.notifyDataSetChanged()
-    }
+            }
+        }, 100)
+        handler.postDelayed({
+            lifecycleScope.launch {
+                refreshAppMenu()
 
-    open inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
-
-        @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-        @SuppressLint("WrongConstant")
-        override fun onFling(
-            e1: MotionEvent?,
-            e2: MotionEvent,
-            velocityX: Float,
-            velocityY: Float
-        ): Boolean {
-            if (e1 != null) {
-                val deltaY = e2.y - e1.y
-                val deltaX = e2.x - e1.x
-
-                // Detect swipe up
-                if (deltaY < -swipeThreshold && abs(velocityY) > swipeVelocityThreshold) {
-                    openAppMenuActivity()
-                }
-
-                // Detect swipe down
-                else if (deltaY > swipeThreshold && abs(velocityY) > swipeVelocityThreshold) {
-                    val statusBarService = getSystemService(Context.STATUS_BAR_SERVICE)
-                    val statusBarManager: Class<*> = Class.forName("android.app.StatusBarManager")
-                    val expandMethod: Method = statusBarManager.getMethod("expandNotificationsPanel")
-                    expandMethod.invoke(statusBarService)
-                }
-
-                // Detect swipe left
-                else if (deltaX < -swipeThreshold && abs(velocityX) > swipeVelocityThreshold && preferences.getBoolean("leftSwipe", true)){
-
-                    if (leftSwipeActivity.first != null && leftSwipeActivity.second != null) {
-                        launcherApps.startMainActivity(leftSwipeActivity.first!!.componentName,  launcherApps.profiles[leftSwipeActivity.second!!], null, null)
-                    } else {
-                        Toast.makeText(this@MainActivity, "Cannot launch app", Toast.LENGTH_SHORT).show()
+                try {
+                    withContext(Dispatchers.Main) {
+                        recyclerView.scrollToPosition(0)
                     }
                 }
+                catch (_: UninitializedPropertyAccessException) {
 
+                }
+            }}, 150)
 
-                // Detect swipe right
-                else if (deltaX > -swipeThreshold && abs(velocityX) > swipeVelocityThreshold && preferences.getBoolean("rightSwipe", true)) {
-                    if (rightSwipeActivity.first != null && rightSwipeActivity.second != null) {
-                        launcherApps.startMainActivity(rightSwipeActivity.first!!.componentName,  launcherApps.profiles[rightSwipeActivity.second!!], null, null)
-                    } else {
-                        Toast.makeText(this@MainActivity, "Cannot launch app", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun closeKeyboard() {
+        val imm =
+            getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
+    }
+
+    suspend fun refreshAppMenu() {
+        try {
+            if (isJobActive) {
+                val updatedApps = appUtils.getInstalledApps(this@MainActivity, launcherApps)
+                if (!listsEqual(installedApps, updatedApps)) {
+                    withContext(Dispatchers.Main) {
+                        updateMenu(updatedApps)
                     }
+                    installedApps = updatedApps
                 }
             }
-            return true
+        }
+        catch (_: UninitializedPropertyAccessException) {
+        }
+    }
+
+    private fun listsEqual(list1: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>, list2: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>): Boolean {
+        if (list1.size != list2.size) return false
+
+        for (i in list1.indices) {
+            if (list1[i].first.componentName != list2[i].first.componentName || list1[i].second.first != list2[i].second.first) {
+                return false
+            }
         }
 
-        override fun onLongPress(e: MotionEvent) {
-            super.onLongPress(e)
-            startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
-        }
+        return true
+    }
 
-        override fun onDoubleTap(e: MotionEvent): Boolean {
-            if (preferences.getBoolean("doubleTap", false)) {
-                if (isAccessibilityServiceEnabled(
-                        this@MainActivity,
-                        ScreenLockService::class.java
-                    )
-                ) {
-                    println("enabled")
-                    val intent = Intent(this@MainActivity, ScreenLockService::class.java)
-                    intent.action = "LOCK_SCREEN"
-                    startService(intent)
+    private fun updateMenu(updatedApps : List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
+        adapter?.updateApps(updatedApps)
+    }
+
+    private suspend fun updateWeather() {
+        withContext(Dispatchers.IO) {
+            if (preferences.getBoolean("weather_enabled", false)) {
+                if (preferences.getBoolean("gps_location", false)) {
+                    weatherSystem.setGpsLocation(this@MainActivity)
                 } else {
-                    promptEnableAccessibility()
+                    updateWeatherText()
                 }
             }
-
-            return super.onDoubleTap(e)
-
-        }
-
-    }
-
-    inner class TextGestureListener : GestureListener() {
-        override fun onLongPress(e: MotionEvent) {
-
-        }
-    }
-
-
-    fun isAccessibilityServiceEnabled(context: Context, service: Class<out AccessibilityService>): Boolean {
-        val am = context.getSystemService(ACCESSIBILITY_SERVICE) as AccessibilityManager
-        val enabledServices =
-            am.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
-
-        for (enabledService in enabledServices) {
-            val enabledServiceInfo: ServiceInfo = enabledService.resolveInfo.serviceInfo
-            if (enabledServiceInfo.packageName.equals(context.packageName) && enabledServiceInfo.name.equals(
-                    service.name
-                )
-            ) return true
-        }
-
-        return false
-    }
-
-    private fun promptEnableAccessibility() {
-        AlertDialog.Builder(this@MainActivity).apply {
-            setTitle("Confirmation")
-            setMessage("To lock with double tap, enable YAM Launcher in accessibility settings.")
-            setPositiveButton("Yes") { _, _ ->
-                // Perform action on confirmation
-                val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                startActivity(intent)
+            else {
+                modifyDate("", 2)
             }
-            setNegativeButton("Cancel") { _, _ ->
-
-            }
-
-        }.create().show()
+        }
     }
 
-    private fun getSwipeInfo(direction: String): Pair<LauncherActivityInfo?, Int?> {
-        val app = preferences.getString("${direction}SwipeApp", "")?.split("§splitter§")
-
-        if (app != null) {
-            if (app.size >= 3)
-
-            return Pair(
-                launcherApps.getActivityList(
-                    app[1], launcherApps.profiles[app[2]
-                        .toInt()]
-                ).firstOrNull(), app[2].toInt()
-            )
+    suspend fun updateWeatherText() {
+        val temp = weatherSystem.getTemp(this@MainActivity)
+        withContext(Dispatchers.Main) {
+            modifyDate(temp, 2)
         }
-        return Pair(null, null)
     }
 
     private fun setupApps() {
-            handleListItems()
-        CoroutineScope(Dispatchers.Default).launch {
+        lifecycleScope.launch(Dispatchers.Default) {
             installedApps = appUtils.getInstalledApps(this@MainActivity, launcherApps)
             val newApps = installedApps.toMutableList()
 
@@ -536,83 +462,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             setupSearch()
         }
 
-    }
-
-    private fun handleListItems() {
-        val shortcuts = arrayOf(R.id.app1, R.id.app2, R.id.app3, R.id.app4, R.id.app5, R.id.app6, R.id.app7, R.id.app8)
-
-        for (i in shortcuts.indices) {
-
-            val textView = findViewById<TextView>(shortcuts[i])
-
-            val shortcutNo = preferences.getString("shortcutNo", "4")?.toInt()
-
-            if (i >= shortcutNo!!) {
-                textView.visibility = View.GONE
-            }
-
-            else {
-                textView.visibility = View.VISIBLE
-
-                unselectedSetup(textView)
-
-                val savedView = sharedPreferenceManager.getShortcut(this, textView)
-
-                if (savedView?.get(1) != "e") {
-                    selectedSetup(textView, savedView)
-                }
-
-                setShortcutAlignment(preferences.getString("shortcutAlignment", "left"), binding.homeView)
-            }
-
-        }
-
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    private fun unselectedSetup(textView: TextView) {
-        textView.setOnTouchListener {_, event ->
-            shortcutGestureDetector.onTouchEvent(event)
-            super.onTouchEvent(event)
-        }
-
-        textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_empty, null),null,null,null)
-
-        unselectedListeners(textView)
-    }
-
-    private fun selectedSetup(textView: TextView, savedView: List<String>?) {
-        if (savedView?.get(1) != "0") {
-            textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_work_app, null),null,null,null)
-        }
-        else {
-            textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_empty, null),null,null,null)
-        }
-        textView.text = savedView?.get(2)
-        selectedListeners(textView, savedView)
-    }
-
-    private fun unselectedListeners(textView: TextView) {
-        textView.setOnClickListener {
-            Toast.makeText(this, "Long click to select an app", Toast.LENGTH_SHORT).show()
-        }
-        textView.setOnLongClickListener {
-            adapter?.shortcutTextView = textView
-            toAppMenu()
-
-            return@setOnLongClickListener true
-        }
-    }
-
-    private fun selectedListeners(textView: TextView, savedView: List<String>?) {
-        textView.setOnClickListener {
-            val mainActivity = launcherApps.getActivityList(savedView?.get(0).toString(), launcherApps.profiles[savedView?.get(1)!!.toInt()]).firstOrNull()
-            if (mainActivity != null) {
-                launcherApps.startMainActivity(mainActivity.componentName,  launcherApps.profiles[savedView[1].toInt()], null, null)
-            } else {
-                Toast.makeText(this, "Cannot launch app", Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 
     private suspend fun setupRecyclerView(newApps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
@@ -640,19 +489,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         })
     }
 
-    private fun setupSearch() {
+    private suspend fun setupSearch() {
         recyclerView.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
 
             if (bottom - top > oldBottom - oldTop) {
-
                 searchView.clearFocus()
-
-                if (searchView.text.isNullOrEmpty()) {
-                    startTask()
-                }
-            }
-            else if (bottom - top < oldBottom - oldTop) {
-                job?.cancel()
             }
         }
 
@@ -666,34 +507,32 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             }
 
             override fun afterTextChanged(s: Editable?) {
-                CoroutineScope(Dispatchers.Default).launch {
+                lifecycleScope.launch(Dispatchers.Default) {
                     filterItems(searchView.text.toString())
                 }
             }
         })
     }
 
-    suspend fun applySearch() {
-        filterItems(searchView.text.toString())
-    }
-
     private suspend fun filterItems(query: String?) {
 
-            val cleanQuery = stringUtils.cleanString(query)
-            val newFilteredApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
-            val updatedApps = appUtils.getInstalledApps(this@MainActivity, launcherApps)
+        val cleanQuery = stringUtils.cleanString(query)
+        val newFilteredApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
+        val updatedApps = appUtils.getInstalledApps(this@MainActivity, launcherApps)
 
-            getFilteredApps(cleanQuery, newFilteredApps, updatedApps)
+        getFilteredApps(cleanQuery, newFilteredApps, updatedApps)
 
-            applySearch(newFilteredApps)
+        applySearchFilter(newFilteredApps)
 
     }
 
     private suspend fun getFilteredApps(cleanQuery: String?, newFilteredApps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>, updatedApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
         if (cleanQuery.isNullOrEmpty()) {
+            isJobActive = true
             refreshAppMenu()
             newFilteredApps.addAll(installedApps)
         } else {
+            isJobActive = false
             updatedApps.forEach {
                 val cleanItemText = stringUtils.cleanString(sharedPreferenceManager.getAppName(this@MainActivity, it.first.applicationInfo.packageName, it.second.second, packageManager.getApplicationLabel(it.first.applicationInfo)).toString())
                 if (cleanItemText != null) {
@@ -705,7 +544,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
     }
 
-    private suspend fun applySearch(newFilteredApps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
+    private suspend fun applySearchFilter(newFilteredApps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
         if (!listsEqual(installedApps, newFilteredApps)) {
             withContext(Dispatchers.Main) {
                 updateMenu(newFilteredApps)
@@ -714,70 +553,45 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
     }
 
-    private fun startTask() {
-        job?.cancel()
-        job = CoroutineScope(Dispatchers.Default).launch {
-            while (true) {
-                refreshAppMenu()
-                delay(5000)
-            }
-        }
+    suspend fun applySearch() {
+        filterItems(searchView.text.toString())
     }
 
-    fun openAppMenuActivity() {
-        adapter?.shortcutTextView = null
-        binding.menutitle.visibility = View.GONE
-        toAppMenu()
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        backToHome()
     }
-    
-    fun backToHome() {
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        unregisterBatteryReceiver()
+        preferences.unregisterOnSharedPreferenceChangeListener(this)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // Keyboard is sometimes open when going back to the app, so close it.
         closeKeyboard()
-        animations.showHome(binding)
-        animations.backgroundOut(this@MainActivity, Color.parseColor(preferences.getString("bgColor",  "#00000000")))
-        val handler = Handler(Looper.getMainLooper())
-        handler.postDelayed({
-            try {
-                binding.menutitle.visibility = View.VISIBLE
-                searchView.setText("")
-            }
-            catch (_: UninitializedPropertyAccessException) {
+        try {
 
-            }
-        }, 100)
-        handler.postDelayed({
-            CoroutineScope(Dispatchers.Default).launch {
-                refreshAppMenu()
+            recyclerView.scrollToPosition(0)
 
-            try {
-                withContext(Dispatchers.Main) {
-                    recyclerView.scrollToPosition(0)
-                }
-            }
-            catch (_: UninitializedPropertyAccessException) {
+        }
+        catch (_: UninitializedPropertyAccessException) {
 
-            }
-        }}, 150)
-
+        }
     }
 
-    private fun toAppMenu() {
-        animations.showApps(binding)
-        animations.backgroundIn(this@MainActivity, Color.parseColor(preferences.getString("bgColor",  "#00000000")))
-        if (preferences.getBoolean("autoKeyboard", false)) {
-            val imm =
-                getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            searchView.requestFocus()
-            imm.showSoftInput(searchView, InputMethodManager.SHOW_IMPLICIT)
-        }
+    @SuppressLint("NotifyDataSetChanged")
+    override fun onResume() {
+        super.onResume()
+        adapter?.notifyDataSetChanged()
     }
 
     override fun onItemClick(appInfo: LauncherActivityInfo, userHandle: UserHandle) {
-        val mainActivity = launcherApps.getActivityList(appInfo.applicationInfo.packageName, userHandle).firstOrNull()
-        if (mainActivity != null) {
-            launcherApps.startMainActivity(mainActivity.componentName, userHandle, null, null)
-        } else {
-            Toast.makeText(this, "Cannot launch app", Toast.LENGTH_SHORT).show()
-        }
+        appUtils.launchApp(this@MainActivity, launcherApps, appInfo, userHandle)
     }
 
     override fun onShortcut(
@@ -825,12 +639,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         shortcutView.text = textView.text.toString()
         shortcutView.setOnClickListener {
-            val mainActivity = launcherApps.getActivityList(appInfo.applicationInfo.packageName, userHandle).firstOrNull()
-            if (mainActivity != null) {
-                launcherApps.startMainActivity(mainActivity.componentName,  userHandle, null, null)
-            } else {
-                Toast.makeText(this, "Cannot launch app", Toast.LENGTH_SHORT).show()
-            }
+            appUtils.launchApp(this@MainActivity, launcherApps, appInfo, userHandle)
         }
         sharedPreferenceManager.setShortcut(this, shortcutView, appInfo.applicationInfo.packageName, userProfile)
         backToHome()
@@ -866,211 +675,93 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         )
     }
 
-    suspend fun refreshAppMenu() {
-            try {
-                val updatedApps = appUtils.getInstalledApps(this@MainActivity, launcherApps)
-                println("update running")
-                if (!listsEqual(installedApps, updatedApps)) {
-                    withContext(Dispatchers.Main) {
-                        updateMenu(updatedApps)
-                    }
-                    installedApps = updatedApps
+    open inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
+
+        @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+        @SuppressLint("WrongConstant")
+        override fun onFling(
+            e1: MotionEvent?,
+            e2: MotionEvent,
+            velocityX: Float,
+            velocityY: Float
+        ): Boolean {
+            if (e1 != null) {
+                val deltaY = e2.y - e1.y
+                val deltaX = e2.x - e1.x
+
+                // Detect swipe up
+                if (deltaY < -swipeThreshold && abs(velocityY) > swipeVelocityThreshold) {
+                    openAppMenu()
                 }
-            }
-            catch (_: UninitializedPropertyAccessException) {
-            }
 
-        }
+                // Detect swipe down
+                else if (deltaY > swipeThreshold && abs(velocityY) > swipeVelocityThreshold) {
+                    val statusBarService = getSystemService(Context.STATUS_BAR_SERVICE)
+                    val statusBarManager: Class<*> = Class.forName("android.app.StatusBarManager")
+                    val expandMethod: Method = statusBarManager.getMethod("expandNotificationsPanel")
+                    expandMethod.invoke(statusBarService)
+                }
 
+                // Detect swipe left
+                else if (deltaX < -swipeThreshold && abs(velocityX) > swipeVelocityThreshold && preferences.getBoolean("leftSwipe", true)){
 
-    private fun closeKeyboard() {
-        val imm =
-            getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
-    }
-
-    private fun updateMenu(updatedApps : List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
-        adapter?.updateApps(updatedApps)
-        println("moved")
-    }
-
-    private fun listsEqual(list1: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>, list2: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>): Boolean {
-        if (list1.size != list2.size) return false
-
-        for (i in list1.indices) {
-            if (list1[i].first.componentName != list2[i].first.componentName || list1[i].second.first != list2[i].second.first) {
-                return false
-            }
-        }
-
-        return true
-    }
-
-    private fun setClockAlignment(alignment: String?) {
-
-        when (alignment) {
-            "left" -> {
-                clock.textAlignment = TEXT_ALIGNMENT_TEXT_START
-                dateText.textAlignment = TEXT_ALIGNMENT_TEXT_START
-            }
-            "center" -> {
-                clock.textAlignment = TEXT_ALIGNMENT_CENTER
-                dateText.textAlignment = TEXT_ALIGNMENT_CENTER
-            }
-            "right" -> {
-                clock.textAlignment = TEXT_ALIGNMENT_TEXT_END
-                dateText.textAlignment = TEXT_ALIGNMENT_TEXT_END
-            }
-        }
-    }
-
-    private fun setShortcutAlignment(alignment: String?, shortcuts: LinearLayout) {
-        shortcuts.children.forEach {
-
-            if (it is TextView) {
-
-                try {
-                    when (alignment) {
-                        "left" -> {
-                            it.setCompoundDrawablesWithIntrinsicBounds(
-                                it.compoundDrawables.filterNotNull().first(), null, null, null
-                            )
-                            it.gravity = Gravity.CENTER_VERTICAL or Gravity.START
-                        }
-
-                        "center" -> {
-                            it.setCompoundDrawablesWithIntrinsicBounds(
-                                it.compoundDrawables.filterNotNull().first(),
-                                null,
-                                it.compoundDrawables.filterNotNull().first(),
-                                null
-                            )
-                            it.gravity = Gravity.CENTER
-                        }
-
-                        "right" -> {
-                            it.setCompoundDrawablesWithIntrinsicBounds(
-                                null,
-                                null,
-                                it.compoundDrawables.filterNotNull().first(),
-                                null
-                            )
-                            it.gravity = Gravity.CENTER_VERTICAL or Gravity.END
-                        }
-                    }
-                } catch(_: Exception) {}
-            }
-        }
-    }
-
-    private fun setSearchAlignment(alignment: String?) {
-
-        when (alignment) {
-            "left" -> {
-                searchView.textAlignment = View.TEXT_ALIGNMENT_VIEW_START
-            }
-            "center" -> {
-                searchView.textAlignment = View.TEXT_ALIGNMENT_CENTER
-            }
-            "right" -> {
-                searchView.textAlignment = View.TEXT_ALIGNMENT_VIEW_END
-            }
-        }
-    }
-
-    private fun setShortcutSize(shortcuts: LinearLayout) {
-
-        val viewTreeObserver = shortcuts.viewTreeObserver
-        val globalLayoutListener = object : ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-
-                shortcuts.children.forEach {
-                    if (it is TextView) {
-
-                        when (preferences.getString("shortcutSize", "medium")) {
-                            "small" -> {
-                                it.setPadding(
-                                    it.paddingLeft,
-                                    it.height / 4,
-                                    it.paddingRight,
-                                    it.height / 4
-                                )
-                            }
-
-                            "medium" -> {
-                                it.setPadding(
-                                    it.paddingLeft,
-                                    (it.height / 4.5).toInt(),
-                                    it.paddingRight,
-                                    (it.height / 4.5).toInt()
-                                )
-                            }
-
-                            "large" -> {
-                                it.setPadding(it.paddingLeft, 0, it.paddingRight, 0)
-                            }
-                        }
-
+                    if (leftSwipeActivity.first != null && leftSwipeActivity.second != null) {
+                        launcherApps.startMainActivity(leftSwipeActivity.first!!.componentName,  launcherApps.profiles[leftSwipeActivity.second!!], null, null)
+                    } else {
+                        Toast.makeText(this@MainActivity, "Cannot launch app", Toast.LENGTH_SHORT).show()
                     }
                 }
-                if (viewTreeObserver.isAlive) {
-                    viewTreeObserver.removeOnGlobalLayoutListener(this)
+
+
+                // Detect swipe right
+                else if (deltaX > -swipeThreshold && abs(velocityX) > swipeVelocityThreshold && preferences.getBoolean("rightSwipe", true)) {
+                    if (rightSwipeActivity.first != null && rightSwipeActivity.second != null) {
+                        launcherApps.startMainActivity(rightSwipeActivity.first!!.componentName,  launcherApps.profiles[rightSwipeActivity.second!!], null, null)
+                    } else {
+                        Toast.makeText(this@MainActivity, "Cannot launch app", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
+            return true
         }
 
-        if (viewTreeObserver.isAlive) {
-            viewTreeObserver.addOnGlobalLayoutListener(globalLayoutListener)
+        override fun onLongPress(e: MotionEvent) {
+            super.onLongPress(e)
+            startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
+        }
+
+        override fun onDoubleTap(e: MotionEvent): Boolean {
+            if (preferences.getBoolean("doubleTap", false)) {
+                if (gestureUtils.isAccessibilityServiceEnabled(
+                        this@MainActivity,
+                        ScreenLockService::class.java
+                    )
+                ) {
+                    println("enabled")
+                    val intent = Intent(this@MainActivity, ScreenLockService::class.java)
+                    intent.action = "LOCK_SCREEN"
+                    startService(intent)
+                } else {
+                    gestureUtils.promptEnableAccessibility(this@MainActivity)
+                }
+            }
+
+            return super.onDoubleTap(e)
+
+        }
+
+        private fun openAppMenu() {
+            adapter?.shortcutTextView = null
+            binding.menutitle.visibility = View.GONE
+            toAppMenu()
+        }
+
+    }
+
+    inner class TextGestureListener : GestureListener() {
+        override fun onLongPress(e: MotionEvent) {
+
         }
     }
 
-    private fun setClockSize(size: String?) {
-        when (size) {
-            "small" -> {
-                clock.textSize = 48F
-            }
-            "medium" -> {
-                clock.textSize = 58F
-            }
-            "large" -> {
-                clock.textSize = 68F
-            }
-        }
-    }
-
-    private fun setDateSize(size: String?) {
-        when (size) {
-            "small" -> {
-                dateText.textSize = 17F
-            }
-            "medium" -> {
-                dateText.textSize = 20F
-            }
-            "large" -> {
-                dateText.textSize = 23F
-            }
-        }
-    }
-
-    private fun setSearchSize(size: String?) {
-        when (size) {
-            "small" -> {
-                searchView.textSize = 21F
-            }
-            "medium" -> {
-                searchView.textSize = 23F
-            }
-            "large" -> {
-                searchView.textSize = 25F
-            }
-        }
-    }
-
-    fun isJobActive(): Boolean {
-        return if (job != null) {
-            job!!.isActive
-        } else {
-            false
-        }
-    }
 }

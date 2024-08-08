@@ -88,15 +88,16 @@ class GestureAppsFragment : Fragment(), GestureAppsAdapter.OnItemClickListener {
                 }
 
                 override fun afterTextChanged(s: Editable?) {
-
-                    filterItems(searchView.text.toString())
+                    lifecycleScope.launch {
+                        filterItems(searchView.text.toString())
+                    }
 
                 }
             })
         }
     }
 
-    private fun filterItems(query: String?) {
+    private suspend fun filterItems(query: String?) {
 
         val cleanQuery = stringUtils.cleanString(query)
         val newFilteredApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()

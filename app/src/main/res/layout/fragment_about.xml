@@ -20,7 +20,7 @@
         android:id="@+id/textView2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="YAM Launcher"
+        android:text="@string/app_name"
         android:textAlignment="center"
         android:textSize="34sp"
         android:textStyle="bold"

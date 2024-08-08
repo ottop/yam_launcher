@@ -126,9 +126,7 @@ class AppActionMenu {
                 )
 
                 CoroutineScope(Dispatchers.Default).launch {
-                    CoroutineScope(Dispatchers.Default).launch {
-                        activity.applySearch()
-                    }
+                    activity.applySearch()
                 }
             }
         }
