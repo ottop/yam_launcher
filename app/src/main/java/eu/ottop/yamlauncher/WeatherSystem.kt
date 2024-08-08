@@ -7,31 +7,31 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.asExecutor
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
+import kotlin.coroutines.coroutineContext
 
 class WeatherSystem {
 
     private val sharedPreferenceManager = SharedPreferenceManager()
     private val stringUtils = StringUtils()
 
-    fun setGpsLocation(activity: Activity) {
+    suspend fun setGpsLocation(activity: MainActivity) {
         val locationManager = activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
-        val locationListener = object : LocationListener {
-            override fun onLocationChanged(location: Location) {
-                println("Location obtained")
-                locationManager.removeUpdates(this)
-            }
-
-        }
 
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
@@ -42,17 +42,20 @@ class WeatherSystem {
             return
         }
 
-
-        locationManager.requestLocationUpdates(LocationManager.FUSED_PROVIDER, 0, 0f, locationListener)
-
-
-        val currentLocation = locationManager.getLastKnownLocation(LocationManager.FUSED_PROVIDER)
-
-
-        if (currentLocation != null) {
-            sharedPreferenceManager.setWeatherLocation(activity, "latitude=${currentLocation.latitude}&longitude=${currentLocation.longitude}", sharedPreferenceManager.getWeatherRegion(activity))
+        locationManager.getCurrentLocation(
+            LocationManager.GPS_PROVIDER,          // Use GPS provider
+            null,                                  // No cancellation signal
+            ContextCompat.getMainExecutor(activity)
+        )
+        { location: Location? ->               // Lambda expression for the callback
+            if (location != null) {
+                CoroutineScope(Dispatchers.IO).launch {
+                val latitude = location.latitude
+                val longitude = location.longitude
+                sharedPreferenceManager.setWeatherLocation(activity, "latitude=${latitude}&longitude=${longitude}", sharedPreferenceManager.getWeatherRegion(activity))
+                activity.updateWeatherText()}
+            }
         }
-
 
     }
 

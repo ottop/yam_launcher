@@ -36,9 +36,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
             gpsLocationPref.onPreferenceChangeListener =
                 Preference.OnPreferenceChangeListener { _, newValue ->
                     val isGpsEnabled = newValue as Boolean
-                    if (isGpsEnabled) {
-                        weatherSystem.setGpsLocation(requireActivity())
-                    }
                     manualLocationPref?.isEnabled = !isGpsEnabled
                     true // Returning true means the change is persisted
                 }

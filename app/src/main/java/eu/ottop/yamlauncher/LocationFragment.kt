@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.fragment.app.setFragmentResult
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.Preference
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
@@ -44,7 +45,7 @@ class LocationFragment : Fragment(), LocationListAdapter.OnItemClickListener {
 
         stringUtils.setLink(requireActivity().findViewById(R.id.locationLink), getString(R.string.location_link))
 
-        CoroutineScope(Dispatchers.IO).launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             locationList = weatherSystem.getSearchedLocations(
                 searchView.text.toString()
             )
@@ -75,7 +76,7 @@ class LocationFragment : Fragment(), LocationListAdapter.OnItemClickListener {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 println(searchView.text.toString())
-                CoroutineScope(Dispatchers.IO).launch {
+                lifecycleScope.launch(Dispatchers.IO){
                     val locations = weatherSystem.getSearchedLocations(
                         searchView.text.toString()
                     )

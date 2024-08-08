@@ -70,8 +70,8 @@
     <string name="codeberg_link"><![CDATA[<a href="https://codeberg.org/ottoptj/yamlauncher">Codeberg</a>]]></string>
     <string name="github_link"><![CDATA[<a href="https://github.com">GitHub</a>]]></string>
 
-    <string name="stripe_link"><![CDATA[<a href="https://codeberg.org/ottoptj/yamlauncher">Stripe</a>]]></string>
-    <string name="libera_link"><![CDATA[<a href="https://github.com">Liberapay</a>]]></string>
+    <string name="libera_link"><![CDATA[<a href="https://github.com">Liberapay</a><br>(recurring)]]></string>
+    <string name="stripe_link"><![CDATA[<a href="https://codeberg.org/ottoptj/yamlauncher">Stripe</a><br>(one-time)]]></string>
 
     <string name="weather_link"><![CDATA[Weather data by <a href="https://open-meteo.com/">Open-Meteo.com</a><br>(<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>)]]></string>
     <string name="location_link"><![CDATA[Location data by <a href="https://open-meteo.com/">Open-Meteo.com</a> (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>)]]></string>

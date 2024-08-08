@@ -44,6 +44,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.children
 import androidx.core.view.marginLeft
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleCoroutineScope
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
@@ -189,6 +193,28 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             }
         })
 
+        lifecycleScope.launch(Dispatchers.IO) {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                while (true) {
+                    updateWeather()
+                    delay(600000)
+                }
+            }
+        }
+
+    }
+
+    private suspend fun updateWeather() {
+        withContext(Dispatchers.IO) {
+            if (preferences.getBoolean("weather_enabled", false)) {
+                if (preferences.getBoolean("gps_location", false)) {
+                        weatherSystem.setGpsLocation(this@MainActivity)
+                } else {
+
+                        updateWeatherText()
+                }
+            }
+        }
     }
 
     fun modifyDate(value: String, index: Int) {
@@ -197,22 +223,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         dateText.format24Hour = "${dateElements[1]}${stringUtils.addStartTextIfNotEmpty(dateElements[2], " | ")}${stringUtils.addStartTextIfNotEmpty(dateElements[3], " | ")}"
     }
 
-    private fun startWeatherMonitor() {
-        weatherJob?.cancel()
-        weatherJob = CoroutineScope(Dispatchers.IO).launch {
-            while (true) {
-                if (preferences.getBoolean("gps_location", false)) {
-                    withContext(Dispatchers.Main) {
-                        weatherSystem.setGpsLocation(this@MainActivity)
-                    }
-                }
 
-                val currentWeather = weatherSystem.getTemp(this@MainActivity)
-                withContext(Dispatchers.Main) {
-                    modifyDate(currentWeather, 2)
-                }
-                delay(300000)
-            }
+
+    suspend fun updateWeatherText() {
+        val temp = weatherSystem.getTemp(this@MainActivity)
+        withContext(Dispatchers.Main) {
+            modifyDate(temp, 2)
         }
     }
 
@@ -261,7 +277,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
             "weather_enabled" -> {
                 if (preferences?.getBoolean(key, false) == true) {
-                    startWeatherMonitor()
+                    lifecycleScope.launch {
+                        updateWeather()
+                    }
                 }
                 else {
                     weatherJob?.cancel()
@@ -363,9 +381,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     override fun onStart() {
         super.onStart()
         startTask()
-        if (preferences.getBoolean("weather_enabled", false)) {
-            startWeatherMonitor()
-        }
 
         // Keyboard is sometimes open when going back to the app, so close it.
         closeKeyboard()

@@ -117,8 +117,8 @@
         android:text="Stripe"
         android:textAlignment="center"
         android:textSize="20sp"
-        app:layout_constraintEnd_toStartOf="@+id/githubLink"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/liberaLink"
         app:layout_constraintTop_toBottomOf="@+id/divider2" />
 
     <TextView
@@ -130,8 +130,8 @@
         android:text="Liberapay"
         android:textAlignment="center"
         android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/codebergLink"
+        app:layout_constraintEnd_toStartOf="@+id/stripeLink"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider2" />
 
     <TextView

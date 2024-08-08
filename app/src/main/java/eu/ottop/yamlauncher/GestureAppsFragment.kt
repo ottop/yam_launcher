@@ -17,6 +17,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.setFragmentResult
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.Preference
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.CoroutineScope
@@ -43,7 +44,7 @@ class GestureAppsFragment : Fragment(), GestureAppsAdapter.OnItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        CoroutineScope(Dispatchers.Main).launch {
+        lifecycleScope.launch {
 
             withContext(Dispatchers.Default) {
 
