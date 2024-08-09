@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import eu.ottop.yamlauncher.databinding.ActivitySettingsBinding
 
 class SettingsActivity : AppCompatActivity() {
+
     private lateinit var binding: ActivitySettingsBinding
 
         override fun onCreate(savedInstanceState: Bundle?) {

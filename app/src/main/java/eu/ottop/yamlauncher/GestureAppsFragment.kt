@@ -1,6 +1,5 @@
 package eu.ottop.yamlauncher
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.pm.LauncherActivityInfo
@@ -25,9 +24,9 @@ import kotlinx.coroutines.withContext
 class GestureAppsFragment : Fragment(), GestureAppsAdapter.OnItemClickListener {
 
     private var adapter: GestureAppsAdapter? = null
-    private val sharedPreferenceManager = SharedPreferenceManager()
+    private val sharedPreferenceManager = SharedPreferenceManager(requireContext())
     private var stringUtils = StringUtils()
-    private val appUtils = AppUtils()
+    private val appUtils = AppUtils(requireContext())
     private lateinit var launcherApps: LauncherApps
 
     override fun onCreateView(
@@ -49,7 +48,7 @@ class GestureAppsFragment : Fragment(), GestureAppsAdapter.OnItemClickListener {
 
                 adapter = GestureAppsAdapter(
                     requireContext(),
-                    appUtils.getInstalledApps(activity as Activity, launcherApps).toMutableList(),
+                    appUtils.getInstalledApps(launcherApps).toMutableList(),
                     this@GestureAppsFragment
                 )
             }
@@ -104,7 +103,7 @@ class GestureAppsFragment : Fragment(), GestureAppsAdapter.OnItemClickListener {
 
         val cleanQuery = stringUtils.cleanString(query)
         val newFilteredApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
-        val updatedApps = appUtils.getInstalledApps(requireActivity(), launcherApps)
+        val updatedApps = appUtils.getInstalledApps(launcherApps)
 
         getFilteredApps(cleanQuery, newFilteredApps, updatedApps)
 
@@ -117,7 +116,11 @@ class GestureAppsFragment : Fragment(), GestureAppsAdapter.OnItemClickListener {
             newFilteredApps.addAll(updatedApps)
         } else {
             updatedApps.forEach {
-                val cleanItemText = stringUtils.cleanString(sharedPreferenceManager.getAppName(requireActivity(), it.first.applicationInfo.packageName, it.second.second, requireActivity().packageManager.getApplicationLabel(it.first.applicationInfo)).toString())
+                val cleanItemText = stringUtils.cleanString(sharedPreferenceManager.getAppName(
+                    it.first.applicationInfo.packageName,
+                    it.second.second,
+                    requireActivity().packageManager.getApplicationLabel(it.first.applicationInfo)
+                ).toString())
                 if (cleanItemText != null) {
                     if (cleanItemText.contains(cleanQuery, ignoreCase = true)) {
                         newFilteredApps.add(it)
@@ -156,7 +159,11 @@ class GestureAppsFragment : Fragment(), GestureAppsAdapter.OnItemClickListener {
 
 
     override fun onItemClick(appInfo: LauncherActivityInfo, profile: Int) {
-        showConfirmationDialog(appInfo, sharedPreferenceManager.getAppName(requireContext(), appInfo.applicationInfo.packageName,profile, requireContext().packageManager.getApplicationLabel(appInfo.applicationInfo)).toString(), profile)
+        showConfirmationDialog(appInfo, sharedPreferenceManager.getAppName(
+            appInfo.applicationInfo.packageName,
+            profile,
+            requireContext().packageManager.getApplicationLabel(appInfo.applicationInfo)
+        ).toString(), profile)
     }
 
 

@@ -22,7 +22,8 @@ import com.google.android.material.textfield.TextInputEditText
 
 
 class AppMenuAdapter(
-    private val activity: Context,
+
+    private val context: Context,
     private var apps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>,
     private val itemClickListener: OnItemClickListener,
     private val shortcutListener: OnShortcutListener,
@@ -33,10 +34,10 @@ class AppMenuAdapter(
 
         var shortcutTextView: TextView? = null
 
-        private val sharedPreferenceManager = SharedPreferenceManager()
-        private var preferences = PreferenceManager.getDefaultSharedPreferences(activity)
+        private val sharedPreferenceManager = SharedPreferenceManager(context)
+        private var preferences = PreferenceManager.getDefaultSharedPreferences(context)
         private val uiUtils = UIUtils()
-        private val appUtils = AppUtils()
+        private val appUtils = AppUtils(context)
 
     interface OnItemClickListener {
         fun onItemClick(appInfo: LauncherActivityInfo, userHandle: UserHandle)
@@ -112,15 +113,15 @@ class AppMenuAdapter(
         val app = apps[position]
 
         if (app.second.second != 0) {
-            holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_work_app, null),null, ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null),null)
+            holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(context.resources, R.drawable.ic_work_app, null),null, ResourcesCompat.getDrawable(context.resources, R.drawable.ic_empty, null),null)
             holder.textView.compoundDrawables[0].colorFilter =
                 BlendModeColorFilter(Color.parseColor(preferences?.getString("textColor",  "#FFF3F3F3")), BlendMode.SRC_ATOP)
         }
         else {
-            holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null),null,ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null),null)
+            holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(context.resources, R.drawable.ic_empty, null),null,ResourcesCompat.getDrawable(context.resources, R.drawable.ic_empty, null),null)
         }
 
-        uiUtils.setAppAlignment(activity, preferences, holder.textView, holder.editText)
+        uiUtils.setAppAlignment(context, preferences, holder.textView, holder.editText)
 
         uiUtils.setAppSize(preferences, holder.textView, holder.editText)
 
@@ -131,11 +132,10 @@ class AppMenuAdapter(
         )
 
         holder.textView.setTextColor(Color.parseColor(preferences?.getString("textColor",  "#FFF3F3F3")))
-        val appLabel: CharSequence = appInfo?.loadLabel(activity.packageManager) ?: "Removing..."
+        val appLabel: CharSequence = appInfo?.loadLabel(context.packageManager) ?: "Removing..."
 
         if (appInfo != null) {
             holder.textView.text = sharedPreferenceManager.getAppName(
-                activity,
                 appInfo.packageName,
                 app.second.second,
                 appLabel

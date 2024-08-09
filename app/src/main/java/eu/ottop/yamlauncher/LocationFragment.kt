@@ -21,8 +21,8 @@ import kotlinx.coroutines.withContext
 class LocationFragment : Fragment(), LocationListAdapter.OnItemClickListener {
 
     private var adapter: LocationListAdapter? = null
-    private val weatherSystem = WeatherSystem()
-    private val sharedPreferenceManager = SharedPreferenceManager()
+    private lateinit var weatherSystem: WeatherSystem
+    private lateinit var sharedPreferenceManager: SharedPreferenceManager
     private val stringUtils = StringUtils()
     private val uiUtils = UIUtils()
 
@@ -30,7 +30,6 @@ class LocationFragment : Fragment(), LocationListAdapter.OnItemClickListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_location, container, false)
     }
 
@@ -42,6 +41,10 @@ class LocationFragment : Fragment(), LocationListAdapter.OnItemClickListener {
         var locationList = mutableListOf<Map<String, String>>()
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
+
+        weatherSystem = WeatherSystem(requireContext())
+
+        sharedPreferenceManager = SharedPreferenceManager(requireContext())
 
         stringUtils.setLink(requireActivity().findViewById(R.id.locationLink), getString(R.string.location_link))
 
@@ -108,7 +111,6 @@ class LocationFragment : Fragment(), LocationListAdapter.OnItemClickListener {
             setTitle("Confirmation")
             setMessage("Are you sure you want to select $appName?")
             setPositiveButton("Yes") { _, _ ->
-                // Perform action on confirmation
                 performConfirmedAction(appName, latitude, longitude)
             }
             setNegativeButton("Cancel") { _, _ ->
@@ -119,7 +121,7 @@ class LocationFragment : Fragment(), LocationListAdapter.OnItemClickListener {
     }
 
     private fun performConfirmedAction(appName: String?, latitude: String?, longitude: String?) {
-        sharedPreferenceManager.setWeatherLocation(requireContext(), "latitude=${latitude}&longitude=${longitude}", appName)
+        sharedPreferenceManager.setWeatherLocation("latitude=${latitude}&longitude=${longitude}", appName)
         requireActivity().supportFragmentManager.popBackStack()
     }
 

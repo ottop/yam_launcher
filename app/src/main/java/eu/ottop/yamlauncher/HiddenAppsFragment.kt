@@ -1,6 +1,5 @@
 package eu.ottop.yamlauncher
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.pm.LauncherActivityInfo
@@ -18,8 +17,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 
 class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
-    private val appUtils = AppUtils()
-    private val sharedPreferenceManager = SharedPreferenceManager()
+    private lateinit var appUtils: AppUtils
+    private lateinit var sharedPreferenceManager: SharedPreferenceManager
     private var adapter: HiddenAppsAdapter? = null
     private var stringUtils = StringUtils()
     private val uiUtils = UIUtils()
@@ -34,10 +33,15 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = HiddenAppsAdapter(requireContext(), appUtils.getHiddenApps(activity as Activity).toMutableList(), this)
+        appUtils = AppUtils(requireContext())
+        sharedPreferenceManager = SharedPreferenceManager(requireContext())
+
         val recyclerView = view.findViewById<RecyclerView>(R.id.hidden_app_recycler)
         val appMenuEdgeFactory = AppMenuEdgeFactory(requireActivity())
         val preferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
+
+        adapter = HiddenAppsAdapter(requireContext(), appUtils.getHiddenApps().toMutableList(), this)
+
 
         recyclerView.edgeEffectFactory = appMenuEdgeFactory
         recyclerView.adapter = adapter
@@ -85,7 +89,7 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
 
         val cleanQuery = stringUtils.cleanString(query)
         val newFilteredApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
-        val updatedApps = appUtils.getHiddenApps(requireActivity())
+        val updatedApps = appUtils.getHiddenApps()
 
         getFilteredApps(cleanQuery, newFilteredApps, updatedApps)
 
@@ -98,7 +102,11 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
             newFilteredApps.addAll(updatedApps)
         } else {
             updatedApps.forEach {
-                val cleanItemText = stringUtils.cleanString(sharedPreferenceManager.getAppName(requireActivity(), it.first.applicationInfo.packageName, it.second.second, requireActivity().packageManager.getApplicationLabel(it.first.applicationInfo)).toString())
+                val cleanItemText = stringUtils.cleanString(sharedPreferenceManager.getAppName(
+                    it.first.applicationInfo.packageName,
+                    it.second.second,
+                    requireActivity().packageManager.getApplicationLabel(it.first.applicationInfo)
+                ).toString())
                 if (cleanItemText != null) {
                     if (cleanItemText.contains(cleanQuery, ignoreCase = true)) {
                         newFilteredApps.add(it)
@@ -117,7 +125,6 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
             setTitle("Confirmation")
             setMessage("Are you sure you want to unhide $appName?")
             setPositiveButton("Yes") { _, _ ->
-                // Perform action on confirmation
                 performConfirmedAction(appInfo, profile)
             }
 
@@ -127,12 +134,16 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
     }
 
     private fun performConfirmedAction(appInfo: LauncherActivityInfo, profile: Int) {
-        sharedPreferenceManager.setAppVisible(requireContext(), appInfo.applicationInfo.packageName, profile)
-        adapter?.updateApps(appUtils.getHiddenApps(requireActivity()))
+        sharedPreferenceManager.setAppVisible(appInfo.applicationInfo.packageName, profile)
+        adapter?.updateApps(appUtils.getHiddenApps())
     }
 
     override fun onItemClick(appInfo: LauncherActivityInfo, profile: Int) {
-        showConfirmationDialog(appInfo, sharedPreferenceManager.getAppName(requireContext(), appInfo.applicationInfo.packageName,profile, requireContext().packageManager.getApplicationLabel(appInfo.applicationInfo)).toString(), profile)
+        showConfirmationDialog(appInfo, sharedPreferenceManager.getAppName(
+            appInfo.applicationInfo.packageName,
+            profile,
+            requireContext().packageManager.getApplicationLabel(appInfo.applicationInfo)
+        ).toString(), profile)
     }
 
 }

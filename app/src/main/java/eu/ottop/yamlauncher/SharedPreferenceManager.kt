@@ -3,65 +3,65 @@ package eu.ottop.yamlauncher
 import android.content.Context
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceManager
 
-class SharedPreferenceManager {
+class SharedPreferenceManager (context: Context) {
 
-    fun setShortcut(cont: Context, textView: TextView, packageName: String, profile: Int) {
-        val editor = cont.getSharedPreferences("shortcuts", AppCompatActivity.MODE_PRIVATE).edit()
-        val key = textView.id.toString()
+    private val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+
+    fun setShortcut(textView: TextView, packageName: String, profile: Int) {
+        val editor = preferences.edit()
+        val key = "shortcut${textView.id}"
         editor.putString(key, "$packageName§splitter§$profile§splitter§${textView.text}")
         editor.apply()
     }
 
-    fun getShortcut(cont: Context, textView: TextView): List<String>? {
-        val sharedPref = cont.getSharedPreferences("shortcuts", AppCompatActivity.MODE_PRIVATE)
-        val key = textView.id.toString()
-        val value = sharedPref.getString(key, "e§splitter§e")
+    fun getShortcut(textView: TextView): List<String>? {
+        val key = "shortcut${textView.id}"
+        val value = preferences.getString(key, "e§splitter§e")
         return value?.split("§splitter§")
     }
 
-    fun setAppHidden(cont: Context, packageName: String, profile: Int, hidden: Boolean) {
-        val editor = cont.getSharedPreferences("hidden_apps", AppCompatActivity.MODE_PRIVATE).edit()
-        val key = "$packageName-$profile"
+    fun setAppHidden(packageName: String, profile: Int, hidden: Boolean) {
+        val editor = preferences.edit()
+        val key = "hidden$packageName-$profile"
         editor.putBoolean(key, hidden)
         editor.apply()
     }
 
-    fun isAppHidden(cont: Context, packageName: String, profile: Int): Boolean {
-        val sharedPref = cont.getSharedPreferences("hidden_apps", AppCompatActivity.MODE_PRIVATE)
-        val key = "$packageName-$profile"
-        return sharedPref.getBoolean(key, false) // Default to false (visible)
+    fun isAppHidden(packageName: String, profile: Int): Boolean {
+        val key = "hidden$packageName-$profile"
+        return preferences.getBoolean(key, false) // Default to false (visible)
     }
 
-    fun setAppVisible(cont: Context, packageName: String, profile: Int) {
-        val editor = cont.getSharedPreferences("hidden_apps", AppCompatActivity.MODE_PRIVATE).edit()
-        val key = "$packageName-$profile"
+    fun setAppVisible(packageName: String, profile: Int) {
+        val editor = preferences.edit()
+        val key = "hidden$packageName-$profile"
         editor.remove(key)
         editor.apply()
     }
 
-    fun setAppName(cont: Context, packageName: String, profile: Int, newName: String) {
-        val editor = cont.getSharedPreferences("renamed_apps", AppCompatActivity.MODE_PRIVATE).edit()
-        val key = "$packageName-$profile"
+    fun setAppName(packageName: String, profile: Int, newName: String) {
+        val editor = preferences.edit()
+        val key = "name$packageName-$profile"
         editor.putString(key, newName)
         editor.apply()
     }
 
-    fun getAppName(cont: Context, packageName: String, profile: Int, appName: CharSequence): CharSequence? {
-        val sharedPreferences = cont.getSharedPreferences("renamed_apps", AppCompatActivity.MODE_PRIVATE)
-        val key = "$packageName-$profile"
-        return sharedPreferences.getString(key, appName.toString())
+    fun getAppName(packageName: String, profile: Int, appName: CharSequence): CharSequence? {
+        val key = "name$packageName-$profile"
+        return preferences.getString(key, appName.toString())
     }
 
-    fun resetAppName(cont: Context, packageName: String, profile: Int) {
-        val editor = cont.getSharedPreferences("renamed_apps", AppCompatActivity.MODE_PRIVATE).edit()
-        val key = "$packageName-$profile"
+    fun resetAppName(packageName: String, profile: Int) {
+        val editor = preferences.edit()
+        val key = "name$packageName-$profile"
         editor.remove(key)
         editor.apply()
     }
 
-    fun setWeatherLocation(cont: Context, location: String, region: String?) {
-        val editor = cont.getSharedPreferences("weather_location", AppCompatActivity.MODE_PRIVATE).edit()
+    fun setWeatherLocation(location: String, region: String?) {
+        val editor = preferences.edit()
         val key = "location"
         val regionKey = "location_region"
         editor.putString(key, location)
@@ -69,20 +69,18 @@ class SharedPreferenceManager {
         editor.apply()
     }
 
-    fun getWeatherLocation(cont: Context) : String? {
-        val sharedPreferences = cont.getSharedPreferences("weather_location", AppCompatActivity.MODE_PRIVATE)
+    fun getWeatherLocation(): String? {
         val key = "location"
-        return sharedPreferences.getString(key, "")
+        return preferences.getString(key, "")
     }
 
-    fun getWeatherRegion(cont: Context) : String? {
-        val sharedPreferences = cont.getSharedPreferences("weather_location", AppCompatActivity.MODE_PRIVATE)
+    fun getWeatherRegion(): String? {
         val key = "location_region"
-        return sharedPreferences.getString(key, "")
+        return preferences.getString(key, "")
     }
 
-    fun setGestures(cont: Context, direction: String, appName: String?) {
-        val editor = cont.getSharedPreferences("gestures", AppCompatActivity.MODE_PRIVATE).edit()
+    fun setGestures(direction: String, appName: String?) {
+        val editor = preferences.edit()
         val nameKey = "$direction-name"
         editor.putString(nameKey, appName)
         editor.apply()
@@ -90,9 +88,8 @@ class SharedPreferenceManager {
 
 
     fun getGestureName(cont: Context, direction: String) : String? {
-        val sharedPreferences = cont.getSharedPreferences("gestures", AppCompatActivity.MODE_PRIVATE)
         val key = "$direction-name"
-        return sharedPreferences.getString(key, "")
+        return preferences.getString(key, "")
     }
 
 }

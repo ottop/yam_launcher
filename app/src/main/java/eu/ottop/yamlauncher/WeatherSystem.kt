@@ -15,15 +15,15 @@ import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 
-class WeatherSystem {
+class WeatherSystem(private val context: Context) {
 
-    private val sharedPreferenceManager = SharedPreferenceManager()
+    private val sharedPreferenceManager = SharedPreferenceManager(context)
     private val stringUtils = StringUtils()
 
     suspend fun setGpsLocation(activity: MainActivity) {
-        val locationManager = activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
-        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
                 activity,
                 arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
@@ -35,14 +35,14 @@ class WeatherSystem {
         locationManager.getCurrentLocation(
             LocationManager.GPS_PROVIDER,          // Use GPS provider
             null,                                  // No cancellation signal
-            ContextCompat.getMainExecutor(activity)
+            ContextCompat.getMainExecutor(context)
         )
         { location: Location? ->               // Lambda expression for the callback
             if (location != null) {
                 CoroutineScope(Dispatchers.IO).launch {
                 val latitude = location.latitude
                 val longitude = location.longitude
-                sharedPreferenceManager.setWeatherLocation(activity, "latitude=${latitude}&longitude=${longitude}", sharedPreferenceManager.getWeatherRegion(activity))
+                sharedPreferenceManager.setWeatherLocation("latitude=${latitude}&longitude=${longitude}", sharedPreferenceManager.getWeatherRegion())
                 activity.updateWeatherText()}
             }
         }
@@ -82,13 +82,13 @@ class WeatherSystem {
         return foundLocations
     }
 
-    fun getTemp(context: Context) : String {
+    fun getTemp() : String {
 
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
             val tempUnits = preferences.getString("tempUnits", "celsius")
             var currentWeather = ""
 
-            val location = sharedPreferenceManager.getWeatherLocation(context)
+            val location = sharedPreferenceManager.getWeatherLocation()
 
         if (location != null) {
             if (location.isNotEmpty()) {

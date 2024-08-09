@@ -44,8 +44,8 @@ import kotlin.math.abs
 
 class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener, AppMenuAdapter.OnItemClickListener, AppMenuAdapter.OnShortcutListener, AppMenuAdapter.OnItemLongClickListener {
 
-    private val weatherSystem = WeatherSystem()
-    private val appUtils = AppUtils()
+    private lateinit var weatherSystem: WeatherSystem
+    private lateinit var appUtils: AppUtils
     private val stringUtils = StringUtils()
     private val uiUtils = UIUtils()
     private val gestureUtils = GestureUtils()
@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private val appMenuLinearLayoutManager = AppMenuLinearLayoutManager(this@MainActivity)
     private val appMenuEdgeFactory = AppMenuEdgeFactory(this@MainActivity)
 
-    private val sharedPreferenceManager = SharedPreferenceManager()
+    private lateinit var sharedPreferenceManager: SharedPreferenceManager
 
     private val animations = Animations()
 
@@ -137,6 +137,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         launcherApps = getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
 
+        weatherSystem = WeatherSystem(this@MainActivity)
+
+        appUtils = AppUtils(this@MainActivity)
+
+        sharedPreferenceManager = SharedPreferenceManager(this@MainActivity)
+
         preferences = PreferenceManager.getDefaultSharedPreferences(this)
     }
 
@@ -177,7 +183,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
                 unsetShortcutSetup(textView)
 
-                val savedView = sharedPreferenceManager.getShortcut(this, textView)
+                val savedView = sharedPreferenceManager.getShortcut(textView)
 
                 if (savedView?.get(1) != "e") {
                     setShortcutSetup(textView, savedView)
@@ -399,11 +405,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     suspend fun refreshAppMenu() {
         try {
             if (isJobActive) {
-                val updatedApps = appUtils.getInstalledApps(this@MainActivity, launcherApps)
+                val updatedApps = appUtils.getInstalledApps(launcherApps)
                 if (!listsEqual(installedApps, updatedApps)) {
-                    withContext(Dispatchers.Main) {
-                        updateMenu(updatedApps)
-                    }
+
+                    updateMenu(updatedApps)
+
                     installedApps = updatedApps
                 }
             }
@@ -424,8 +430,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         return true
     }
 
-    private fun updateMenu(updatedApps : List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
-        adapter?.updateApps(updatedApps)
+    private suspend fun updateMenu(updatedApps : List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
+        withContext(Dispatchers.Main) {
+            adapter?.updateApps(updatedApps)
+        }
     }
 
     private suspend fun updateWeather() {
@@ -444,7 +452,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     suspend fun updateWeatherText() {
-        val temp = weatherSystem.getTemp(this@MainActivity)
+        val temp = weatherSystem.getTemp()
         withContext(Dispatchers.Main) {
             modifyDate(temp, 2)
         }
@@ -452,7 +460,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private fun setupApps() {
         lifecycleScope.launch(Dispatchers.Default) {
-            installedApps = appUtils.getInstalledApps(this@MainActivity, launcherApps)
+            installedApps = appUtils.getInstalledApps(launcherApps)
             val newApps = installedApps.toMutableList()
 
             setupRecyclerView(newApps)
@@ -516,37 +524,37 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         val cleanQuery = stringUtils.cleanString(query)
         val newFilteredApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
-        val updatedApps = appUtils.getInstalledApps(this@MainActivity, launcherApps)
+        val updatedApps = appUtils.getInstalledApps(launcherApps)
 
         getFilteredApps(cleanQuery, newFilteredApps, updatedApps)
-
-        applySearchFilter(newFilteredApps)
-
     }
 
     private suspend fun getFilteredApps(cleanQuery: String?, newFilteredApps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>, updatedApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
         if (cleanQuery.isNullOrEmpty()) {
             isJobActive = true
-            refreshAppMenu()
-            newFilteredApps.addAll(installedApps)
+            updateMenu(updatedApps)
         } else {
             isJobActive = false
             updatedApps.forEach {
-                val cleanItemText = stringUtils.cleanString(sharedPreferenceManager.getAppName(this@MainActivity, it.first.applicationInfo.packageName, it.second.second, packageManager.getApplicationLabel(it.first.applicationInfo)).toString())
+                val cleanItemText = stringUtils.cleanString(sharedPreferenceManager.getAppName(
+                    it.first.applicationInfo.packageName,
+                    it.second.second,
+                    packageManager.getApplicationLabel(it.first.applicationInfo)
+                ).toString())
                 if (cleanItemText != null) {
                     if (cleanItemText.contains(cleanQuery, ignoreCase = true)) {
                         newFilteredApps.add(it)
                     }
                 }
             }
+            applySearchFilter(newFilteredApps)
         }
     }
 
     private suspend fun applySearchFilter(newFilteredApps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
         if (!listsEqual(installedApps, newFilteredApps)) {
-            withContext(Dispatchers.Main) {
-                updateMenu(newFilteredApps)
-            }
+            updateMenu(newFilteredApps)
+
             installedApps = newFilteredApps
         }
     }
@@ -556,7 +564,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             filterItems(searchView.text.toString())
         }
     }
-
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
@@ -575,9 +582,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         // Keyboard is sometimes open when going back to the app, so close it.
         closeKeyboard()
         try {
-
             recyclerView.scrollToPosition(0)
-
         }
         catch (_: UninitializedPropertyAccessException) {
 
@@ -591,7 +596,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     override fun onItemClick(appInfo: LauncherActivityInfo, userHandle: UserHandle) {
-        appUtils.launchApp(this@MainActivity, launcherApps, appInfo, userHandle)
+        appUtils.launchApp(launcherApps, appInfo, userHandle)
     }
 
     override fun onShortcut(
@@ -639,9 +644,13 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         shortcutView.text = textView.text.toString()
         shortcutView.setOnClickListener {
-            appUtils.launchApp(this@MainActivity, launcherApps, appInfo, userHandle)
+            appUtils.launchApp(launcherApps, appInfo, userHandle)
         }
-        sharedPreferenceManager.setShortcut(this, shortcutView, appInfo.applicationInfo.packageName, userProfile)
+        sharedPreferenceManager.setShortcut(
+            shortcutView,
+            appInfo.applicationInfo.packageName,
+            userProfile
+        )
         backToHome()
     }
 
@@ -689,12 +698,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 val deltaY = e2.y - e1.y
                 val deltaX = e2.x - e1.x
 
-                // Detect swipe up
+                // Swipe up
                 if (deltaY < -swipeThreshold && abs(velocityY) > swipeVelocityThreshold) {
                     openAppMenu()
                 }
 
-                // Detect swipe down
+                // Swipe down
                 else if (deltaY > swipeThreshold && abs(velocityY) > swipeVelocityThreshold) {
                     val statusBarService = getSystemService(Context.STATUS_BAR_SERVICE)
                     val statusBarManager: Class<*> = Class.forName("android.app.StatusBarManager")
@@ -702,7 +711,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     expandMethod.invoke(statusBarService)
                 }
 
-                // Detect swipe left
+                // Swipe left
                 else if (deltaX < -swipeThreshold && abs(velocityX) > swipeVelocityThreshold && preferences.getBoolean("leftSwipe", true)){
 
                     if (leftSwipeActivity.first != null && leftSwipeActivity.second != null) {
@@ -713,7 +722,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 }
 
 
-                // Detect swipe right
+                // Swipe right
                 else if (deltaX > -swipeThreshold && abs(velocityX) > swipeVelocityThreshold && preferences.getBoolean("rightSwipe", true)) {
                     if (rightSwipeActivity.first != null && rightSwipeActivity.second != null) {
                         launcherApps.startMainActivity(rightSwipeActivity.first!!.componentName,  launcherApps.profiles[rightSwipeActivity.second!!], null, null)

@@ -19,11 +19,11 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.lifecycle.lifecycleScope
 import eu.ottop.yamlauncher.databinding.ActivityMainBinding
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class AppActionMenu {
 
-    private val sharedPreferenceManager = SharedPreferenceManager()
     private val animations = Animations()
 
     fun setActionListeners(
@@ -39,6 +39,8 @@ class AppActionMenu {
         launcherApps: LauncherApps,
         mainActivity: LauncherActivityInfo?
     ){
+
+        val sharedPreferenceManager = SharedPreferenceManager(activity)
 
         actionMenu.findViewById<TextView>(R.id.info).setOnClickListener {
             if (mainActivity != null) {
@@ -100,12 +102,11 @@ class AppActionMenu {
                         activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                     imm.hideSoftInputFromWindow(editText.windowToken, 0)
                     sharedPreferenceManager.setAppName(
-                        activity,
                         appInfo.packageName,
                         workProfile,
                         editText.text.toString()
                     )
-                    activity.lifecycleScope.launch(Dispatchers.Default) {
+                    activity.lifecycleScope.launch {
                         activity.applySearch()
                     }
 
@@ -120,12 +121,11 @@ class AppActionMenu {
                     activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(editLayout.windowToken, 0)
                 sharedPreferenceManager.resetAppName(
-                    activity,
                     app.first.applicationInfo.packageName,
                     app.second.second
                 )
 
-                activity.lifecycleScope.launch(Dispatchers.Default) {
+                activity.lifecycleScope.launch {
                     activity.applySearch()
                 }
             }
@@ -136,7 +136,7 @@ class AppActionMenu {
             textView.visibility = View.GONE
             actionMenu.visibility = View.GONE
             activity.lifecycleScope.launch {
-                sharedPreferenceManager.setAppHidden(activity, appInfo.packageName, workProfile, true)
+                sharedPreferenceManager.setAppHidden(appInfo.packageName, workProfile, true)
                 activity.refreshAppMenu()
             }
         }

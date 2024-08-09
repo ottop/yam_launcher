@@ -14,14 +14,14 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 
 class GestureAppsAdapter(
-    private val activity: Context,
+    private val context: Context,
     var apps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>,
     private val itemClickListener: OnItemClickListener
 ) :
     RecyclerView.Adapter<GestureAppsAdapter.AppViewHolder>() {
 
-    private val sharedPreferenceManager = SharedPreferenceManager()
-    private var preferences = PreferenceManager.getDefaultSharedPreferences(activity)
+    private val sharedPreferenceManager = SharedPreferenceManager(context)
+    private var preferences = PreferenceManager.getDefaultSharedPreferences(context)
     private val uiUtils = UIUtils()
 
     interface OnItemClickListener {
@@ -52,18 +52,22 @@ class GestureAppsAdapter(
         val app = apps[position]
 
         if (app.second.second != 0) {
-            holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_work_app, null),null,null,null)
+            holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(context.resources, R.drawable.ic_work_app, null),null,null,null)
         }
         else {
-            holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null),null,null,null)
+            holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(context.resources, R.drawable.ic_empty, null),null,null,null)
         }
 
-        uiUtils.setAppAlignment(activity, preferences, holder.textView)
+        uiUtils.setAppAlignment(context, preferences, holder.textView)
 
         uiUtils.setAppSize(preferences, holder.textView)
 
         val appInfo = app.first.activityInfo.applicationInfo
-        holder.textView.text = sharedPreferenceManager.getAppName(activity, app.first.applicationInfo.packageName,app.second.second, holder.itemView.context.packageManager.getApplicationLabel(appInfo))
+        holder.textView.text = sharedPreferenceManager.getAppName(
+            app.first.applicationInfo.packageName,
+            app.second.second,
+            holder.itemView.context.packageManager.getApplicationLabel(appInfo)
+        )
 
         holder.textView.visibility = View.VISIBLE
     }
