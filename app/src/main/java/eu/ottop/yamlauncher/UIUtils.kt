@@ -23,7 +23,8 @@ import com.google.android.material.textfield.TextInputEditText
 class UIUtils {
 
     fun setBackground(window: Window, preferences: SharedPreferences) {
-        window.setBackgroundDrawable(ColorDrawable(Color.parseColor("#00000000")))
+        window.decorView.background = ColorDrawable(Color.parseColor("#00000000"))
+
         window.decorView.setBackgroundColor(
             Color.parseColor(preferences.getString("bgColor",  "#00000000"))
         )
