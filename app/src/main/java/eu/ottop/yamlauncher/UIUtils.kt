@@ -66,15 +66,14 @@ class UIUtils {
     }
 
     fun setSearchColors(preferences: SharedPreferences, searchView: TextInputEditText) {
-        val color = Color.parseColor(preferences.getString("textColor", "#FFF3F3F3"))
         val viewTreeObserver = searchView.viewTreeObserver
 
         val globalLayoutListener = object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
+                val color = Color.parseColor(preferences.getString("textColor", "#FFF3F3F3"))
                 searchView.setTextColor(color)
-                searchView.setHintTextColor(setAlpha(Color.parseColor(preferences.getString("textColor", "#FFF3F3F3")), "A9"))
-                searchView.compoundDrawables[0].mutate().colorFilter =
-                    BlendModeColorFilter(color, BlendMode.SRC_ATOP)
+                searchView.setHintTextColor(setAlpha(color, "A9"))
+                searchView.compoundDrawables[0].mutate().colorFilter = BlendModeColorFilter(color, BlendMode.SRC_ATOP)
 
                 if (viewTreeObserver.isAlive) {
                     viewTreeObserver.removeOnGlobalLayoutListener(this)
