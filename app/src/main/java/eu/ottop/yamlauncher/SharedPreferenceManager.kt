@@ -1,6 +1,7 @@
 package eu.ottop.yamlauncher
 
 import android.content.Context
+import android.graphics.Color
 import android.widget.TextView
 import androidx.preference.PreferenceManager
 
@@ -93,6 +94,18 @@ class SharedPreferenceManager (context: Context) {
 
     fun getGestureInfo(direction: String) : List<String>? {
         return preferences.getString("${direction}SwipeApp", "")?.split("§splitter§")
+    }
+
+    fun getBgColor(): Int {
+        return Color.parseColor(preferences.getString("bgColor",  "#00000000"))
+    }
+
+    fun getTextColor(): Int {
+        return Color.parseColor(preferences.getString("textColor",  "#FFF3F3F3"))
+    }
+
+    fun getClockAlignment(): String? {
+        return preferences.getString("clockAlignment", "left")
     }
 
 }

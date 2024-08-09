@@ -20,22 +20,24 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.children
 import com.google.android.material.textfield.TextInputEditText
 
-class UIUtils {
+class UIUtils(context: Context) {
 
-    fun setBackground(window: Window, preferences: SharedPreferences) {
+    private val sharedPreferenceManager = SharedPreferenceManager(context)
+
+    fun setBackground(window: Window) {
         window.decorView.background = ColorDrawable(Color.parseColor("#00000000"))
 
         window.decorView.setBackgroundColor(
-            Color.parseColor(preferences.getString("bgColor",  "#00000000"))
+            sharedPreferenceManager.getBgColor()
         )
     }
 
-    fun setTextColors(preferences: SharedPreferences, view: View) {
-        val color = Color.parseColor(preferences.getString("textColor",  "#FFF3F3F3"))
+    fun setTextColors(view: View) {
+        val color = sharedPreferenceManager.getTextColor()
         when {
             view is ViewGroup -> {
                 view.children.forEach { child ->
-                    setTextColors(preferences, child)
+                    setTextColors(child)
                 }
             }
             hasMethod(view, "setTextColor") -> {
@@ -66,12 +68,12 @@ class UIUtils {
         return Color.argb(newAlpha, r, g, b)
     }
 
-    fun setSearchColors(preferences: SharedPreferences, searchView: TextInputEditText) {
+    fun setSearchColors(searchView: TextInputEditText) {
         val viewTreeObserver = searchView.viewTreeObserver
 
         val globalLayoutListener = object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
-                val color = Color.parseColor(preferences.getString("textColor", "#FFF3F3F3"))
+                val color = sharedPreferenceManager.getTextColor()
                 searchView.setTextColor(color)
                 searchView.setHintTextColor(setAlpha(color, "A9"))
                 searchView.compoundDrawables[0].mutate().colorFilter = BlendModeColorFilter(color, BlendMode.SRC_ATOP)
@@ -87,8 +89,8 @@ class UIUtils {
         }
     }
 
-    fun setClockAlignment(preferences: SharedPreferences, clock: TextClock, dateText: TextClock) {
-        val alignment = preferences.getString("clockAlignment", "left")
+    fun setClockAlignment(clock: TextClock, dateText: TextClock) {
+        val alignment = sharedPreferenceManager.getClockAlignment()
         setTextAlignment(clock, alignment)
         setTextAlignment(dateText, alignment)
     }

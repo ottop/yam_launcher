@@ -5,13 +5,15 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.app.Activity
-import android.content.SharedPreferences
+import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.View
 import eu.ottop.yamlauncher.databinding.ActivityMainBinding
 
-class Animations {
+class Animations (context: Context) {
+
+    private val sharedPreferenceManager = SharedPreferenceManager(context)
 
     fun fadeViewIn(view: View, duration: Long = 100) {
         view.fadeIn(duration)
@@ -30,8 +32,8 @@ class Animations {
         binding.homeView.fadeOut()
     }
 
-    fun backgroundIn(activity: Activity, preferences: SharedPreferences, duration: Long = 100) {
-        val originalColor = Color.parseColor(preferences.getString("bgColor",  "#00000000"))
+    fun backgroundIn(activity: Activity, duration: Long = 100) {
+        val originalColor = sharedPreferenceManager.getBgColor()
 
         val newColor: Int = if (originalColor == Color.parseColor("#00000000")) {
             Color.parseColor("#3F000000")
@@ -51,8 +53,8 @@ class Animations {
         backgroundColorAnimator.start()
     }
 
-    fun backgroundOut(activity: Activity, preferences: SharedPreferences, duration: Long = 100) {
-        val newColor = Color.parseColor(preferences.getString("bgColor",  "#00000000"))
+    fun backgroundOut(activity: Activity, duration: Long = 100) {
+        val newColor = sharedPreferenceManager.getBgColor()
 
         val originalColor: Int = if (newColor == Color.parseColor("#00000000")) {
             Color.parseColor("#3F000000")

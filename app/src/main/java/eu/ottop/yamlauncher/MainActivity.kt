@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private lateinit var weatherSystem: WeatherSystem
     private lateinit var appUtils: AppUtils
     private val stringUtils = StringUtils()
-    private val uiUtils = UIUtils()
+    private lateinit var uiUtils: UIUtils
     private lateinit var gestureUtils: GestureUtils
 
     private var appActionMenu = AppActionMenu()
@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private lateinit var sharedPreferenceManager: SharedPreferenceManager
 
-    private val animations = Animations()
+    private lateinit var animations: Animations
 
     private lateinit var clock: TextClock
     private var clockMargin = 0
@@ -121,6 +121,13 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     private fun setMainVariables() {
+        weatherSystem = WeatherSystem(this@MainActivity)
+        appUtils = AppUtils(this@MainActivity)
+        uiUtils = UIUtils(this@MainActivity)
+        gestureUtils = GestureUtils(this@MainActivity)
+        sharedPreferenceManager = SharedPreferenceManager(this@MainActivity)
+        animations = Animations(this@MainActivity)
+
         gestureDetector = GestureDetector(this, GestureListener())
         shortcutGestureDetector = GestureDetector(this, TextGestureListener())
 
@@ -136,22 +143,15 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         launcherApps = getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
 
-        weatherSystem = WeatherSystem(this@MainActivity)
-
-        appUtils = AppUtils(this@MainActivity)
-
-        sharedPreferenceManager = SharedPreferenceManager(this@MainActivity)
-        gestureUtils = GestureUtils(this@MainActivity)
-
         preferences = PreferenceManager.getDefaultSharedPreferences(this)
     }
 
     private fun setPreferences() {
-        uiUtils.setBackground(window, preferences)
-        uiUtils.setTextColors(preferences, binding.homeView)
-        uiUtils.setSearchColors(preferences, searchView)
+        uiUtils.setBackground(window)
+        uiUtils.setTextColors(binding.homeView)
+        uiUtils.setSearchColors(searchView)
 
-        uiUtils.setClockAlignment(preferences, clock, dateText)
+        uiUtils.setClockAlignment(clock, dateText)
         uiUtils.setSearchAlignment(preferences, searchView)
 
         uiUtils.setClockSize(preferences, clock)
@@ -225,7 +225,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private fun toAppMenu() {
         animations.showApps(binding)
-        animations.backgroundIn(this@MainActivity, preferences)
+        animations.backgroundIn(this@MainActivity)
         if (preferences.getBoolean("autoKeyboard", false)) {
             val imm =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -297,16 +297,16 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         if (preferences != null) {
             when (key) {
                 "bgColor" -> {
-                    uiUtils.setBackground(window, preferences)
+                    uiUtils.setBackground(window)
                 }
 
                 "textColor" -> {
-                    uiUtils.setTextColors(preferences, binding.homeView)
-                    uiUtils.setSearchColors(preferences, searchView)
+                    uiUtils.setTextColors(binding.homeView)
+                    uiUtils.setSearchColors(searchView)
                 }
 
                 "clockAlignment" -> {
-                    uiUtils.setClockAlignment(preferences, clock, dateText)
+                    uiUtils.setClockAlignment(clock, dateText)
                 }
 
                 "shortcutAlignment" -> {
@@ -370,7 +370,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     fun backToHome() {
         closeKeyboard()
         animations.showHome(binding)
-        animations.backgroundOut(this@MainActivity, preferences)
+        animations.backgroundOut(this@MainActivity)
         val handler = Handler(Looper.getMainLooper())
         handler.postDelayed({
             try {

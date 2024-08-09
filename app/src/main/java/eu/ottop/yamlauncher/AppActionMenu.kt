@@ -24,8 +24,6 @@ import kotlinx.coroutines.launch
 
 class AppActionMenu {
 
-    private val animations = Animations()
-
     fun setActionListeners(
         activity: MainActivity,
         binding: ActivityMainBinding,
@@ -39,7 +37,7 @@ class AppActionMenu {
         launcherApps: LauncherApps,
         mainActivity: LauncherActivityInfo?
     ){
-
+        val animations = Animations(activity)
         val sharedPreferenceManager = SharedPreferenceManager(activity)
 
         actionMenu.findViewById<TextView>(R.id.info).setOnClickListener {

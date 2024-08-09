@@ -23,7 +23,7 @@ class HiddenAppsAdapter(
         private val sharedPreferenceManager = SharedPreferenceManager(context)
         private var preferences = PreferenceManager.getDefaultSharedPreferences(context)
 
-        private val uiUtils = UIUtils()
+        private val uiUtils = UIUtils(context)
 
     interface OnItemClickListener {
         fun onItemClick(appInfo: LauncherActivityInfo, profile: Int)

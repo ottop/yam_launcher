@@ -40,8 +40,9 @@ class GestureAppsFragment : Fragment(), GestureAppsAdapter.OnItemClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        sharedPreferenceManager = SharedPreferenceManager(requireContext())
+
         appUtils = AppUtils(requireContext())
+        sharedPreferenceManager = SharedPreferenceManager(requireContext())
 
         lifecycleScope.launch {
 
@@ -57,7 +58,7 @@ class GestureAppsFragment : Fragment(), GestureAppsAdapter.OnItemClickListener {
             }
             val recyclerView = view.findViewById<RecyclerView>(R.id.gesture_app_recycler)
             val appMenuEdgeFactory = AppMenuEdgeFactory(requireActivity())
-            val uiUtils = UIUtils()
+            val uiUtils = UIUtils(requireContext())
             val preferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
             recyclerView.edgeEffectFactory = appMenuEdgeFactory

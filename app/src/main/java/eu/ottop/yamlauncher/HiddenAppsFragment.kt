@@ -21,7 +21,7 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
     private lateinit var sharedPreferenceManager: SharedPreferenceManager
     private var adapter: HiddenAppsAdapter? = null
     private var stringUtils = StringUtils()
-    private val uiUtils = UIUtils()
+    private lateinit var uiUtils: UIUtils
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,6 +33,7 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        uiUtils = UIUtils(requireContext())
         appUtils = AppUtils(requireContext())
         sharedPreferenceManager = SharedPreferenceManager(requireContext())
 

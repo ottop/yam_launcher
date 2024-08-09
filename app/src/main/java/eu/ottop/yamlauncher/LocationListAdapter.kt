@@ -11,14 +11,14 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 
 class LocationListAdapter(
-    private val activity: Context,
+    private val context: Context,
     private var apps: MutableList<Map<String, String>>,
     private val itemClickListener: OnItemClickListener
 ) :
     RecyclerView.Adapter<LocationListAdapter.AppViewHolder>() {
 
-    private var preferences = PreferenceManager.getDefaultSharedPreferences(activity)
-    private val uiUtils = UIUtils()
+    private var preferences = PreferenceManager.getDefaultSharedPreferences(context)
+    private val uiUtils = UIUtils(context)
 
     interface OnItemClickListener {
         fun onItemClick(name: String?, latitude: String?, longitude: String?)
@@ -51,12 +51,12 @@ class LocationListAdapter(
     override fun onBindViewHolder(holder: AppViewHolder, position: Int) {
         val app = apps[position]
 
-        uiUtils.setAppAlignment(activity, preferences, holder.textView, null ,holder.regionText)
+        uiUtils.setAppAlignment(context, preferences, holder.textView, null ,holder.regionText)
 
         uiUtils.setAppSize(preferences, holder.textView, null, holder.regionText)
 
         holder.textView.text = app["name"]
-        holder.regionText.text = activity.getString(R.string.region_text, app["region"], app["country"])
+        holder.regionText.text = context.getString(R.string.region_text, app["region"], app["country"])
 
         holder.textView.visibility = View.VISIBLE
     }

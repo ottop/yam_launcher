@@ -24,7 +24,7 @@ class LocationFragment : Fragment(), LocationListAdapter.OnItemClickListener {
     private lateinit var weatherSystem: WeatherSystem
     private lateinit var sharedPreferenceManager: SharedPreferenceManager
     private val stringUtils = StringUtils()
-    private val uiUtils = UIUtils()
+    private lateinit var uiUtils: UIUtils
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,16 +35,15 @@ class LocationFragment : Fragment(), LocationListAdapter.OnItemClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        uiUtils = UIUtils(requireContext())
+        weatherSystem = WeatherSystem(requireContext())
+        sharedPreferenceManager = SharedPreferenceManager(requireContext())
 
         val searchView = view.findViewById<TextInputEditText>(R.id.locationSearch)
 
         var locationList = mutableListOf<Map<String, String>>()
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
-
-        weatherSystem = WeatherSystem(requireContext())
-
-        sharedPreferenceManager = SharedPreferenceManager(requireContext())
 
         stringUtils.setLink(requireActivity().findViewById(R.id.locationLink), getString(R.string.location_link))
 
