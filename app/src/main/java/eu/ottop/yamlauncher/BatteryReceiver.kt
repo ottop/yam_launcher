@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
 class BatteryReceiver(private val activity: MainActivity) : BroadcastReceiver() {
 
@@ -14,7 +16,6 @@ class BatteryReceiver(private val activity: MainActivity) : BroadcastReceiver() 
             val scale = it.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
             val batteryPct = level * 100 / scale.toFloat()
             activity.modifyDate("${batteryPct.toInt()}%", 3)
-
         }
     }
 

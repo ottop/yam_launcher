@@ -26,8 +26,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val hiddenPref = findPreference<Preference?>("hidden_apps")
 
         manualLocationPref?.summary = sharedPreferenceManager.getWeatherRegion()
-        leftSwipePref?.summary = sharedPreferenceManager.getGestureName(requireContext(), "left")
-        rightSwipePref?.summary = sharedPreferenceManager.getGestureName(requireContext(), "right")
+        leftSwipePref?.summary = sharedPreferenceManager.getGestureName("left")
+        rightSwipePref?.summary = sharedPreferenceManager.getGestureName("right")
 
         if (gpsLocationPref != null && manualLocationPref != null) {
             // Initial setup
@@ -71,14 +71,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 setFragmentResultListener("request_key") { _, bundle ->
                     clearFragmentResultListener("request_key")
                     val result = bundle.getString("gesture_app")
-                    val appDetails = result?.split("§splitter§")
-                    if (leftSwipePref != null && result != null) {
-                        setPreference("leftSwipeApp", result)
-                    }
+
                     sharedPreferenceManager.setGestures(
-                        "left", appDetails?.get(0)
+                        "left", result
                     )
-                    val appName = appDetails?.get(0)
+
+                    val appName = sharedPreferenceManager.getGestureName("left")
                     leftSwipePref?.summary = appName
                 }
                 true }
@@ -93,14 +91,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 setFragmentResultListener("request_key") { _, bundle ->
                     clearFragmentResultListener("request_key")
                     val result = bundle.getString("gesture_app")
-                    val appDetails = result?.split("§splitter§")
-                    if (rightSwipePref != null && result != null) {
-                        setPreference("rightSwipeApp", result)
-                    }
+
                     sharedPreferenceManager.setGestures(
-                        "right", appDetails?.get(0)
+                        "right", result
                     )
-                    val appName = appDetails?.get(0)
+
+                    val appName = sharedPreferenceManager.getGestureName("right")
                     rightSwipePref?.summary = appName
                 }
                 true }
@@ -118,16 +114,5 @@ class SettingsFragment : PreferenceFragmentCompat() {
     override fun onResume() {
         super.onResume()
         manualLocationPref?.summary = sharedPreferenceManager.getWeatherRegion()
-    }
-
-    private fun setPreference(key: String, value: String) {
-        // Get the SharedPreferences instance
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
-
-        // Edit the SharedPreferences to update the value
-        with(sharedPreferences.edit()) {
-            putString(key, value)
-            apply()
-        }
     }
 }

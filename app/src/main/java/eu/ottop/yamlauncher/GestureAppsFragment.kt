@@ -2,6 +2,7 @@ package eu.ottop.yamlauncher
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
 import android.os.Bundle
@@ -24,9 +25,9 @@ import kotlinx.coroutines.withContext
 class GestureAppsFragment : Fragment(), GestureAppsAdapter.OnItemClickListener {
 
     private var adapter: GestureAppsAdapter? = null
-    private val sharedPreferenceManager = SharedPreferenceManager(requireContext())
+    private lateinit var sharedPreferenceManager: SharedPreferenceManager
     private var stringUtils = StringUtils()
-    private val appUtils = AppUtils(requireContext())
+    private lateinit var appUtils: AppUtils
     private lateinit var launcherApps: LauncherApps
 
     override fun onCreateView(
@@ -39,6 +40,8 @@ class GestureAppsFragment : Fragment(), GestureAppsAdapter.OnItemClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        sharedPreferenceManager = SharedPreferenceManager(requireContext())
+        appUtils = AppUtils(requireContext())
 
         lifecycleScope.launch {
 

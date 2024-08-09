@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private lateinit var appUtils: AppUtils
     private val stringUtils = StringUtils()
     private val uiUtils = UIUtils()
-    private val gestureUtils = GestureUtils()
+    private lateinit var gestureUtils: GestureUtils
 
     private var appActionMenu = AppActionMenu()
     private val appMenuLinearLayoutManager = AppMenuLinearLayoutManager(this@MainActivity)
@@ -118,7 +118,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
 
         setupApps()
-
     }
 
     private fun setMainVariables() {
@@ -142,6 +141,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         appUtils = AppUtils(this@MainActivity)
 
         sharedPreferenceManager = SharedPreferenceManager(this@MainActivity)
+        gestureUtils = GestureUtils(this@MainActivity)
 
         preferences = PreferenceManager.getDefaultSharedPreferences(this)
     }
@@ -161,8 +161,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         uiUtils.setStatusBar(window, preferences)
 
-        leftSwipeActivity = gestureUtils.getSwipeInfo(preferences, launcherApps, "left")
-        rightSwipeActivity = gestureUtils.getSwipeInfo(preferences, launcherApps, "right")
+        leftSwipeActivity = gestureUtils.getSwipeInfo(launcherApps, "left")
+        rightSwipeActivity = gestureUtils.getSwipeInfo(launcherApps, "right")
     }
 
     private fun setShortcuts() {
@@ -338,11 +338,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 }
 
                 "leftSwipeApp" -> {
-                    leftSwipeActivity = gestureUtils.getSwipeInfo(preferences, launcherApps, "left")
+                    leftSwipeActivity = gestureUtils.getSwipeInfo(launcherApps, "left")
                 }
 
                 "rightSwipeApp" -> {
-                    rightSwipeActivity = gestureUtils.getSwipeInfo(preferences, launcherApps, "right")
+                    rightSwipeActivity = gestureUtils.getSwipeInfo(launcherApps, "right")
                 }
 
                 "battery_enabled" -> {
@@ -446,7 +446,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 }
             }
             else {
-                modifyDate("", 2)
+                withContext(Dispatchers.Main) {
+                    modifyDate("", 2)
+                }
             }
         }
     }
@@ -742,7 +744,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         override fun onDoubleTap(e: MotionEvent): Boolean {
             if (preferences.getBoolean("doubleTap", false)) {
                 if (gestureUtils.isAccessibilityServiceEnabled(
-                        this@MainActivity,
                         ScreenLockService::class.java
                     )
                 ) {
@@ -750,7 +751,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     intent.action = "LOCK_SCREEN"
                     startService(intent)
                 } else {
-                    gestureUtils.promptEnableAccessibility(this@MainActivity)
+                    gestureUtils.promptEnableAccessibility()
                 }
             }
 

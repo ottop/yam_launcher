@@ -2,7 +2,6 @@ package eu.ottop.yamlauncher
 
 import android.content.Context
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
 
 class SharedPreferenceManager (context: Context) {
@@ -81,15 +80,19 @@ class SharedPreferenceManager (context: Context) {
 
     fun setGestures(direction: String, appName: String?) {
         val editor = preferences.edit()
-        val nameKey = "$direction-name"
+        val nameKey = "${direction}SwipeApp"
         editor.putString(nameKey, appName)
         editor.apply()
     }
 
+    fun getGestureName(direction: String) : String? {
+        val key = "${direction}SwipeApp"
+        val name = preferences.getString(key, "")?.split("§splitter§")
+        return name?.get(0)
+    }
 
-    fun getGestureName(cont: Context, direction: String) : String? {
-        val key = "$direction-name"
-        return preferences.getString(key, "")
+    fun getGestureInfo(direction: String) : List<String>? {
+        return preferences.getString("${direction}SwipeApp", "")?.split("§splitter§")
     }
 
 }

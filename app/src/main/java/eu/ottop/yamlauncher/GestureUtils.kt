@@ -5,7 +5,6 @@ import android.accessibilityservice.AccessibilityServiceInfo
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
 import android.content.pm.ServiceInfo
@@ -13,10 +12,12 @@ import android.provider.Settings
 import android.view.accessibility.AccessibilityManager
 import androidx.appcompat.app.AppCompatActivity.ACCESSIBILITY_SERVICE
 
-class GestureUtils {
+class GestureUtils(private val context: Context) {
 
-    fun getSwipeInfo(preferences: SharedPreferences, launcherApps: LauncherApps, direction: String): Pair<LauncherActivityInfo?, Int?> {
-        val app = preferences.getString("${direction}SwipeApp", "")?.split("§splitter§")
+    private val sharedPreferenceManager = SharedPreferenceManager(context)
+
+    fun getSwipeInfo(launcherApps: LauncherApps, direction: String): Pair<LauncherActivityInfo?, Int?> {
+        val app = sharedPreferenceManager.getGestureInfo(direction)
 
         if (app != null) {
             if (app.size >= 3)
@@ -31,7 +32,7 @@ class GestureUtils {
         return Pair(null, null)
     }
 
-    fun isAccessibilityServiceEnabled(context: Context, service: Class<out AccessibilityService>): Boolean {
+    fun isAccessibilityServiceEnabled(service: Class<out AccessibilityService>): Boolean {
         val am = context.getSystemService(ACCESSIBILITY_SERVICE) as AccessibilityManager
         val enabledServices =
             am.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
@@ -47,7 +48,7 @@ class GestureUtils {
         return false
     }
 
-    fun promptEnableAccessibility(context: Context) {
+    fun promptEnableAccessibility() {
         AlertDialog.Builder(context).apply {
             setTitle("Confirmation")
             setMessage("To lock with double tap, enable YAM Launcher in accessibility settings.")
