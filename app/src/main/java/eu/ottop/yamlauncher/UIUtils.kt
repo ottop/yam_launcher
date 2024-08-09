@@ -1,5 +1,6 @@
 package eu.ottop.yamlauncher
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.BlendMode
 import android.graphics.BlendModeColorFilter
@@ -15,10 +16,11 @@ import android.view.WindowInsetsController
 import android.widget.LinearLayout
 import android.widget.TextClock
 import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.children
 import com.google.android.material.textfield.TextInputEditText
 
-class UIUtils() {
+class UIUtils {
 
     fun setBackground(window: Window, preferences: SharedPreferences) {
         window.setBackgroundDrawable(ColorDrawable(Color.parseColor("#00000000")))
@@ -64,14 +66,15 @@ class UIUtils() {
     }
 
     fun setSearchColors(preferences: SharedPreferences, searchView: TextInputEditText) {
+        val color = Color.parseColor(preferences.getString("textColor", "#FFF3F3F3"))
         val viewTreeObserver = searchView.viewTreeObserver
 
         val globalLayoutListener = object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
-                searchView.setTextColor(Color.parseColor(preferences.getString("textColor", "#FFF3F3F3")))
+                searchView.setTextColor(color)
                 searchView.setHintTextColor(setAlpha(Color.parseColor(preferences.getString("textColor", "#FFF3F3F3")), "A9"))
                 searchView.compoundDrawables[0].mutate().colorFilter =
-                    BlendModeColorFilter(Color.parseColor(preferences.getString("textColor", "#FFF3F3F3")), BlendMode.SRC_ATOP)
+                    BlendModeColorFilter(color, BlendMode.SRC_ATOP)
 
                 if (viewTreeObserver.isAlive) {
                     viewTreeObserver.removeOnGlobalLayoutListener(this)
@@ -85,8 +88,9 @@ class UIUtils() {
     }
 
     fun setClockAlignment(preferences: SharedPreferences, clock: TextClock, dateText: TextClock) {
-        setTextAlignment(clock, preferences.getString("clockAlignment", "left"))
-        setTextAlignment(dateText, preferences.getString("clockAlignment", "left"))
+        val alignment = preferences.getString("clockAlignment", "left")
+        setTextAlignment(clock, alignment)
+        setTextAlignment(dateText, alignment)
     }
 
     fun setShortcutAlignment(preferences: SharedPreferences, shortcuts: LinearLayout) {
@@ -128,8 +132,42 @@ class UIUtils() {
         }
     }
 
+    fun setAppAlignment(activity: Context, preferences: SharedPreferences, textView: TextView, editText: TextInputEditText? = null, regionText: TextView? = null) {
+        val alignment = preferences.getString("appMenuAlignment", "left")
+        setTextGravity(textView, alignment)
+
+        if (regionText != null) {
+            setTextGravity(textView, alignment)
+            setTextGravity(regionText, alignment)
+            return
+        }
+
+        when (alignment) {
+            "left" -> {
+                textView.setCompoundDrawablesWithIntrinsicBounds(textView.compoundDrawables.filterNotNull().first(),null, ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null), null)
+                editText?.gravity = Gravity.CENTER_VERTICAL or Gravity.START
+
+            }
+            "center" -> {
+                textView.setCompoundDrawablesWithIntrinsicBounds(textView.compoundDrawables.filterNotNull().first(),null, textView.compoundDrawables.filterNotNull().first(), null)
+                editText?.gravity = Gravity.CENTER_VERTICAL or Gravity.END
+
+            }
+            "right" -> {
+                textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null),null, textView.compoundDrawables.filterNotNull().first(), null)
+                editText?.gravity = Gravity.CENTER_VERTICAL or Gravity.END
+            }
+        }
+
+    }
+
     fun setSearchAlignment(preferences: SharedPreferences, searchView: TextInputEditText) {
         setTextAlignment(searchView, preferences.getString("searchAlignment", "left"))
+    }
+
+    fun setMenuTitleAlignment(preferences: SharedPreferences, menuTitle: TextView) {
+        setTextGravity(menuTitle, preferences.getString("appMenuAlignment", "left"))
+
     }
 
     private fun setTextAlignment(view: TextView, alignment: String?) {
@@ -141,6 +179,18 @@ class UIUtils() {
             "right" -> View.TEXT_ALIGNMENT_VIEW_END
 
             else -> View.TEXT_ALIGNMENT_VIEW_START
+        }
+    }
+
+    private fun setTextGravity(view: TextView, alignment: String?) {
+        view.gravity = when (alignment) {
+            "left" -> Gravity.CENTER_VERTICAL or Gravity.START
+
+            "center" -> Gravity.CENTER
+
+            "right" -> Gravity.CENTER_VERTICAL or Gravity.END
+
+            else -> Gravity.CENTER_VERTICAL or Gravity.START
         }
     }
 
@@ -197,6 +247,17 @@ class UIUtils() {
         }
     }
 
+    fun setAppSize(preferences: SharedPreferences, textView: TextView, editText: TextInputEditText? = null, regionText: TextView? = null) {
+        val size = preferences.getString("appMenuSize", "medium")
+        setTextSize(textView, size, 24F, 26F, 28F)
+        if (editText != null) {
+            setTextSize(editText, size, 24F, 26F, 28F)
+        }
+        if (regionText != null) {
+            setTextSize(regionText, size, 14F, 16F, 18F)
+        }
+    }
+
     fun setSearchSize(preferences: SharedPreferences, searchView: TextInputEditText) {
         setTextSize(searchView, preferences.getString("searchSize", "medium"), 21F, 23F, 25F)
     }
@@ -227,5 +288,4 @@ class UIUtils() {
             }
         }
     }
-
 }

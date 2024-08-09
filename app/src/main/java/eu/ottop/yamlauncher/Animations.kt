@@ -3,18 +3,15 @@ package eu.ottop.yamlauncher
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ArgbEvaluator
-import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.View
-import android.view.WindowManager
-import androidx.core.content.ContextCompat
 import eu.ottop.yamlauncher.databinding.ActivityMainBinding
 
-class Animations () {
+class Animations {
 
     fun fadeViewIn(view: View, duration: Long = 100) {
         view.fadeIn(duration)

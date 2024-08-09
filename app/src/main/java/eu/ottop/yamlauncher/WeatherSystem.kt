@@ -1,29 +1,19 @@
 package eu.ottop.yamlauncher
 
 import android.Manifest
-import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
-import android.location.LocationListener
 import android.location.LocationManager
-import android.os.Handler
-import android.os.Looper
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.asExecutor
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
-import kotlin.coroutines.coroutineContext
 
 class WeatherSystem {
 
@@ -134,7 +124,7 @@ class WeatherSystem {
 
                         }
 
-                        currentWeather = "$weatherType ${currentData.getInt("temperature_2m").toString()}"
+                        currentWeather = "$weatherType ${currentData.getInt("temperature_2m")}"
 
                     }
                 }

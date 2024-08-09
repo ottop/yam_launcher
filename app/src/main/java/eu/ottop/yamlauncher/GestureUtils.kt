@@ -14,6 +14,7 @@ import android.view.accessibility.AccessibilityManager
 import androidx.appcompat.app.AppCompatActivity.ACCESSIBILITY_SERVICE
 
 class GestureUtils {
+
     fun getSwipeInfo(preferences: SharedPreferences, launcherApps: LauncherApps, direction: String): Pair<LauncherActivityInfo?, Int?> {
         val app = preferences.getString("${direction}SwipeApp", "")?.split("§splitter§")
 

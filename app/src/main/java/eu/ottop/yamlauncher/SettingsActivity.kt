@@ -1,10 +1,7 @@
 package eu.ottop.yamlauncher
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.widget.AdapterView
-import androidx.core.content.ContextCompat
+import androidx.appcompat.app.AppCompatActivity
 import eu.ottop.yamlauncher.databinding.ActivitySettingsBinding
 
 class SettingsActivity : AppCompatActivity() {

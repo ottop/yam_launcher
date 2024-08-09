@@ -8,42 +8,47 @@ import android.os.Bundle
 import android.os.UserHandle
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
+import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.textfield.TextInputEditText
 
 class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
     private val appUtils = AppUtils()
     private val sharedPreferenceManager = SharedPreferenceManager()
     private var adapter: HiddenAppsAdapter? = null
     private var stringUtils = StringUtils()
+    private val uiUtils = UIUtils()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_hidden_apps, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-         adapter = HiddenAppsAdapter(requireContext(), appUtils.getHiddenApps(activity as Activity).toMutableList(), this)
+        adapter = HiddenAppsAdapter(requireContext(), appUtils.getHiddenApps(activity as Activity).toMutableList(), this)
         val recyclerView = view.findViewById<RecyclerView>(R.id.hidden_app_recycler)
         val appMenuEdgeFactory = AppMenuEdgeFactory(requireActivity())
+        val preferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
         recyclerView.edgeEffectFactory = appMenuEdgeFactory
         recyclerView.adapter = adapter
 
         recyclerView.scrollToPosition(0)
 
-        val searchView = view.findViewById<EditText>(R.id.hiddenAppSearch)
+        val searchView = view.findViewById<TextInputEditText>(R.id.hiddenAppSearch)
+
+        uiUtils.setMenuTitleAlignment(preferences, view.findViewById(R.id.hidden_menutitle))
+        uiUtils.setSearchAlignment(preferences, searchView)
+        uiUtils.setSearchSize(preferences, searchView)
 
         recyclerView.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
 
@@ -113,7 +118,7 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
             setMessage("Are you sure you want to unhide $appName?")
             setPositiveButton("Yes") { _, _ ->
                 // Perform action on confirmation
-                performConfirmedAction(appInfo, appName, profile)
+                performConfirmedAction(appInfo, profile)
             }
 
             setNegativeButton("Cancel") { _, _ ->
@@ -121,13 +126,9 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
         }.create().show()
     }
 
-    private fun performConfirmedAction(appInfo: LauncherActivityInfo, appName: String, profile: Int) {
+    private fun performConfirmedAction(appInfo: LauncherActivityInfo, profile: Int) {
         sharedPreferenceManager.setAppVisible(requireContext(), appInfo.applicationInfo.packageName, profile)
         adapter?.updateApps(appUtils.getHiddenApps(requireActivity()))
-    }
-
-    private fun handleCancellation() {
-        // Handle the cancellation of the dialog
     }
 
     override fun onItemClick(appInfo: LauncherActivityInfo, profile: Int) {

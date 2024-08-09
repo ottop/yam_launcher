@@ -16,8 +16,8 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
+import androidx.lifecycle.lifecycleScope
 import eu.ottop.yamlauncher.databinding.ActivityMainBinding
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -105,7 +105,7 @@ class AppActionMenu {
                         workProfile,
                         editText.text.toString()
                     )
-                    CoroutineScope(Dispatchers.Default).launch {
+                    activity.lifecycleScope.launch(Dispatchers.Default) {
                         activity.applySearch()
                     }
 
@@ -125,7 +125,7 @@ class AppActionMenu {
                     app.second.second
                 )
 
-                CoroutineScope(Dispatchers.Default).launch {
+                activity.lifecycleScope.launch(Dispatchers.Default) {
                     activity.applySearch()
                 }
             }
@@ -135,7 +135,7 @@ class AppActionMenu {
             editLayout.visibility = View.GONE
             textView.visibility = View.GONE
             actionMenu.visibility = View.GONE
-            CoroutineScope(Dispatchers.Default).launch {
+            activity.lifecycleScope.launch {
                 sharedPreferenceManager.setAppHidden(activity, appInfo.packageName, workProfile, true)
                 activity.refreshAppMenu()
             }

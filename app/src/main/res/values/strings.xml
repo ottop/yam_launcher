@@ -26,5 +26,6 @@
     <string name="weather_link"><![CDATA[Weather data by <a href="https://open-meteo.com/">Open-Meteo.com</a><br>(<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>)]]></string>
     <string name="location_link"><![CDATA[Location data by <a href="https://open-meteo.com/">Open-Meteo.com</a> (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>)]]></string>
     <string name="accessibility_service_description">Idk this is my service</string>
+    <string name="region_text">%1$s%2$s</string>
 
 </resources>

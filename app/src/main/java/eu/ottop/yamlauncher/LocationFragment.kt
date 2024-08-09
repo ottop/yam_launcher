@@ -5,18 +5,15 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
-import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.preference.Preference
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.CoroutineScope
+import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -27,6 +24,7 @@ class LocationFragment : Fragment(), LocationListAdapter.OnItemClickListener {
     private val weatherSystem = WeatherSystem()
     private val sharedPreferenceManager = SharedPreferenceManager()
     private val stringUtils = StringUtils()
+    private val uiUtils = UIUtils()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,9 +37,11 @@ class LocationFragment : Fragment(), LocationListAdapter.OnItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val searchView = view.findViewById<EditText>(R.id.locationSearch)
+        val searchView = view.findViewById<TextInputEditText>(R.id.locationSearch)
 
         var locationList = mutableListOf<Map<String, String>>()
+
+        val preferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
         stringUtils.setLink(requireActivity().findViewById(R.id.locationLink), getString(R.string.location_link))
 
@@ -54,6 +54,9 @@ class LocationFragment : Fragment(), LocationListAdapter.OnItemClickListener {
         adapter = LocationListAdapter(requireContext(), locationList, this)
         val recyclerView = view.findViewById<RecyclerView>(R.id.locationrecycler)
         val appMenuEdgeFactory = AppMenuEdgeFactory(requireActivity())
+        uiUtils.setMenuTitleAlignment(preferences, view.findViewById(R.id.location_menutitle))
+        uiUtils.setSearchAlignment(preferences, searchView)
+        uiUtils.setSearchSize(preferences, searchView)
 
         recyclerView.edgeEffectFactory = appMenuEdgeFactory
         recyclerView.adapter = adapter

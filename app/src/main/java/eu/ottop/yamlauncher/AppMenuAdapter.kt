@@ -9,22 +9,21 @@ import android.graphics.BlendMode
 import android.graphics.BlendModeColorFilter
 import android.graphics.Color
 import android.os.UserHandle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.textfield.TextInputEditText
 
 
 class AppMenuAdapter(
     private val activity: Context,
-    var apps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>,
+    private var apps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>,
     private val itemClickListener: OnItemClickListener,
     private val shortcutListener: OnShortcutListener,
     private val itemLongClickListener: OnItemLongClickListener,
@@ -36,6 +35,8 @@ class AppMenuAdapter(
 
         private val sharedPreferenceManager = SharedPreferenceManager()
         private var preferences = PreferenceManager.getDefaultSharedPreferences(activity)
+        private val uiUtils = UIUtils()
+        private val appUtils = AppUtils()
 
     interface OnItemClickListener {
         fun onItemClick(appInfo: LauncherActivityInfo, userHandle: UserHandle)
@@ -62,7 +63,7 @@ class AppMenuAdapter(
         val textView: TextView = listItem.findViewById(R.id.app_name)
         val actionMenuLayout: LinearLayout = listItem.findViewById(R.id.action_menu)
         private val editView: LinearLayout = listItem.findViewById(R.id.rename_view)
-        val editText: EditText = editView.findViewById(R.id.app_name_edit)
+        val editText: TextInputEditText = editView.findViewById(R.id.app_name_edit)
 
         init {
             actionMenuLayout.visibility = View.INVISIBLE
@@ -119,51 +120,18 @@ class AppMenuAdapter(
             holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null),null,ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null),null)
         }
 
-        when (preferences.getString("appMenuAlignment", "left")) {
-            "left" -> {
-                holder.textView.setCompoundDrawablesWithIntrinsicBounds(holder.textView.compoundDrawables.filterNotNull().first(),null, ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null), null)
-                holder.textView.gravity = Gravity.CENTER_VERTICAL or Gravity.START
-            }
-            "center" -> {
-                holder.textView.setCompoundDrawablesWithIntrinsicBounds(holder.textView.compoundDrawables.filterNotNull().first(),null,holder.textView.compoundDrawables.filterNotNull().first(), null)
-                holder.textView.gravity = Gravity.CENTER
+        uiUtils.setAppAlignment(activity, preferences, holder.textView, holder.editText)
 
-            }
-            "right" -> {
-                holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null),null, holder.textView.compoundDrawables.filterNotNull().first(), null)
-                holder.textView.gravity = Gravity.CENTER_VERTICAL or Gravity.END
-            }
-        }
+        uiUtils.setAppSize(preferences, holder.textView, holder.editText)
 
-        when (preferences.getString("appMenuSize", "medium")) {
-            "small" -> {
-                holder.textView.textSize = 24F
-                holder.editText.textSize = 24F
-            }
-
-            "medium" -> {
-                holder.textView.textSize = 26F
-                holder.editText.textSize = 26F
-            }
-
-            "large" -> {
-                holder.textView.textSize = 28F
-                holder.editText.textSize = 28F
-            }
-        }
-
-        val appUtils = AppUtils()
-        var appInfo = appUtils.getAppInfo(
+        val appInfo = appUtils.getAppInfo(
             launcherApps,
             app.first.applicationInfo.packageName,
             app.second.second
         )
 
         holder.textView.setTextColor(Color.parseColor(preferences?.getString("textColor",  "#FFF3F3F3")))
-        var appLabel: CharSequence = ""
-        appLabel = appInfo?.loadLabel(activity.packageManager) ?: "Removing..."
-
-        println(appLabel)
+        val appLabel: CharSequence = appInfo?.loadLabel(activity.packageManager) ?: "Removing..."
 
         if (appInfo != null) {
             holder.textView.text = sharedPreferenceManager.getAppName(
@@ -192,28 +160,9 @@ class AppMenuAdapter(
         return apps.size
     }
 
-    fun addApp(position: Int, app: Pair<LauncherActivityInfo, Pair<UserHandle, Int>>) {
-        apps.add(position, app)
-    }
-
-    fun removeApp(position: Int) {
-        apps.removeAt(position)
-    }
-
-    fun updateApp(position: Int, app: Pair<LauncherActivityInfo, Pair<UserHandle, Int>>) {
-        apps[position] = app
-    }
-
-    fun moveApp(position: Int, newPosition: Int) {
-        val app = apps.removeAt(position)
-        apps.add(newPosition, app)
-
-    }
-
     @SuppressLint("NotifyDataSetChanged")
     fun updateApps(newApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
         apps = newApps.toMutableList()
         notifyDataSetChanged()
     }
-
 }

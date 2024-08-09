@@ -44,49 +44,47 @@ import kotlin.math.abs
 
 class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener, AppMenuAdapter.OnItemClickListener, AppMenuAdapter.OnShortcutListener, AppMenuAdapter.OnItemLongClickListener {
 
-    private lateinit var binding: ActivityMainBinding
-    private lateinit var gestureDetector: GestureDetector
-    private lateinit var shortcutGestureDetector: GestureDetector
-    private lateinit var launcherApps: LauncherApps
-    private lateinit var installedApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>
+    private val weatherSystem = WeatherSystem()
+    private val appUtils = AppUtils()
+    private val stringUtils = StringUtils()
+    private val uiUtils = UIUtils()
+    private val gestureUtils = GestureUtils()
+
+    private var appActionMenu = AppActionMenu()
+    private val appMenuLinearLayoutManager = AppMenuLinearLayoutManager(this@MainActivity)
+    private val appMenuEdgeFactory = AppMenuEdgeFactory(this@MainActivity)
+
+    private val sharedPreferenceManager = SharedPreferenceManager()
+
+    private val animations = Animations()
+
+    private lateinit var clock: TextClock
+    private var clockMargin = 0
+    private lateinit var dateText: TextClock
+    private var dateElements = mutableListOf<String>()
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var searchView: TextInputEditText
     private var adapter: AppMenuAdapter? = null
     private var batteryReceiver: BatteryReceiver? = null
 
-    private var appActionMenu = AppActionMenu()
-    private val sharedPreferenceManager = SharedPreferenceManager()
-    private val appUtils = AppUtils()
-    private val appMenuLinearLayoutManager = AppMenuLinearLayoutManager(this@MainActivity)
-    private val appMenuEdgeFactory = AppMenuEdgeFactory(this@MainActivity)
-    private val animations = Animations()
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var launcherApps: LauncherApps
+    private lateinit var installedApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>
+
+    private lateinit var preferences: SharedPreferences
+
+    private var isBatteryReceiverRegistered = false
+    var isJobActive = true
 
     private val swipeThreshold = 100
     private val swipeVelocityThreshold = 100
 
-    private lateinit var clock: TextClock
-    private var clockMargin = 0
-
-    private lateinit var dateText: TextClock
-
-    private lateinit var preferences: SharedPreferences
-
-    private val stringUtils = StringUtils()
-
-    private var dateElements = mutableListOf<String>()
-
-    private val weatherSystem = WeatherSystem()
-
-    private lateinit var uiUtils: UIUtils
-    private lateinit var gestureUtils: GestureUtils
-
-    private var isBatteryReceiverRegistered = false
-
     private lateinit var leftSwipeActivity: Pair<LauncherActivityInfo?, Int?>
     private lateinit var rightSwipeActivity: Pair<LauncherActivityInfo?, Int?>
 
-    var isJobActive = true
+    private lateinit var gestureDetector: GestureDetector
+    private lateinit var shortcutGestureDetector: GestureDetector
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -140,8 +138,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         launcherApps = getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
 
         preferences = PreferenceManager.getDefaultSharedPreferences(this)
-        uiUtils = UIUtils()
-        gestureUtils = GestureUtils()
     }
 
     private fun setPreferences() {
@@ -211,6 +207,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             Toast.makeText(this, "Long click to select an app", Toast.LENGTH_SHORT).show()
         }
         textView.setOnLongClickListener {
+            uiUtils.setMenuTitleAlignment(preferences, binding.menutitle)
+            binding.menutitle.visibility = View.VISIBLE
+
             adapter?.shortcutTextView = textView
             toAppMenu()
 
@@ -305,7 +304,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 }
 
                 "shortcutAlignment" -> {
-                    uiUtils.setShortcutSize(preferences, binding.homeView)
+                    uiUtils.setShortcutAlignment(preferences, binding.homeView)
                 }
 
                 "searchAlignment" -> {
@@ -369,7 +368,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         val handler = Handler(Looper.getMainLooper())
         handler.postDelayed({
             try {
-                binding.menutitle.visibility = View.VISIBLE
                 searchView.setText(R.string.empty)
             }
             catch (_: UninitializedPropertyAccessException) {
@@ -554,7 +552,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     suspend fun applySearch() {
-        filterItems(searchView.text.toString())
+        withContext(Dispatchers.Default) {
+            filterItems(searchView.text.toString())
+        }
     }
 
 
@@ -737,7 +737,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                         ScreenLockService::class.java
                     )
                 ) {
-                    println("enabled")
                     val intent = Intent(this@MainActivity, ScreenLockService::class.java)
                     intent.action = "LOCK_SCREEN"
                     startService(intent)

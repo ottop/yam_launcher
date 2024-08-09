@@ -16,8 +16,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
 
-        val weatherSystem = WeatherSystem()
-
         val gpsLocationPref: SwitchPreference? = findPreference("gps_location")
         manualLocationPref = findPreference("manual_location")
         val leftSwipePref = findPreference<Preference?>("leftSwipeApp")

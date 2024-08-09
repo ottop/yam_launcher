@@ -9,18 +9,15 @@ import android.os.Bundle
 import android.os.UserHandle
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.Toast
-import androidx.core.content.ContextCompat.getSystemService
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.lifecycleScope
-import androidx.preference.Preference
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.CoroutineScope
+import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -58,13 +55,19 @@ class GestureAppsFragment : Fragment(), GestureAppsAdapter.OnItemClickListener {
             }
             val recyclerView = view.findViewById<RecyclerView>(R.id.gesture_app_recycler)
             val appMenuEdgeFactory = AppMenuEdgeFactory(requireActivity())
+            val uiUtils = UIUtils()
+            val preferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
             recyclerView.edgeEffectFactory = appMenuEdgeFactory
             recyclerView.adapter = adapter
 
             recyclerView.scrollToPosition(0)
 
-            val searchView = view.findViewById<EditText>(R.id.gestureAppSearch)
+            val searchView = view.findViewById<TextInputEditText>(R.id.gestureAppSearch)
+
+            uiUtils.setMenuTitleAlignment(preferences, view.findViewById(R.id.gesture_menutitle))
+            uiUtils.setSearchAlignment(preferences, searchView)
+            uiUtils.setSearchSize(preferences, searchView)
 
             recyclerView.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
 
