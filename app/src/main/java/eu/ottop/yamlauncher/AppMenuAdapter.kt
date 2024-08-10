@@ -52,7 +52,8 @@ class AppMenuAdapter(
             textView: TextView,
             actionMenuLayout: LinearLayout,
             editView: LinearLayout,
-            position: Int
+            position: Int,
+            shortcutTextView: TextView?
         )
     }
 
@@ -78,25 +79,24 @@ class AppMenuAdapter(
                     }
             }
 
-            if (shortcutTextView == null) {
-                textView.setOnLongClickListener {
-                        val position = bindingAdapterPosition
 
-                        val app = apps[position].first
-                        itemLongClickListener.onItemLongClick(
-                            app,
-                            apps[position].second.first,
-                            apps[position].second.second,
-                            textView,
-                            actionMenuLayout,
-                            editView,
-                            position
-                        )
-                        return@setOnLongClickListener true
-                    }
+            textView.setOnLongClickListener {
+                val position = bindingAdapterPosition
 
-
+                val app = apps[position].first
+                itemLongClickListener.onItemLongClick(
+                    app,
+                    apps[position].second.first,
+                    apps[position].second.second,
+                    textView,
+                    actionMenuLayout,
+                    editView,
+                    position,
+                    shortcutTextView
+                )
+                return@setOnLongClickListener true
             }
+
         }
     }
 

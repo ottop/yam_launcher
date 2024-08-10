@@ -22,14 +22,14 @@ class Animations (context: Context) {
     fun fadeViewOut(view: View, duration: Long = 100) {
         view.fadeOut(duration)
     }
-    fun showHome(binding: ActivityMainBinding) {
-        binding.appView.slideOutToBottom()
-        binding.homeView.fadeIn()
+    fun showHome(homeView: View, appView: View) {
+        appView.slideOutToBottom()
+        homeView.fadeIn()
     }
 
-    fun showApps(binding: ActivityMainBinding) {
-        binding.appView.slideInFromBottom()
-        binding.homeView.fadeOut()
+    fun showApps(homeView: View, appView: View) {
+        appView.slideInFromBottom()
+        homeView.fadeOut()
     }
 
     fun backgroundIn(activity: Activity, duration: Long = 100) {

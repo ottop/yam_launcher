@@ -94,41 +94,60 @@ class UIUtils(private val context: Context) {
         setTextAlignment(dateText, alignment)
     }
 
-    fun setShortcutAlignment(shortcuts: LinearLayout) {
+    fun setShortcutsAlignment(shortcuts: LinearLayout) {
+        val alignment = sharedPreferenceManager.getShortcutAlignment()
         shortcuts.children.forEach {
 
             if (it is TextView) {
 
                 try {
-                    when (sharedPreferenceManager.getShortcutAlignment()) {
-                        "left" -> {
-                            it.setCompoundDrawablesWithIntrinsicBounds(
-                                it.compoundDrawables.filterNotNull().first(), null, null, null
-                            )
-                            it.gravity = Gravity.CENTER_VERTICAL or Gravity.START
-                        }
-
-                        "center" -> {
-                            it.setCompoundDrawablesWithIntrinsicBounds(
-                                it.compoundDrawables.filterNotNull().first(),
-                                null,
-                                it.compoundDrawables.filterNotNull().first(),
-                                null
-                            )
-                            it.gravity = Gravity.CENTER
-                        }
-
-                        "right" -> {
-                            it.setCompoundDrawablesWithIntrinsicBounds(
-                                null,
-                                null,
-                                it.compoundDrawables.filterNotNull().first(),
-                                null
-                            )
-                            it.gravity = Gravity.CENTER_VERTICAL or Gravity.END
-                        }
-                    }
+                    setShortcutAlignment(it, alignment)
+                    setShortcutDrawables(it, alignment)
                 } catch(_: Exception) {}
+            }
+        }
+    }
+
+    fun setShortcutAlignment(shortcut: TextView, alignment: String?) {
+        when (alignment) {
+            "left" -> {
+                shortcut.gravity = Gravity.CENTER_VERTICAL or Gravity.START
+            }
+
+            "center" -> {
+                shortcut.gravity = Gravity.CENTER
+            }
+
+            "right" -> {
+                shortcut.gravity = Gravity.CENTER_VERTICAL or Gravity.END
+            }
+        }
+    }
+
+    fun setShortcutDrawables(shortcut: TextView, alignment: String?) {
+        when (alignment) {
+            "left" -> {
+                shortcut.setCompoundDrawablesWithIntrinsicBounds(
+                    shortcut.compoundDrawables.filterNotNull().first(), null, null, null
+                )
+            }
+
+            "center" -> {
+                shortcut.setCompoundDrawablesWithIntrinsicBounds(
+                    shortcut.compoundDrawables.filterNotNull().first(),
+                    null,
+                    shortcut.compoundDrawables.filterNotNull().first(),
+                    null
+                )
+            }
+
+            "right" -> {
+                shortcut.setCompoundDrawablesWithIntrinsicBounds(
+                    null,
+                    null,
+                    shortcut.compoundDrawables.filterNotNull().first(),
+                    null
+                )
             }
         }
     }
@@ -207,7 +226,7 @@ class UIUtils(private val context: Context) {
         setTextSize(dateText, sharedPreferenceManager.getDateSize(), 17F, 20F, 23F)
     }
 
-    fun setShortcutSize(shortcuts: LinearLayout) {
+    fun setShortcutsSize(shortcuts: LinearLayout) {
 
         val viewTreeObserver = shortcuts.viewTreeObserver
         val globalLayoutListener = object : ViewTreeObserver.OnGlobalLayoutListener {

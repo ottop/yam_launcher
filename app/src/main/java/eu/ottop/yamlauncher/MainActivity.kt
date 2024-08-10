@@ -155,7 +155,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         uiUtils.setClockSize(clock)
         uiUtils.setDateSize(dateText)
-        uiUtils.setShortcutSize(binding.homeView)
+        uiUtils.setShortcutsSize(binding.homeView)
         uiUtils.setSearchSize(searchView)
 
         uiUtils.setStatusBar(window)
@@ -188,7 +188,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     setShortcutSetup(textView, savedView)
                 }
 
-                uiUtils.setShortcutAlignment(binding.homeView)
+                uiUtils.setShortcutsAlignment(binding.homeView)
             }
 
         }
@@ -223,7 +223,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     private fun toAppMenu() {
-        animations.showApps(binding)
+        animations.showApps(binding.homeView, binding.appView)
         animations.backgroundIn(this@MainActivity)
         if (sharedPreferenceManager.isAutoKeyboardEnabled()) {
             val imm =
@@ -309,7 +309,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 }
 
                 "shortcutAlignment" -> {
-                    uiUtils.setShortcutAlignment(binding.homeView)
+                    uiUtils.setShortcutsAlignment(binding.homeView)
                 }
 
                 "searchAlignment" -> {
@@ -325,7 +325,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 }
 
                 "shortcutSize" -> {
-                    uiUtils.setShortcutSize(binding.homeView)
+                    uiUtils.setShortcutsSize(binding.homeView)
                 }
 
                 "searchSize" -> {
@@ -368,7 +368,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     fun backToHome() {
         closeKeyboard()
-        animations.showHome(binding)
+        animations.showHome(binding.homeView, binding.appView)
         animations.backgroundOut(this@MainActivity)
         val handler = Handler(Looper.getMainLooper())
         handler.postDelayed({
@@ -623,6 +623,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             appInfo.applicationInfo.packageName,
             userProfile
         )
+        uiUtils.setShortcutDrawables(shortcutView, sharedPreferenceManager.getShortcutAlignment())
         backToHome()
     }
 
@@ -634,8 +635,13 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         textView: TextView,
         actionMenuLayout: LinearLayout,
         editView: LinearLayout,
-        position: Int
+        position: Int,
+        shortcutTextView: TextView?
     ) {
+        if (shortcutTextView != null) {
+            onShortcut(appInfo, userHandle, textView, userProfile, shortcutTextView)
+            return
+        }
         textView.visibility = View.INVISIBLE
         animations.fadeViewIn(actionMenuLayout)
         val mainActivity =
