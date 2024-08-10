@@ -1,7 +1,10 @@
 # Privacy Policy
 
+## Summary
+No data is sent anywhere by default. Enabling the weather option sends coordinates to Open-Meteo and Open-Meteo may also store your IP address in this case.
+
 ## Collected data
-The application stores data related to its preferences. 
+The application stores data about the state of its preferences on your device's local storage. This is not sent outside of your device.
 
 For example, if you choose to align the clock to the center, this preference is saved so that the clock does not get reset to the left when the application is launched the next time.
 
