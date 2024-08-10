@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/list_item"
+    android:id="@+id/listItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="0dp">
 
     <LinearLayout
-        android:id="@+id/rename_view"
+        android:id="@+id/renameView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingVertical="10dp"
         android:visibility="invisible">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/app_name_edit"
+            android:id="@+id/appNameEdit"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -44,13 +43,13 @@
             android:gravity="center"
             android:insetTop="0dp"
             android:insetBottom="0dp"
-            android:text="Reset"
+            android:text="@string/reset"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault"
             android:textColor="#F3F3F3" />
     </LinearLayout>
 
     <TextView
-        android:id="@+id/app_name"
+        android:id="@+id/appName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="false"
@@ -67,7 +66,7 @@
         app:drawableLeftCompat="@drawable/ic_work_app" />
 
     <LinearLayout
-        android:id="@+id/action_menu"
+        android:id="@+id/actionMenu"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
@@ -80,7 +79,7 @@
             android:layout_weight="1"
             android:background="#A7000000"
             android:foreground="@drawable/app_action_foreground"
-            android:text="Info"
+            android:text="@string/info"
             android:textAlignment="center"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault"
             android:textColor="#F3F3F3FF"
@@ -93,7 +92,7 @@
             android:layout_weight="1"
             android:background="#A7000000"
             android:foreground="@drawable/app_action_foreground"
-            android:text="Uninstall"
+            android:text="@string/uninstall"
             android:textAlignment="center"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault"
             android:textColor="#F3F3F3FF"
@@ -106,7 +105,7 @@
             android:layout_weight="1"
             android:background="#A7000000"
             android:foreground="@drawable/app_action_foreground"
-            android:text="Rename"
+            android:text="@string/rename"
             android:textAlignment="center"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault"
             android:textColor="#F3F3F3FF"
@@ -119,7 +118,7 @@
             android:layout_weight="1"
             android:background="#A7000000"
             android:foreground="@drawable/app_action_foreground"
-            android:text="Hide"
+            android:text="@string/hide"
             android:textAlignment="center"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault"
             android:textColor="#F3F3F3FF"
@@ -132,7 +131,7 @@
             android:layout_weight="1"
             android:background="#A7000000"
             android:foreground="@drawable/app_action_foreground"
-            android:text="Close"
+            android:text="@string/close"
             android:textAlignment="center"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault"
             android:textColor="#F3F3F3FF"

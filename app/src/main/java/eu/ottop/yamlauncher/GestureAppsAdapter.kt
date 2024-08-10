@@ -27,8 +27,8 @@ class GestureAppsAdapter(
     }
 
     inner class AppViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val listItem: FrameLayout = itemView.findViewById(R.id.list_item)
-        val textView: TextView = listItem.findViewById(R.id.app_name)
+        private val listItem: FrameLayout = itemView.findViewById(R.id.listItem)
+        val textView: TextView = listItem.findViewById(R.id.appName)
 
         init {
             textView.setOnClickListener {

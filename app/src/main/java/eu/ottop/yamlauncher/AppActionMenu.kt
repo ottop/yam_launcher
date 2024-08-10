@@ -67,7 +67,7 @@ class AppActionMenu {
             textView.visibility = View.INVISIBLE
             animations.fadeViewIn(editLayout)
             animations.fadeViewOut(actionMenu, 100)
-            val editText = editLayout.findViewById<EditText>(R.id.app_name_edit)
+            val editText = editLayout.findViewById<EditText>(R.id.appNameEdit)
             val resetButton = editLayout.findViewById<AppCompatButton>(R.id.reset)
 
             val app = Pair(mainActivity!!, Pair(userHandle, workProfile))

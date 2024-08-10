@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/gesture_app_view"
+    android:id="@+id/gestureAppView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="bottom"
@@ -13,7 +13,7 @@
         android:layout_height="60dp" />
 
     <TextView
-        android:id="@+id/gesture_menutitle"
+        android:id="@+id/gestureMenuTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="false"
@@ -28,7 +28,7 @@
         android:textSize="36sp" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/gesture_app_recycler"
+        android:id="@+id/gestureAppRecycler"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"

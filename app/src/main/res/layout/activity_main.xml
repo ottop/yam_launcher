@@ -2,7 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_view"
+    android:id="@+id/mainView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="fill_vertical"
@@ -10,7 +10,7 @@
     tools:context=".MainActivity">
 
     <LinearLayout
-        android:id="@+id/app_view"
+        android:id="@+id/appView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="bottom"
@@ -22,7 +22,7 @@
             android:layout_height="60dp" />
 
         <TextView
-            android:id="@+id/menutitle"
+            android:id="@+id/menuTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="false"
@@ -37,7 +37,7 @@
             android:textSize="36sp" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view"
+            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -53,7 +53,6 @@
             android:id="@+id/searchView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
             android:layout_marginHorizontal="32dp"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="10dp"
@@ -72,7 +71,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/home_view"
+        android:id="@+id/homeView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="fill_vertical"
@@ -81,12 +80,12 @@
         android:visibility="visible">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/clock_layout"
+            android:id="@+id/clockLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <TextClock
-                android:id="@+id/text_clock"
+                android:id="@+id/textClock"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="32dp"
@@ -95,7 +94,6 @@
                 android:fontFamily="@null"
                 android:format12Hour="hh:mm a"
                 android:format24Hour="HH:mm"
-                android:gravity="bottom"
                 android:textAlignment="textStart"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault"
                 android:textColor="#F3F3F3"
@@ -106,7 +104,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextClock
-                android:id="@+id/text_date"
+                android:id="@+id/textDate"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:fontFamily="@null"
@@ -118,9 +116,9 @@
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault"
                 android:textColor="#F3F3F3"
                 android:textSize="20sp"
-                app:layout_constraintEnd_toEndOf="@+id/text_clock"
-                app:layout_constraintStart_toStartOf="@+id/text_clock"
-                app:layout_constraintTop_toBottomOf="@+id/text_clock" />
+                app:layout_constraintEnd_toEndOf="@+id/textClock"
+                app:layout_constraintStart_toStartOf="@+id/textClock"
+                app:layout_constraintTop_toBottomOf="@+id/textClock" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

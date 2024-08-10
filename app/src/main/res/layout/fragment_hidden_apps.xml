@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/hidden_app_view"
+    android:id="@+id/hiddenAppView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="bottom"
@@ -14,7 +14,7 @@
         android:layout_height="60dp" />
 
     <TextView
-        android:id="@+id/hidden_menutitle"
+        android:id="@+id/hiddenMenuTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="false"
@@ -23,13 +23,13 @@
         android:paddingTop="20dp"
         android:paddingRight="40dp"
         android:paddingBottom="20dp"
-        android:text="Unhide an app"
+        android:text="@string/unhide_an_app"
         android:textAppearance="@android:style/TextAppearance.DeviceDefault"
         android:textColor="#C1F3F3F3"
         android:textSize="36sp" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/hidden_app_recycler"
+        android:id="@+id/hiddenAppRecycler"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"

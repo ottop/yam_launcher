@@ -3,17 +3,30 @@
 
     <string name="empty"></string>
 
-    <string name="select_an_app">Select an app</string>
-    <string name="search">Search…</string>
-    <string name="app">App</string>
     <string name="shortcut_default">App</string>
 
-    <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="select_an_app">Select an app</string>
+    <string name="unhide_an_app">Unhide an app</string>
+    <string name="find_your_city">Find your city</string>
+
+    <string name="search">Search…</string>
+
+    <string name="reset">Reset</string>
+    <string name="info">Info</string>
+    <string name="uninstall">Uninstall</string>
+    <string name="rename">Rename</string>
+    <string name="hide">Hide</string>
+    <string name="close">Close</string>
+
+    <string name="app_icon">App Icon</string>
+    <string name="creditName">By Otto Petäjä</string>
+    <string name="source_code">Source Code</string>
+    <string name="codeberg">Codeberg</string>
+    <string name="github">GitHub</string>
+    <string name="donate">Donate</string>
+    <string name="stripe">Stripe</string>
+    <string name="liberapay">Liberapay</string>
+    <string name="weather_data_credit">Weather data by Open-Meteo.com\n(CC BY 4.0)</string>
 
     <string name="my_website_link"><![CDATA[by <a href="https://ottop.eu">Otto Petäjä</a>]]></string>
 
@@ -25,7 +38,9 @@
 
     <string name="weather_link"><![CDATA[Weather data by <a href="https://open-meteo.com/">Open-Meteo.com</a><br>(<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>)]]></string>
     <string name="location_link"><![CDATA[Location data by <a href="https://open-meteo.com/">Open-Meteo.com</a> (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>)]]></string>
-    <string name="accessibility_service_description">Idk this is my service</string>
     <string name="region_text">%1$s%2$s</string>
+
+    <string name="accessibility_service_description">The permission is required for double tap to work for locking the screen.\n\nIt is only needed if you want to use the double tap to lock screen feature in YAM Launcher.</string>
+
 
 </resources>

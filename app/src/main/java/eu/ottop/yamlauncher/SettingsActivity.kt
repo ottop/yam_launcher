@@ -14,7 +14,7 @@ class SettingsActivity : AppCompatActivity() {
             setContentView(binding.root)
             supportFragmentManager
                 .beginTransaction()
-                .replace(R.id.settings_layout, SettingsFragment())
+                .replace(R.id.settingsLayout, SettingsFragment())
                 .commit()
         }
 

@@ -44,7 +44,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 Preference.OnPreferenceClickListener {
                     requireActivity().supportFragmentManager
                         .beginTransaction()
-                        .replace(R.id.settings_layout, LocationFragment())
+                        .replace(R.id.settingsLayout, LocationFragment())
                         .addToBackStack(null)
                         .commit()
                     true
@@ -55,7 +55,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             Preference.OnPreferenceClickListener {
                 requireActivity().supportFragmentManager
                     .beginTransaction()
-                    .replace(R.id.settings_layout, HiddenAppsFragment())
+                    .replace(R.id.settingsLayout, HiddenAppsFragment())
                     .addToBackStack(null)
                     .commit()
                 true }
@@ -64,7 +64,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             Preference.OnPreferenceClickListener {
                 requireActivity().supportFragmentManager
                     .beginTransaction()
-                    .replace(R.id.settings_layout, GestureAppsFragment())
+                    .replace(R.id.settingsLayout, GestureAppsFragment())
                     .addToBackStack(null)
                     .commit()
                 setFragmentResultListener("request_key") { _, bundle ->
@@ -84,7 +84,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             Preference.OnPreferenceClickListener {
                 requireActivity().supportFragmentManager
                     .beginTransaction()
-                    .replace(R.id.settings_layout, GestureAppsFragment())
+                    .replace(R.id.settingsLayout, GestureAppsFragment())
                     .addToBackStack(null)
                     .commit()
                 setFragmentResultListener("request_key") { _, bundle ->
@@ -104,7 +104,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             Preference.OnPreferenceClickListener {
                 requireActivity().supportFragmentManager
                     .beginTransaction()
-                    .replace(R.id.settings_layout, AboutFragment())
+                    .replace(R.id.settingsLayout, AboutFragment())
                     .addToBackStack(null)
                     .commit()
                 true }

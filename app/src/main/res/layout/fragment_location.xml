@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/manual_location_view"
+    android:id="@+id/manualLocationView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="bottom"
@@ -14,7 +14,7 @@
         android:layout_height="60dp" />
 
     <TextView
-        android:id="@+id/location_menutitle"
+        android:id="@+id/locationMenuTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="false"
@@ -23,13 +23,13 @@
         android:paddingTop="20dp"
         android:paddingRight="40dp"
         android:paddingBottom="20dp"
-        android:text="Find your city"
+        android:text="@string/find_your_city"
         android:textAppearance="@android:style/TextAppearance.DeviceDefault"
         android:textColor="#C1F3F3F3"
         android:textSize="36sp" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/locationrecycler"
+        android:id="@+id/locationRecycler"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -70,7 +70,7 @@
         android:layout_marginTop="0dp"
         android:layout_marginBottom="15dp"
         android:linksClickable="true"
-        android:text="Weather data by Open-Meteo.com\n(CC BY 4.0)"
+        android:text="@string/weather_data_credit"
         android:textAlignment="center"
         android:textColor="#B3A5A5A5"
         android:textColorLink="#7F80CBC4"

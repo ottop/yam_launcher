@@ -26,7 +26,7 @@ class AppMenuAdapter(
     private val itemClickListener: OnItemClickListener,
     private val shortcutListener: OnShortcutListener,
     private val itemLongClickListener: OnItemLongClickListener,
-    private val launcherApps: LauncherApps
+    launcherApps: LauncherApps
 ) :
     RecyclerView.Adapter<AppMenuAdapter.AppViewHolder>() {
 
@@ -57,11 +57,11 @@ class AppMenuAdapter(
     }
 
     inner class AppViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val listItem: FrameLayout = itemView.findViewById(R.id.list_item)
-        val textView: TextView = listItem.findViewById(R.id.app_name)
-        val actionMenuLayout: LinearLayout = listItem.findViewById(R.id.action_menu)
-        private val editView: LinearLayout = listItem.findViewById(R.id.rename_view)
-        val editText: TextInputEditText = editView.findViewById(R.id.app_name_edit)
+        private val listItem: FrameLayout = itemView.findViewById(R.id.listItem)
+        val textView: TextView = listItem.findViewById(R.id.appName)
+        val actionMenuLayout: LinearLayout = listItem.findViewById(R.id.actionMenu)
+        private val editView: LinearLayout = listItem.findViewById(R.id.renameView)
+        val editText: TextInputEditText = editView.findViewById(R.id.appNameEdit)
 
         init {
             actionMenuLayout.visibility = View.INVISIBLE

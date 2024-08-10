@@ -14,7 +14,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.lifecycleScope
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.Dispatchers
@@ -57,7 +56,7 @@ class GestureAppsFragment : Fragment(), GestureAppsAdapter.OnItemClickListener {
                     this@GestureAppsFragment
                 )
             }
-            val recyclerView = view.findViewById<RecyclerView>(R.id.gesture_app_recycler)
+            val recyclerView = view.findViewById<RecyclerView>(R.id.gestureAppRecycler)
             val appMenuEdgeFactory = AppMenuEdgeFactory(requireActivity())
             val uiUtils = UIUtils(requireContext())
 
@@ -68,7 +67,7 @@ class GestureAppsFragment : Fragment(), GestureAppsAdapter.OnItemClickListener {
 
             val searchView = view.findViewById<TextInputEditText>(R.id.gestureAppSearch)
 
-            uiUtils.setMenuTitleAlignment(view.findViewById(R.id.gesture_menutitle))
+            uiUtils.setMenuTitleAlignment(view.findViewById(R.id.gestureMenuTitle))
             uiUtils.setSearchAlignment(searchView)
             uiUtils.setSearchSize(searchView)
 

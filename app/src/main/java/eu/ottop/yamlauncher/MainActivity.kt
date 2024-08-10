@@ -14,7 +14,6 @@ import android.os.UserHandle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.GestureDetector
-import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -133,11 +132,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         gestureDetector = GestureDetector(this, GestureListener())
         shortcutGestureDetector = GestureDetector(this, TextGestureListener())
 
-        clock = findViewById(R.id.text_clock)
+        clock = findViewById(R.id.textClock)
 
         clockMargin = clock.marginLeft
 
-        dateText = findViewById(R.id.text_date)
+        dateText = findViewById(R.id.textDate)
 
         dateElements = mutableListOf(dateText.format12Hour.toString(), dateText.format24Hour.toString(), "", "")
 
@@ -213,8 +212,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             Toast.makeText(this, "Long click to select an app", Toast.LENGTH_SHORT).show()
         }
         textView.setOnLongClickListener {
-            uiUtils.setMenuTitleAlignment(binding.menutitle)
-            binding.menutitle.visibility = View.VISIBLE
+            uiUtils.setMenuTitleAlignment(binding.menuTitle)
+            binding.menuTitle.visibility = View.VISIBLE
 
             adapter?.shortcutTextView = textView
             toAppMenu()
@@ -475,7 +474,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private suspend fun setupRecyclerView(newApps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
         adapter = AppMenuAdapter(this@MainActivity, newApps, this@MainActivity, this@MainActivity, this@MainActivity, launcherApps)
         appMenuLinearLayoutManager.stackFromEnd = true
-        recyclerView = findViewById(R.id.recycler_view)
+        recyclerView = findViewById(R.id.recyclerView)
         withContext(Dispatchers.Main) {
             recyclerView.layoutManager = appMenuLinearLayoutManager
             recyclerView.edgeEffectFactory = appMenuEdgeFactory
@@ -732,7 +731,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         private fun openAppMenu() {
             adapter?.shortcutTextView = null
-            binding.menutitle.visibility = View.GONE
+            binding.menuTitle.visibility = View.GONE
             toAppMenu()
         }
 

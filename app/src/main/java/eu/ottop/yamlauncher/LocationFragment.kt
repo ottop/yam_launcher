@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.Dispatchers
@@ -52,9 +51,9 @@ class LocationFragment : Fragment(), LocationListAdapter.OnItemClickListener {
         }
 
         adapter = LocationListAdapter(requireContext(), locationList, this)
-        val recyclerView = view.findViewById<RecyclerView>(R.id.locationrecycler)
+        val recyclerView = view.findViewById<RecyclerView>(R.id.locationRecycler)
         val appMenuEdgeFactory = AppMenuEdgeFactory(requireActivity())
-        uiUtils.setMenuTitleAlignment(view.findViewById(R.id.location_menutitle))
+        uiUtils.setMenuTitleAlignment(view.findViewById(R.id.locationMenuTitle))
         uiUtils.setSearchAlignment(searchView)
         uiUtils.setSearchSize(searchView)
 

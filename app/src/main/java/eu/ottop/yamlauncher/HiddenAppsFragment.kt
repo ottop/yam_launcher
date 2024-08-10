@@ -13,7 +13,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 
@@ -41,7 +40,7 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
         appUtils = AppUtils(requireContext(), launcherApps)
         sharedPreferenceManager = SharedPreferenceManager(requireContext())
 
-        val recyclerView = view.findViewById<RecyclerView>(R.id.hidden_app_recycler)
+        val recyclerView = view.findViewById<RecyclerView>(R.id.hiddenAppRecycler)
         val appMenuEdgeFactory = AppMenuEdgeFactory(requireActivity())
 
         adapter = HiddenAppsAdapter(requireContext(), appUtils.getHiddenApps().toMutableList(), this)
@@ -54,7 +53,7 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
 
         val searchView = view.findViewById<TextInputEditText>(R.id.hiddenAppSearch)
 
-        uiUtils.setMenuTitleAlignment(view.findViewById(R.id.hidden_menutitle))
+        uiUtils.setMenuTitleAlignment(view.findViewById(R.id.hiddenMenuTitle))
         uiUtils.setSearchAlignment(searchView)
         uiUtils.setSearchSize(searchView)
 

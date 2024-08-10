@@ -23,9 +23,9 @@ class LocationListAdapter(
     }
 
     inner class AppViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val listItem: ConstraintLayout = itemView.findViewById(R.id.location_place)
-        val textView: TextView = listItem.findViewById(R.id.location_name)
-        val regionText: TextView = listItem.findViewById(R.id.region_name)
+        private val listItem: ConstraintLayout = itemView.findViewById(R.id.locationPlace)
+        val textView: TextView = listItem.findViewById(R.id.locationName)
+        val regionText: TextView = listItem.findViewById(R.id.regionName)
 
         init {
 
