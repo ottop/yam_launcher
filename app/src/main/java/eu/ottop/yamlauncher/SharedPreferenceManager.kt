@@ -161,4 +161,12 @@ class SharedPreferenceManager (context: Context) {
     fun isBatteryEnabled(): Boolean {
         return preferences.getBoolean("battery_enabled", false)
     }
+
+    fun getAnimationSpeed(): Long {
+        val animSpeed = preferences.getString("animationSpeed", "200")?.toLong()
+        if (animSpeed != null) {
+            return animSpeed
+        }
+        return 200
+    }
 }

@@ -370,6 +370,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         closeKeyboard()
         animations.showHome(binding.homeView, binding.appView)
         animations.backgroundOut(this@MainActivity)
+        val animSpeed = sharedPreferenceManager.getAnimationSpeed()
         val handler = Handler(Looper.getMainLooper())
         handler.postDelayed({
             try {
@@ -378,7 +379,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             catch (_: UninitializedPropertyAccessException) {
 
             }
-        }, 100)
+        }, animSpeed)
+
         handler.postDelayed({
             lifecycleScope.launch {
                 refreshAppMenu()
@@ -391,7 +393,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 catch (_: UninitializedPropertyAccessException) {
 
                 }
-            }}, 150)
+            }}, animSpeed + 50)
 
     }
 

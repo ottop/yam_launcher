@@ -1,17 +1,6 @@
 <resources>
 
-    <string-array name="shortcut_options">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
-        <item>8</item>
-    </string-array>
-
+    <!--General UI-->
     <string-array name="bg_options">
         <item>Transparent</item>
         <item>Black</item>
@@ -34,6 +23,35 @@
     <string-array name="color_values">
         <item>#FFF3F3F3</item>
         <item>#FF0C0C0C</item>
+    </string-array>
+
+    <string-array name="animation_options">
+        <item>0.25x</item>
+        <item>0.5x</item>
+        <item>1x</item>
+        <item>2x</item>
+        <item>4x</item>
+    </string-array>
+
+    <string-array name="animation_values">
+        <item>800</item>
+        <item>400</item>
+        <item>200</item>
+        <item>100</item>
+        <item>50</item>
+    </string-array>
+
+    <!--Home and App Menu-->
+    <string-array name="shortcut_options">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
     </string-array>
 
     <string-array name="h_alignment_options">
@@ -60,6 +78,7 @@
         <item>large</item>
     </string-array>
 
+    <!--Weather-->
     <string-array name="temp_units">
         <item>°C</item>
         <item>°F</item>

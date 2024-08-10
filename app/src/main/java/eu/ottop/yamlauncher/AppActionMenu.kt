@@ -48,7 +48,7 @@ class AppActionMenu {
                 )
             }
 
-            animations.fadeViewOut(actionMenu, 100)
+            animations.fadeViewOut(actionMenu)
             textView.visibility = View.VISIBLE
         }
 
@@ -58,7 +58,7 @@ class AppActionMenu {
             intent.putExtra(Intent.EXTRA_USER, userHandle)
             activity.startActivity(intent)
 
-            animations.fadeViewOut(actionMenu, 100)
+            animations.fadeViewOut(actionMenu)
 
             textView.visibility = View.VISIBLE
         }
@@ -66,7 +66,7 @@ class AppActionMenu {
         actionMenu.findViewById<TextView>(R.id.rename).setOnClickListener {
             textView.visibility = View.INVISIBLE
             animations.fadeViewIn(editLayout)
-            animations.fadeViewOut(actionMenu, 100)
+            animations.fadeViewOut(actionMenu)
             val editText = editLayout.findViewById<EditText>(R.id.appNameEdit)
             val resetButton = editLayout.findViewById<AppCompatButton>(R.id.reset)
 
@@ -86,7 +86,7 @@ class AppActionMenu {
                 if (bottom - top > oldBottom - oldTop) {
                     editLayout.clearFocus()
 
-                    animations.fadeViewOut(editLayout, 100)
+                    animations.fadeViewOut(editLayout)
                     textView.visibility = View.VISIBLE
                     searchView.visibility = View.VISIBLE
                 }
@@ -138,7 +138,7 @@ class AppActionMenu {
         }
 
         actionMenu.findViewById<TextView>(R.id.close).setOnClickListener {
-            animations.fadeViewOut(actionMenu, 100)
+            animations.fadeViewOut(actionMenu)
             textView.visibility = View.VISIBLE
         }
     }

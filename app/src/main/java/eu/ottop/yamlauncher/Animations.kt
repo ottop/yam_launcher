@@ -15,12 +15,12 @@ class Animations (context: Context) {
 
     private val sharedPreferenceManager = SharedPreferenceManager(context)
 
-    fun fadeViewIn(view: View, duration: Long = 100) {
-        view.fadeIn(duration)
+    fun fadeViewIn(view: View) {
+        view.fadeIn()
     }
 
-    fun fadeViewOut(view: View, duration: Long = 100) {
-        view.fadeOut(duration)
+    fun fadeViewOut(view: View) {
+        view.fadeOut()
     }
     fun showHome(homeView: View, appView: View) {
         appView.slideOutToBottom()
@@ -32,7 +32,7 @@ class Animations (context: Context) {
         homeView.fadeOut()
     }
 
-    fun backgroundIn(activity: Activity, duration: Long = 100) {
+    fun backgroundIn(activity: Activity) {
         val originalColor = sharedPreferenceManager.getBgColor()
 
         val newColor: Int = if (originalColor == Color.parseColor("#00000000")) {
@@ -48,12 +48,13 @@ class Animations (context: Context) {
         backgroundColorAnimator.addUpdateListener { animator ->
             colorDrawable.color = animator.animatedValue as Int
         }
+        val duration = sharedPreferenceManager.getAnimationSpeed()
         backgroundColorAnimator.duration = duration
 
         backgroundColorAnimator.start()
     }
 
-    fun backgroundOut(activity: Activity, duration: Long = 100) {
+    fun backgroundOut(activity: Activity) {
         val newColor = sharedPreferenceManager.getBgColor()
 
         val originalColor: Int = if (newColor == Color.parseColor("#00000000")) {
@@ -69,32 +70,37 @@ class Animations (context: Context) {
         backgroundColorAnimator.addUpdateListener { animator ->
             colorDrawable.color = animator.animatedValue as Int
         }
+        val duration = sharedPreferenceManager.getAnimationSpeed()
         backgroundColorAnimator.duration = duration
 
         backgroundColorAnimator.start()
     }
-    private fun View.slideInFromBottom(duration: Long = 100) {
+    private fun View.slideInFromBottom() {
         if (visibility != View.VISIBLE) {
             translationY = height.toFloat()/5
             scaleY = 1.2f
             alpha = 0f
             visibility = View.VISIBLE
+            val duration = sharedPreferenceManager.getAnimationSpeed()
+
             animate()
-                .translationY(0f)
-                .scaleY(1f)
-                .alpha(1f)
-                .setDuration(duration)
-                .setListener(null)
+                    .translationY(0f)
+                    .scaleY(1f)
+                    .alpha(1f)
+                    .setDuration(duration)
+                    .setListener(null)
         }
     }
 
-    private fun View.slideOutToBottom(duration: Long = 50) {
+    private fun View.slideOutToBottom() {
         if (visibility == View.VISIBLE) {
+            val duration = sharedPreferenceManager.getAnimationSpeed()
+
             animate()
                 .translationY(height.toFloat() / 5)
                 .scaleY(1.2f)
                 .alpha(0f)
-                .setDuration(duration)
+                .setDuration(duration/2)
                 .setListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator) {
                         visibility = View.INVISIBLE
@@ -103,29 +109,36 @@ class Animations (context: Context) {
         }
     }
 
-    private fun View.fadeIn(duration: Long = 100) {
+    private fun View.fadeIn() {
         if (visibility != View.VISIBLE) {
             alpha = 0f
             translationY = -height.toFloat()/100
             visibility = View.VISIBLE
+            val duration = sharedPreferenceManager.getAnimationSpeed()
+
             animate()
                 .alpha(1f)
                 .translationY(0f)
                 .setDuration(duration)
                 .setListener(null)
+
         }
     }
 
-    private fun View.fadeOut(duration: Long = 50) {
+    private fun View.fadeOut() {
         if (visibility == View.VISIBLE) {
+            val duration = sharedPreferenceManager.getAnimationSpeed()
+
             animate()
                 .alpha(0f)
                 .translationY(-height.toFloat()/100)
-                .setDuration(duration)
+                .setDuration(duration/2)
                 .setListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator) {
                         visibility = View.GONE
                     }
-                })}
+                })
+
+        }
     }
 }

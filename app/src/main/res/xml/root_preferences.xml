@@ -30,6 +30,15 @@
             android:defaultValue="false"
             android:title="Show Status Bar"
             app:key="barVisibility" />
+        <ListPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:defaultValue="200"
+            app:entries="@array/animation_options"
+            app:entryValues="@array/animation_values"
+            app:key="animationSpeed"
+            app:title="Animation Speed"
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
     <PreferenceCategory
         android:layout_width="wrap_content"
