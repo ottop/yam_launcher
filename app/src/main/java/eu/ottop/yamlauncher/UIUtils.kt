@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.BlendMode
 import android.graphics.BlendModeColorFilter
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -15,17 +14,14 @@ import android.view.WindowInsetsController
 import android.widget.LinearLayout
 import android.widget.TextClock
 import android.widget.TextView
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.children
 import com.google.android.material.textfield.TextInputEditText
 
-class UIUtils(private val context: Context) {
+class UIUtils(context: Context) {
 
     private val sharedPreferenceManager = SharedPreferenceManager(context)
 
     fun setBackground(window: Window) {
-        window.decorView.background = ColorDrawable(Color.parseColor("#00000000"))
-
         window.decorView.setBackgroundColor(
             sharedPreferenceManager.getBgColor()
         )
@@ -97,90 +93,63 @@ class UIUtils(private val context: Context) {
     fun setShortcutsAlignment(shortcuts: LinearLayout) {
         val alignment = sharedPreferenceManager.getShortcutAlignment()
         shortcuts.children.forEach {
-
             if (it is TextView) {
-
-                try {
-                    setShortcutAlignment(it, alignment)
-                    setShortcutDrawables(it, alignment)
-                } catch(_: Exception) {}
+                setTextGravity(it, alignment)
+                setDrawables(it, alignment)
             }
         }
     }
 
-    fun setShortcutAlignment(shortcut: TextView, alignment: String?) {
-        when (alignment) {
-            "left" -> {
-                shortcut.gravity = Gravity.CENTER_VERTICAL or Gravity.START
-            }
 
-            "center" -> {
-                shortcut.gravity = Gravity.CENTER
-            }
+    fun setDrawables(shortcut: TextView, alignment: String?) {
+        try {
+            when (alignment) {
+                "left" -> {
+                    shortcut.setCompoundDrawablesWithIntrinsicBounds(
+                        shortcut.compoundDrawables.filterNotNull().first(),
+                        null,
+                        null,
+                        null
+                    )
+                }
 
-            "right" -> {
-                shortcut.gravity = Gravity.CENTER_VERTICAL or Gravity.END
-            }
-        }
-    }
+                "center" -> {
+                    shortcut.setCompoundDrawablesWithIntrinsicBounds(
+                        shortcut.compoundDrawables.filterNotNull().first(),
+                        null,
+                        shortcut.compoundDrawables.filterNotNull().first(),
+                        null
+                    )
+                }
 
-    fun setShortcutDrawables(shortcut: TextView, alignment: String?) {
-        when (alignment) {
-            "left" -> {
-                shortcut.setCompoundDrawablesWithIntrinsicBounds(
-                    shortcut.compoundDrawables.filterNotNull().first(), null, null, null
-                )
+                "right" -> {
+                    shortcut.setCompoundDrawablesWithIntrinsicBounds(
+                        null,
+                        null,
+                        shortcut.compoundDrawables.filterNotNull().first(),
+                        null
+                    )
+                }
             }
-
-            "center" -> {
-                shortcut.setCompoundDrawablesWithIntrinsicBounds(
-                    shortcut.compoundDrawables.filterNotNull().first(),
-                    null,
-                    shortcut.compoundDrawables.filterNotNull().first(),
-                    null
-                )
-            }
-
-            "right" -> {
-                shortcut.setCompoundDrawablesWithIntrinsicBounds(
-                    null,
-                    null,
-                    shortcut.compoundDrawables.filterNotNull().first(),
-                    null
-                )
-            }
-        }
+        } catch (_: Exception) {}
     }
 
     fun setAppAlignment(
         textView: TextView,
-        editText: TextInputEditText? = null,
+        editText: TextView? = null,
         regionText: TextView? = null
     ) {
         val alignment = sharedPreferenceManager.getAppAlignment()
         setTextGravity(textView, alignment)
 
         if (regionText != null) {
-            setTextGravity(textView, alignment)
             setTextGravity(regionText, alignment)
             return
         }
 
-        when (alignment) {
-            "left" -> {
-                textView.setCompoundDrawablesWithIntrinsicBounds(textView.compoundDrawables.filterNotNull().first(),null, ResourcesCompat.getDrawable(context.resources, R.drawable.ic_empty, null), null)
-                editText?.gravity = Gravity.CENTER_VERTICAL or Gravity.START
-
-            }
-            "center" -> {
-                textView.setCompoundDrawablesWithIntrinsicBounds(textView.compoundDrawables.filterNotNull().first(),null, textView.compoundDrawables.filterNotNull().first(), null)
-                editText?.gravity = Gravity.CENTER_VERTICAL or Gravity.END
-
-            }
-            "right" -> {
-                textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(context.resources, R.drawable.ic_empty, null),null, textView.compoundDrawables.filterNotNull().first(), null)
-                editText?.gravity = Gravity.CENTER_VERTICAL or Gravity.END
-            }
+        if (editText != null) {
+            setDrawables(textView, alignment)
+            setTextGravity(editText, alignment)
         }
 
     }
@@ -195,7 +164,8 @@ class UIUtils(private val context: Context) {
     }
 
     private fun setTextAlignment(view: TextView, alignment: String?) {
-        view.textAlignment = when (alignment) {
+        try {
+            view.textAlignment = when (alignment) {
             "left" -> View.TEXT_ALIGNMENT_VIEW_START
 
             "center" -> View.TEXT_ALIGNMENT_CENTER
@@ -203,19 +173,22 @@ class UIUtils(private val context: Context) {
             "right" -> View.TEXT_ALIGNMENT_VIEW_END
 
             else -> View.TEXT_ALIGNMENT_VIEW_START
-        }
+            }
+        } catch (_: Exception) {}
     }
 
     private fun setTextGravity(view: TextView, alignment: String?) {
-        view.gravity = when (alignment) {
-            "left" -> Gravity.CENTER_VERTICAL or Gravity.START
+        try {
+            view.gravity = when (alignment) {
+                "left" -> Gravity.CENTER_VERTICAL or Gravity.START
 
-            "center" -> Gravity.CENTER
+                "center" -> Gravity.CENTER
 
-            "right" -> Gravity.CENTER_VERTICAL or Gravity.END
+                "right" -> Gravity.CENTER_VERTICAL or Gravity.END
 
-            else -> Gravity.CENTER_VERTICAL or Gravity.START
-        }
+                else -> Gravity.CENTER_VERTICAL or Gravity.START
+            }
+        } catch (_: Exception) {}
     }
 
     fun setClockSize(clock: TextClock) {
@@ -227,6 +200,7 @@ class UIUtils(private val context: Context) {
     }
 
     fun setShortcutsSize(shortcuts: LinearLayout) {
+        val alignment = sharedPreferenceManager.getShortcutSize()
 
         val viewTreeObserver = shortcuts.viewTreeObserver
         val globalLayoutListener = object : ViewTreeObserver.OnGlobalLayoutListener {
@@ -234,30 +208,8 @@ class UIUtils(private val context: Context) {
 
                 shortcuts.children.forEach {
                     if (it is TextView) {
+                        setShortcutSize(it, alignment)
 
-                        when (sharedPreferenceManager.getShortcutSize()) {
-                            "small" -> {
-                                it.setPadding(
-                                    it.paddingLeft,
-                                    it.height / 4,
-                                    it.paddingRight,
-                                    it.height / 4
-                                )
-                            }
-
-                            "medium" -> {
-                                it.setPadding(
-                                    it.paddingLeft,
-                                    (it.height / 4.5).toInt(),
-                                    it.paddingRight,
-                                    (it.height / 4.5).toInt()
-                                )
-                            }
-
-                            "large" -> {
-                                it.setPadding(it.paddingLeft, 0, it.paddingRight, 0)
-                            }
-                        }
                     }
                 }
                 if (viewTreeObserver.isAlive) {
@@ -269,6 +221,34 @@ class UIUtils(private val context: Context) {
         if (viewTreeObserver.isAlive) {
             viewTreeObserver.addOnGlobalLayoutListener(globalLayoutListener)
         }
+    }
+
+    private fun setShortcutSize(shortcut: TextView, alignment: String?) {
+        try {
+            when (alignment) {
+                "small" -> {
+                    shortcut.setPadding(
+                        shortcut.paddingLeft,
+                        shortcut.height / 4,
+                        shortcut.paddingRight,
+                        shortcut.height / 4
+                    )
+                }
+
+                "medium" -> {
+                    shortcut.setPadding(
+                        shortcut.paddingLeft,
+                        (shortcut.height / 4.5).toInt(),
+                        shortcut.paddingRight,
+                        (shortcut.height / 4.5).toInt()
+                    )
+                }
+
+                "large" -> {
+                    shortcut.setPadding(shortcut.paddingLeft, 0, shortcut.paddingRight, 0)
+                }
+            }
+        } catch(_: Exception) {}
     }
 
     fun setAppSize(
@@ -291,15 +271,19 @@ class UIUtils(private val context: Context) {
     }
 
     private fun setTextSize(view: TextView, size: String?, s: Float, m: Float, l: Float) {
-        view.textSize = when (size) {
-            "small" -> s
+        try {
+            view.textSize = when (size) {
+                "small" -> s
 
-            "medium" -> m
+                "medium" -> m
 
-            "large" -> l
+                "large" -> l
 
-            else -> {0F}
-        }
+                else -> {
+                    0F
+                }
+            }
+        } catch (_: Exception) {}
     }
 
     fun setStatusBar(window: Window) {

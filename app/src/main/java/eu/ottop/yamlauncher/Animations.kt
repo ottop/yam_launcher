@@ -15,6 +15,8 @@ class Animations (context: Context) {
 
     private val sharedPreferenceManager = SharedPreferenceManager(context)
 
+    // fadeViewIn and fadeViewOut are for smaller item transitions, such as the action menu
+
     fun fadeViewIn(view: View) {
         view.fadeIn()
     }
@@ -22,6 +24,7 @@ class Animations (context: Context) {
     fun fadeViewOut(view: View) {
         view.fadeOut()
     }
+
     fun showHome(homeView: View, appView: View) {
         appView.slideOutToBottom()
         homeView.fadeIn()
@@ -35,45 +38,47 @@ class Animations (context: Context) {
     fun backgroundIn(activity: Activity) {
         val originalColor = sharedPreferenceManager.getBgColor()
 
-        val newColor: Int = if (originalColor == Color.parseColor("#00000000")) {
-            Color.parseColor("#3F000000")
+        // Only animate darkness onto the transparent background
+        if (originalColor == Color.parseColor("#00000000")) {
+            val newColor = Color.parseColor("#3F000000")
+            val colorDrawable = ColorDrawable(originalColor)
+            activity.window.setBackgroundDrawable(colorDrawable)
+
+            val backgroundColorAnimator = ValueAnimator.ofObject(ArgbEvaluator(), originalColor, newColor)
+            backgroundColorAnimator.addUpdateListener { animator ->
+                colorDrawable.color = animator.animatedValue as Int
+            }
+
+            val duration = sharedPreferenceManager.getAnimationSpeed()
+            backgroundColorAnimator.duration = duration
+
+            backgroundColorAnimator.start()
         } else {
-            originalColor
+            return
         }
-
-        val colorDrawable = ColorDrawable(originalColor)
-        activity.window.setBackgroundDrawable(colorDrawable)
-
-        val backgroundColorAnimator = ValueAnimator.ofObject(ArgbEvaluator(), originalColor, newColor)
-        backgroundColorAnimator.addUpdateListener { animator ->
-            colorDrawable.color = animator.animatedValue as Int
-        }
-        val duration = sharedPreferenceManager.getAnimationSpeed()
-        backgroundColorAnimator.duration = duration
-
-        backgroundColorAnimator.start()
     }
 
     fun backgroundOut(activity: Activity) {
         val newColor = sharedPreferenceManager.getBgColor()
 
-        val originalColor: Int = if (newColor == Color.parseColor("#00000000")) {
-            Color.parseColor("#3F000000")
+        // Only animate darkness onto the transparent background
+        if (newColor == Color.parseColor("#00000000")) {
+            val originalColor = Color.parseColor("#3F000000")
+            val colorDrawable = ColorDrawable(originalColor)
+            activity.window.setBackgroundDrawable(colorDrawable)
+
+            val backgroundColorAnimator = ValueAnimator.ofObject(ArgbEvaluator(), originalColor, newColor)
+            backgroundColorAnimator.addUpdateListener { animator ->
+                colorDrawable.color = animator.animatedValue as Int
+            }
+
+            val duration = sharedPreferenceManager.getAnimationSpeed()
+            backgroundColorAnimator.duration = duration
+
+            backgroundColorAnimator.start()
         } else {
-            newColor
+            return
         }
-
-        val colorDrawable = ColorDrawable(originalColor)
-        activity.window.setBackgroundDrawable(colorDrawable)
-
-        val backgroundColorAnimator = ValueAnimator.ofObject(ArgbEvaluator(), originalColor, newColor)
-        backgroundColorAnimator.addUpdateListener { animator ->
-            colorDrawable.color = animator.animatedValue as Int
-        }
-        val duration = sharedPreferenceManager.getAnimationSpeed()
-        backgroundColorAnimator.duration = duration
-
-        backgroundColorAnimator.start()
     }
     private fun View.slideInFromBottom() {
         if (visibility != View.VISIBLE) {

@@ -17,18 +17,19 @@ class AppUtils(private val context: Context, private val launcherApps: LauncherA
         val allApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
         var sortedApps = listOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
         withContext(Dispatchers.Default) {
-            for (i in launcherApps.profiles.indices) {
+            for (i in launcherApps.profiles.indices) { // Check apps on both, normal and work profiles
                 launcherApps.getActivityList(null, launcherApps.profiles[i]).forEach { app ->
-                    if (!sharedPreferenceManager.isAppHidden(
+                    if (!sharedPreferenceManager.isAppHidden( // Only include the app if it isn't set as hidden
                             app.applicationInfo.packageName,
                             i
-                        ) && app.applicationInfo.packageName != context.applicationInfo.packageName
+                        ) && app.applicationInfo.packageName != context.applicationInfo.packageName // Hide the launcher itself
                     ) {
                         allApps.add(Pair(app, Pair(launcherApps.profiles[i], i)))
                     }
                 }
             }
 
+            // Sort apps by name
             sortedApps = allApps.sortedBy {
                 sharedPreferenceManager.getAppName(
                     it.first.applicationInfo.packageName,
@@ -41,8 +42,11 @@ class AppUtils(private val context: Context, private val launcherApps: LauncherA
 
     }
 
-    fun getHiddenApps(): List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>> {
+    // Get hidden apps for the hidden apps settings
+    suspend fun getHiddenApps(): List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>> {
         val allApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
+        var sortedApps = listOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
+        withContext(Dispatchers.Default) {
         for (i in launcherApps.profiles.indices) {
             launcherApps.getActivityList(null, launcherApps.profiles[i]).forEach { app ->
                 if (sharedPreferenceManager.isAppHidden(app.applicationInfo.packageName, i)) {
@@ -50,13 +54,16 @@ class AppUtils(private val context: Context, private val launcherApps: LauncherA
                 }
             }
         }
-        return allApps.sortedBy {
+
+            sortedApps = allApps.sortedBy {
             sharedPreferenceManager.getAppName(
                 it.first.applicationInfo.packageName,
                 it.second.second,
                 context.packageManager.getApplicationLabel(it.first.applicationInfo)
             ).toString().lowercase()
         }
+        }
+        return sortedApps
     }
 
     fun getAppInfo(

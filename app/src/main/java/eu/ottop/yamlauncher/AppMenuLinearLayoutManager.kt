@@ -17,7 +17,8 @@ class AppMenuLinearLayoutManager(private val activity: MainActivity) : LinearLay
         val scrollRange = super.scrollVerticallyBy(dy, recycler, state)
         val overscroll: Int = dy - scrollRange
 
-        if (overscroll < 0 && firstVisibleItemPosition == 0 && scrollStarted && activity.isJobActive) {
+        // If the user scrolls up when already on top, go back to home. Only if the keyboard isn't open, though
+        if (overscroll < 0 && (firstVisibleItemPosition == 0 || firstVisibleItemPosition < 0) && scrollStarted && activity.canExit) {
             activity.backToHome()
         }
 

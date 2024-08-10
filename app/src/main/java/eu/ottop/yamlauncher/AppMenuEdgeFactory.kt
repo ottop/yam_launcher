@@ -11,7 +11,10 @@ class AppMenuEdgeFactory(private val activity: Activity) : RecyclerView.EdgeEffe
     }
 
     inner class AppMenuEdgeEffect(activity: Activity) : EdgeEffect(activity) {
+
+        //This just speeds up the animation when the scrolling hits the edge so that the app menu can be exited sooner
         private val animationSpeedFactor = 0.75f
+
         override fun onAbsorb(velocity: Int) {
             super.onAbsorb((velocity * animationSpeedFactor).toInt())
         }

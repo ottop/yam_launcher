@@ -30,6 +30,7 @@ class AppMenuAdapter(
 ) :
     RecyclerView.Adapter<AppMenuAdapter.AppViewHolder>() {
 
+        // If the menu is opened to select shortcuts, the below variable is set
         var shortcutTextView: TextView? = null
 
         private val sharedPreferenceManager = SharedPreferenceManager(context)
@@ -52,8 +53,7 @@ class AppMenuAdapter(
             textView: TextView,
             actionMenuLayout: LinearLayout,
             editView: LinearLayout,
-            position: Int,
-            shortcutTextView: TextView?
+            position: Int
         )
     }
 
@@ -71,6 +71,8 @@ class AppMenuAdapter(
             textView.setOnClickListener {
                     val position = bindingAdapterPosition
                     val app = apps[position].first
+
+                    // If opened to select a shortcut, set the shortcut instead of launching the app
                     if (shortcutTextView != null) {
                         shortcutListener.onShortcut(app, apps[position].second.first, textView, apps[position].second.second, shortcutTextView!!)
                     }
@@ -79,11 +81,17 @@ class AppMenuAdapter(
                     }
             }
 
-
             textView.setOnLongClickListener {
                 val position = bindingAdapterPosition
 
                 val app = apps[position].first
+
+                // If opened to select a shortcut, set the shortcut instead of opening the action menu
+                if (shortcutTextView != null) {
+                    shortcutListener.onShortcut(app, apps[position].second.first, textView, apps[position].second.second, shortcutTextView!!)
+                    return@setOnLongClickListener true
+                } else {
+
                 itemLongClickListener.onItemLongClick(
                     app,
                     apps[position].second.first,
@@ -91,11 +99,10 @@ class AppMenuAdapter(
                     textView,
                     actionMenuLayout,
                     editView,
-                    position,
-                    shortcutTextView
+                    position
                 )
                 return@setOnLongClickListener true
-            }
+            }}
 
         }
     }
@@ -109,6 +116,7 @@ class AppMenuAdapter(
     override fun onBindViewHolder(holder: AppViewHolder, position: Int) {
         val app = apps[position]
 
+        // Set initial drawables
         if (app.second.second != 0) {
             holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(context.resources, R.drawable.ic_work_app, null),null, ResourcesCompat.getDrawable(context.resources, R.drawable.ic_empty, null),null)
             holder.textView.compoundDrawables[0].colorFilter =
@@ -122,12 +130,15 @@ class AppMenuAdapter(
 
         uiUtils.setAppSize(holder.textView, holder.editText)
 
+        // Update the application information (allows updating apps to work)
         val appInfo = appUtils.getAppInfo(
             app.first.applicationInfo.packageName,
             app.second.second
         )
 
         holder.textView.setTextColor(sharedPreferenceManager.getTextColor())
+
+        // Set app name on the menu. If the app has been uninstalled, replace it with "Removing" until the app menu updates.
         val appLabel: CharSequence = appInfo?.loadLabel(context.packageManager) ?: "Removing..."
 
         if (appInfo != null) {
@@ -139,6 +150,7 @@ class AppMenuAdapter(
 
             holder.editText.setText(holder.textView.text)
 
+            // Remove the uninstall icon for system apps
             if (appInfo.flags and ApplicationInfo.FLAG_SYSTEM != 0) {
                 holder.actionMenuLayout.findViewById<TextView>(R.id.uninstall).visibility =
                     View.GONE

@@ -39,6 +39,8 @@ class AppActionMenu {
         val sharedPreferenceManager = SharedPreferenceManager(activity)
 
         actionMenu.findViewById<TextView>(R.id.info).setOnClickListener {
+
+            // Launch app info in phone settings
             if (mainActivity != null) {
                 launcherApps.startAppDetailsActivity(
                     mainActivity.componentName,
@@ -75,6 +77,7 @@ class AppActionMenu {
             searchView.visibility = View.INVISIBLE
             editText.requestFocus()
 
+            // Open keyboard
             val handler = Handler(Looper.getMainLooper())
             handler.postDelayed({
                 val imm =
@@ -83,6 +86,8 @@ class AppActionMenu {
             }, 100)
 
             binding.root.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
+
+                // If the keyboard is closed, exit editing mode
                 if (bottom - top > oldBottom - oldTop) {
                     editLayout.clearFocus()
 
@@ -93,6 +98,8 @@ class AppActionMenu {
             }
 
             editText.setOnEditorActionListener { _, actionId, _ ->
+
+                // Once the new name is confirmed, close the keyboard, save the new app name and update the apps on screen
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     val imm =
                         activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -113,6 +120,8 @@ class AppActionMenu {
             }
 
             resetButton.setOnClickListener {
+
+                // If reset is pressed, close keyboard, remove saved edited name and update the apps on screen
                 val imm =
                     activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(editLayout.windowToken, 0)

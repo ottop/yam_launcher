@@ -74,7 +74,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private lateinit var preferences: SharedPreferences
 
     private var isBatteryReceiverRegistered = false
-    var isJobActive = true
+    private var isJobActive = true
+    var canExit = true
 
     private val swipeThreshold = 100
     private val swipeVelocityThreshold = 100
@@ -502,7 +503,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         recyclerView.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
 
             if (bottom - top > oldBottom - oldTop) {
+                canExit = true
                 searchView.clearFocus()
+            }
+            else if (bottom - top < oldBottom - oldTop) {
+                canExit = false
             }
         }
 
@@ -625,7 +630,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             appInfo.applicationInfo.packageName,
             userProfile
         )
-        uiUtils.setShortcutDrawables(shortcutView, sharedPreferenceManager.getShortcutAlignment())
+        uiUtils.setDrawables(shortcutView, sharedPreferenceManager.getShortcutAlignment())
         backToHome()
     }
 
@@ -637,13 +642,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         textView: TextView,
         actionMenuLayout: LinearLayout,
         editView: LinearLayout,
-        position: Int,
-        shortcutTextView: TextView?
+        position: Int
     ) {
-        if (shortcutTextView != null) {
-            onShortcut(appInfo, userHandle, textView, userProfile, shortcutTextView)
-            return
-        }
         textView.visibility = View.INVISIBLE
         animations.fadeViewIn(actionMenuLayout)
         val mainActivity =

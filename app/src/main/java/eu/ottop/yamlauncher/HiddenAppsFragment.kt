@@ -13,8 +13,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
+import kotlinx.coroutines.launch
 
 class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
 
@@ -40,10 +42,12 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
         appUtils = AppUtils(requireContext(), launcherApps)
         sharedPreferenceManager = SharedPreferenceManager(requireContext())
 
+        lifecycleScope.launch {
+
         val recyclerView = view.findViewById<RecyclerView>(R.id.hiddenAppRecycler)
         val appMenuEdgeFactory = AppMenuEdgeFactory(requireActivity())
 
-        adapter = HiddenAppsAdapter(requireContext(), appUtils.getHiddenApps().toMutableList(), this)
+        adapter = HiddenAppsAdapter(requireContext(), appUtils.getHiddenApps().toMutableList(), this@HiddenAppsFragment)
 
 
         recyclerView.edgeEffectFactory = appMenuEdgeFactory
@@ -74,8 +78,9 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
             }
 
             override fun afterTextChanged(s: Editable?) {
-
-                filterItems(searchView.text.toString())
+                lifecycleScope.launch {
+                    filterItems(searchView.text.toString())
+                }
 
             }
         })
@@ -87,8 +92,9 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
             imm.showSoftInput(searchView, InputMethodManager.SHOW_IMPLICIT)
         }
     }
+    }
 
-    private fun filterItems(query: String?) {
+    private suspend fun filterItems(query: String?) {
 
         val cleanQuery = stringUtils.cleanString(query)
         val newFilteredApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
@@ -128,7 +134,9 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
             setTitle("Confirmation")
             setMessage("Are you sure you want to unhide $appName?")
             setPositiveButton("Yes") { _, _ ->
-                performConfirmedAction(appInfo, profile)
+                lifecycleScope.launch {
+                    performConfirmedAction(appInfo, profile)
+                }
             }
 
             setNegativeButton("Cancel") { _, _ ->
@@ -136,7 +144,7 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
         }.create().show()
     }
 
-    private fun performConfirmedAction(appInfo: LauncherActivityInfo, profile: Int) {
+    private suspend fun performConfirmedAction(appInfo: LauncherActivityInfo, profile: Int) {
         sharedPreferenceManager.setAppVisible(appInfo.applicationInfo.packageName, profile)
         adapter?.updateApps(appUtils.getHiddenApps())
     }

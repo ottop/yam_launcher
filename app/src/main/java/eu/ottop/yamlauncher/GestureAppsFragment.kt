@@ -32,7 +32,6 @@ class GestureAppsFragment : Fragment(), GestureAppsAdapter.OnItemClickListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_gesture_apps, container, false)
     }
 
@@ -46,16 +45,12 @@ class GestureAppsFragment : Fragment(), GestureAppsAdapter.OnItemClickListener {
 
         lifecycleScope.launch {
 
-            withContext(Dispatchers.Default) {
+            adapter = GestureAppsAdapter(
+                requireContext(),
+                appUtils.getInstalledApps().toMutableList(),
+                this@GestureAppsFragment
+            )
 
-
-
-                adapter = GestureAppsAdapter(
-                    requireContext(),
-                    appUtils.getInstalledApps().toMutableList(),
-                    this@GestureAppsFragment
-                )
-            }
             val recyclerView = view.findViewById<RecyclerView>(R.id.gestureAppRecycler)
             val appMenuEdgeFactory = AppMenuEdgeFactory(requireActivity())
             val uiUtils = UIUtils(requireContext())

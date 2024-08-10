@@ -14,12 +14,13 @@ class AboutFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_about, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Set up about page links
         stringUtils.setLink(requireActivity().findViewById(R.id.creditText), getString(R.string.my_website_link))
         stringUtils.setLink(requireActivity().findViewById(R.id.codebergLink), getString(R.string.codeberg_link))
         stringUtils.setLink(requireActivity().findViewById(R.id.githubLink), getString(R.string.github_link))
