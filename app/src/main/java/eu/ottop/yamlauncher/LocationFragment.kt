@@ -43,8 +43,6 @@ class LocationFragment : Fragment(), LocationListAdapter.OnItemClickListener {
 
         var locationList = mutableListOf<Map<String, String>>()
 
-        val preferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
-
         stringUtils.setLink(requireActivity().findViewById(R.id.locationLink), getString(R.string.location_link))
 
         lifecycleScope.launch(Dispatchers.IO) {
@@ -56,9 +54,9 @@ class LocationFragment : Fragment(), LocationListAdapter.OnItemClickListener {
         adapter = LocationListAdapter(requireContext(), locationList, this)
         val recyclerView = view.findViewById<RecyclerView>(R.id.locationrecycler)
         val appMenuEdgeFactory = AppMenuEdgeFactory(requireActivity())
-        uiUtils.setMenuTitleAlignment(preferences, view.findViewById(R.id.location_menutitle))
-        uiUtils.setSearchAlignment(preferences, searchView)
-        uiUtils.setSearchSize(preferences, searchView)
+        uiUtils.setMenuTitleAlignment(view.findViewById(R.id.location_menutitle))
+        uiUtils.setSearchAlignment(searchView)
+        uiUtils.setSearchSize(searchView)
 
         recyclerView.edgeEffectFactory = appMenuEdgeFactory
         recyclerView.adapter = adapter
@@ -97,7 +95,7 @@ class LocationFragment : Fragment(), LocationListAdapter.OnItemClickListener {
             }
         })
 
-        if (PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("autoKeyboard", false)) {
+        if (sharedPreferenceManager.isAutoKeyboardEnabled()) {
             val imm =
                 requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             searchView.requestFocus()

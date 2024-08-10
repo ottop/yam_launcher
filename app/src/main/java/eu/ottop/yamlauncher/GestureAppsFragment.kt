@@ -2,7 +2,6 @@ package eu.ottop.yamlauncher
 
 import android.app.AlertDialog
 import android.content.Context
-import android.content.SharedPreferences
 import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
 import android.os.Bundle
@@ -41,25 +40,26 @@ class GestureAppsFragment : Fragment(), GestureAppsAdapter.OnItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        appUtils = AppUtils(requireContext())
+        launcherApps = requireContext().getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
+
+        appUtils = AppUtils(requireContext(), launcherApps)
         sharedPreferenceManager = SharedPreferenceManager(requireContext())
 
         lifecycleScope.launch {
 
             withContext(Dispatchers.Default) {
 
-                launcherApps = requireContext().getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
+
 
                 adapter = GestureAppsAdapter(
                     requireContext(),
-                    appUtils.getInstalledApps(launcherApps).toMutableList(),
+                    appUtils.getInstalledApps().toMutableList(),
                     this@GestureAppsFragment
                 )
             }
             val recyclerView = view.findViewById<RecyclerView>(R.id.gesture_app_recycler)
             val appMenuEdgeFactory = AppMenuEdgeFactory(requireActivity())
             val uiUtils = UIUtils(requireContext())
-            val preferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
             recyclerView.edgeEffectFactory = appMenuEdgeFactory
             recyclerView.adapter = adapter
@@ -68,9 +68,9 @@ class GestureAppsFragment : Fragment(), GestureAppsAdapter.OnItemClickListener {
 
             val searchView = view.findViewById<TextInputEditText>(R.id.gestureAppSearch)
 
-            uiUtils.setMenuTitleAlignment(preferences, view.findViewById(R.id.gesture_menutitle))
-            uiUtils.setSearchAlignment(preferences, searchView)
-            uiUtils.setSearchSize(preferences, searchView)
+            uiUtils.setMenuTitleAlignment(view.findViewById(R.id.gesture_menutitle))
+            uiUtils.setSearchAlignment(searchView)
+            uiUtils.setSearchSize(searchView)
 
             recyclerView.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
 
@@ -107,7 +107,7 @@ class GestureAppsFragment : Fragment(), GestureAppsAdapter.OnItemClickListener {
 
         val cleanQuery = stringUtils.cleanString(query)
         val newFilteredApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
-        val updatedApps = appUtils.getInstalledApps(launcherApps)
+        val updatedApps = appUtils.getInstalledApps()
 
         getFilteredApps(cleanQuery, newFilteredApps, updatedApps)
 

@@ -7,7 +7,6 @@ import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
 import android.graphics.BlendMode
 import android.graphics.BlendModeColorFilter
-import android.graphics.Color
 import android.os.UserHandle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +15,6 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 
@@ -35,9 +33,8 @@ class AppMenuAdapter(
         var shortcutTextView: TextView? = null
 
         private val sharedPreferenceManager = SharedPreferenceManager(context)
-        private var preferences = PreferenceManager.getDefaultSharedPreferences(context)
         private val uiUtils = UIUtils(context)
-        private val appUtils = AppUtils(context)
+        private val appUtils = AppUtils(context, launcherApps)
 
     interface OnItemClickListener {
         fun onItemClick(appInfo: LauncherActivityInfo, userHandle: UserHandle)
@@ -115,23 +112,22 @@ class AppMenuAdapter(
         if (app.second.second != 0) {
             holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(context.resources, R.drawable.ic_work_app, null),null, ResourcesCompat.getDrawable(context.resources, R.drawable.ic_empty, null),null)
             holder.textView.compoundDrawables[0].colorFilter =
-                BlendModeColorFilter(Color.parseColor(preferences?.getString("textColor",  "#FFF3F3F3")), BlendMode.SRC_ATOP)
+                BlendModeColorFilter(sharedPreferenceManager.getTextColor(), BlendMode.SRC_ATOP)
         }
         else {
             holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(context.resources, R.drawable.ic_empty, null),null,ResourcesCompat.getDrawable(context.resources, R.drawable.ic_empty, null),null)
         }
 
-        uiUtils.setAppAlignment(context, preferences, holder.textView, holder.editText)
+        uiUtils.setAppAlignment(holder.textView, holder.editText)
 
-        uiUtils.setAppSize(preferences, holder.textView, holder.editText)
+        uiUtils.setAppSize(holder.textView, holder.editText)
 
         val appInfo = appUtils.getAppInfo(
-            launcherApps,
             app.first.applicationInfo.packageName,
             app.second.second
         )
 
-        holder.textView.setTextColor(Color.parseColor(preferences?.getString("textColor",  "#FFF3F3F3")))
+        holder.textView.setTextColor(sharedPreferenceManager.getTextColor())
         val appLabel: CharSequence = appInfo?.loadLabel(context.packageManager) ?: "Removing..."
 
         if (appInfo != null) {

@@ -5,8 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
 
 class BatteryReceiver(private val activity: MainActivity) : BroadcastReceiver() {
 

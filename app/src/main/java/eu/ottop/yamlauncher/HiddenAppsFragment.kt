@@ -3,6 +3,7 @@ package eu.ottop.yamlauncher
 import android.app.AlertDialog
 import android.content.Context
 import android.content.pm.LauncherActivityInfo
+import android.content.pm.LauncherApps
 import android.os.Bundle
 import android.os.UserHandle
 import android.text.Editable
@@ -17,11 +18,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 
 class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
-    private lateinit var appUtils: AppUtils
+
     private lateinit var sharedPreferenceManager: SharedPreferenceManager
     private var adapter: HiddenAppsAdapter? = null
     private var stringUtils = StringUtils()
     private lateinit var uiUtils: UIUtils
+    private lateinit var appUtils: AppUtils
+    private lateinit var launcherApps: LauncherApps
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,13 +36,13 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        launcherApps = requireContext().getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
         uiUtils = UIUtils(requireContext())
-        appUtils = AppUtils(requireContext())
+        appUtils = AppUtils(requireContext(), launcherApps)
         sharedPreferenceManager = SharedPreferenceManager(requireContext())
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.hidden_app_recycler)
         val appMenuEdgeFactory = AppMenuEdgeFactory(requireActivity())
-        val preferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
         adapter = HiddenAppsAdapter(requireContext(), appUtils.getHiddenApps().toMutableList(), this)
 
@@ -51,9 +54,9 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
 
         val searchView = view.findViewById<TextInputEditText>(R.id.hiddenAppSearch)
 
-        uiUtils.setMenuTitleAlignment(preferences, view.findViewById(R.id.hidden_menutitle))
-        uiUtils.setSearchAlignment(preferences, searchView)
-        uiUtils.setSearchSize(preferences, searchView)
+        uiUtils.setMenuTitleAlignment(view.findViewById(R.id.hidden_menutitle))
+        uiUtils.setSearchAlignment(searchView)
+        uiUtils.setSearchSize(searchView)
 
         recyclerView.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
 
@@ -78,7 +81,7 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
             }
         })
 
-        if (PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("autoKeyboard", false)) {
+        if (sharedPreferenceManager.isAutoKeyboardEnabled()) {
             val imm =
                 requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             searchView.requestFocus()

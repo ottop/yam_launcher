@@ -84,8 +84,7 @@ class WeatherSystem(private val context: Context) {
 
     fun getTemp() : String {
 
-            val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-            val tempUnits = preferences.getString("tempUnits", "celsius")
+            val tempUnits = sharedPreferenceManager.getTempUnits()
             var currentWeather = ""
 
             val location = sharedPreferenceManager.getWeatherLocation()

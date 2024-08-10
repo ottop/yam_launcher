@@ -121,8 +121,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     private fun setMainVariables() {
+        launcherApps = getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
+
         weatherSystem = WeatherSystem(this@MainActivity)
-        appUtils = AppUtils(this@MainActivity)
+        appUtils = AppUtils(this@MainActivity, launcherApps)
         uiUtils = UIUtils(this@MainActivity)
         gestureUtils = GestureUtils(this@MainActivity)
         sharedPreferenceManager = SharedPreferenceManager(this@MainActivity)
@@ -141,8 +143,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         searchView = findViewById(R.id.searchView)
 
-        launcherApps = getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
-
         preferences = PreferenceManager.getDefaultSharedPreferences(this)
     }
 
@@ -152,14 +152,14 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         uiUtils.setSearchColors(searchView)
 
         uiUtils.setClockAlignment(clock, dateText)
-        uiUtils.setSearchAlignment(preferences, searchView)
+        uiUtils.setSearchAlignment(searchView)
 
-        uiUtils.setClockSize(preferences, clock)
-        uiUtils.setDateSize(preferences, dateText)
-        uiUtils.setShortcutSize(preferences, binding.homeView)
-        uiUtils.setSearchSize(preferences, searchView)
+        uiUtils.setClockSize(clock)
+        uiUtils.setDateSize(dateText)
+        uiUtils.setShortcutSize(binding.homeView)
+        uiUtils.setSearchSize(searchView)
 
-        uiUtils.setStatusBar(window, preferences)
+        uiUtils.setStatusBar(window)
 
         leftSwipeActivity = gestureUtils.getSwipeInfo(launcherApps, "left")
         rightSwipeActivity = gestureUtils.getSwipeInfo(launcherApps, "right")
@@ -172,7 +172,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
             val textView = findViewById<TextView>(shortcuts[i])
 
-            val shortcutNo = preferences.getString("shortcutNo", "4")?.toInt()
+            val shortcutNo = sharedPreferenceManager.getShortcutNumber()
 
             if (i >= shortcutNo!!) {
                 textView.visibility = View.GONE
@@ -189,7 +189,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     setShortcutSetup(textView, savedView)
                 }
 
-                uiUtils.setShortcutAlignment(preferences, binding.homeView)
+                uiUtils.setShortcutAlignment(binding.homeView)
             }
 
         }
@@ -213,7 +213,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             Toast.makeText(this, "Long click to select an app", Toast.LENGTH_SHORT).show()
         }
         textView.setOnLongClickListener {
-            uiUtils.setMenuTitleAlignment(preferences, binding.menutitle)
+            uiUtils.setMenuTitleAlignment(binding.menutitle)
             binding.menutitle.visibility = View.VISIBLE
 
             adapter?.shortcutTextView = textView
@@ -226,7 +226,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private fun toAppMenu() {
         animations.showApps(binding)
         animations.backgroundIn(this@MainActivity)
-        if (preferences.getBoolean("autoKeyboard", false)) {
+        if (sharedPreferenceManager.isAutoKeyboardEnabled()) {
             val imm =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             searchView.requestFocus()
@@ -260,7 +260,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private fun setHomeListeners() {
         registerBatteryReceiver()
 
-        if (!preferences.getBoolean("battery_enabled", false)) {
+        if (!sharedPreferenceManager.isBatteryEnabled()) {
             unregisterBatteryReceiver()
         }
 
@@ -310,31 +310,31 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 }
 
                 "shortcutAlignment" -> {
-                    uiUtils.setShortcutAlignment(preferences, binding.homeView)
+                    uiUtils.setShortcutAlignment(binding.homeView)
                 }
 
                 "searchAlignment" -> {
-                    uiUtils.setSearchAlignment(preferences, searchView)
+                    uiUtils.setSearchAlignment(searchView)
                 }
 
                 "clockSize" -> {
-                    uiUtils.setClockSize(preferences, clock)
+                    uiUtils.setClockSize(clock)
                 }
 
                 "dateSize" -> {
-                    uiUtils.setDateSize(preferences, dateText)
+                    uiUtils.setDateSize(dateText)
                 }
 
                 "shortcutSize" -> {
-                    uiUtils.setShortcutSize(preferences, binding.homeView)
+                    uiUtils.setShortcutSize(binding.homeView)
                 }
 
                 "searchSize" -> {
-                    uiUtils.setSearchSize(preferences, searchView)
+                    uiUtils.setSearchSize(searchView)
                 }
 
                 "barVisibility" -> {
-                    uiUtils.setStatusBar(window, preferences)
+                    uiUtils.setStatusBar(window)
                 }
 
                 "leftSwipeApp" -> {
@@ -346,7 +346,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 }
 
                 "battery_enabled" -> {
-                    if (preferences.getBoolean(key, false)) {
+                    if (sharedPreferenceManager.isBatteryEnabled()) {
                         registerBatteryReceiver()
                     } else {
                         unregisterBatteryReceiver()
@@ -405,7 +405,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     suspend fun refreshAppMenu() {
         try {
             if (isJobActive) {
-                val updatedApps = appUtils.getInstalledApps(launcherApps)
+                val updatedApps = appUtils.getInstalledApps()
                 if (!listsEqual(installedApps, updatedApps)) {
 
                     updateMenu(updatedApps)
@@ -438,8 +438,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private suspend fun updateWeather() {
         withContext(Dispatchers.IO) {
-            if (preferences.getBoolean("weather_enabled", false)) {
-                if (preferences.getBoolean("gps_location", false)) {
+            if (sharedPreferenceManager.isWeatherEnabled()) {
+                if (sharedPreferenceManager.isWeatherGPS()) {
                     weatherSystem.setGpsLocation(this@MainActivity)
                 } else {
                     updateWeatherText()
@@ -462,7 +462,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private fun setupApps() {
         lifecycleScope.launch(Dispatchers.Default) {
-            installedApps = appUtils.getInstalledApps(launcherApps)
+            installedApps = appUtils.getInstalledApps()
             val newApps = installedApps.toMutableList()
 
             setupRecyclerView(newApps)
@@ -526,7 +526,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         val cleanQuery = stringUtils.cleanString(query)
         val newFilteredApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
-        val updatedApps = appUtils.getInstalledApps(launcherApps)
+        val updatedApps = appUtils.getInstalledApps()
 
         getFilteredApps(cleanQuery, newFilteredApps, updatedApps)
     }
@@ -598,7 +598,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     override fun onItemClick(appInfo: LauncherActivityInfo, userHandle: UserHandle) {
-        appUtils.launchApp(launcherApps, appInfo, userHandle)
+        appUtils.launchApp(appInfo, userHandle)
     }
 
     override fun onShortcut(
@@ -615,38 +615,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             shortcutView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_empty, null),null,null,null)
         }
 
-        when (preferences.getString("shortcutAlignment", "left")) {
-            "left" -> {
-                shortcutView.setCompoundDrawablesWithIntrinsicBounds(
-                    textView.compoundDrawables.filterNotNull().first(), null, null, null
-                )
-                shortcutView.gravity = Gravity.CENTER_VERTICAL or Gravity.START
-            }
-
-            "center" -> {
-                shortcutView.setCompoundDrawablesWithIntrinsicBounds(
-                    shortcutView.compoundDrawables.filterNotNull().first(),
-                    null,
-                    shortcutView.compoundDrawables.filterNotNull().first(),
-                    null
-                )
-                shortcutView.gravity = Gravity.CENTER
-            }
-
-            "right" -> {
-                shortcutView.setCompoundDrawablesWithIntrinsicBounds(
-                    null,
-                    null,
-                    shortcutView.compoundDrawables.filterNotNull().first(),
-                    null
-                )
-                shortcutView.gravity = Gravity.CENTER_VERTICAL or Gravity.END
-            }
-        }
-
         shortcutView.text = textView.text.toString()
         shortcutView.setOnClickListener {
-            appUtils.launchApp(launcherApps, appInfo, userHandle)
+            appUtils.launchApp(appInfo, userHandle)
         }
         sharedPreferenceManager.setShortcut(
             shortcutView,
@@ -714,7 +685,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 }
 
                 // Swipe left
-                else if (deltaX < -swipeThreshold && abs(velocityX) > swipeVelocityThreshold && preferences.getBoolean("leftSwipe", true)){
+                else if (deltaX < -swipeThreshold && abs(velocityX) > swipeVelocityThreshold && sharedPreferenceManager.isGestureEnabled("left")){
 
                     if (leftSwipeActivity.first != null && leftSwipeActivity.second != null) {
                         launcherApps.startMainActivity(leftSwipeActivity.first!!.componentName,  launcherApps.profiles[leftSwipeActivity.second!!], null, null)
@@ -725,7 +696,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
 
                 // Swipe right
-                else if (deltaX > -swipeThreshold && abs(velocityX) > swipeVelocityThreshold && preferences.getBoolean("rightSwipe", true)) {
+                else if (deltaX > -swipeThreshold && abs(velocityX) > swipeVelocityThreshold && sharedPreferenceManager.isGestureEnabled("right")) {
                     if (rightSwipeActivity.first != null && rightSwipeActivity.second != null) {
                         launcherApps.startMainActivity(rightSwipeActivity.first!!.componentName,  launcherApps.profiles[rightSwipeActivity.second!!], null, null)
                     } else {
@@ -742,7 +713,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
 
         override fun onDoubleTap(e: MotionEvent): Boolean {
-            if (preferences.getBoolean("doubleTap", false)) {
+            if (sharedPreferenceManager.isDoubleTapEnabled()) {
                 if (gestureUtils.isAccessibilityServiceEnabled(
                         ScreenLockService::class.java
                     )
@@ -772,5 +743,4 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         }
     }
-
 }

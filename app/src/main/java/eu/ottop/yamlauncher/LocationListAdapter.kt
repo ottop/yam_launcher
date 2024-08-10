@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 
 class LocationListAdapter(
@@ -17,7 +16,6 @@ class LocationListAdapter(
 ) :
     RecyclerView.Adapter<LocationListAdapter.AppViewHolder>() {
 
-    private var preferences = PreferenceManager.getDefaultSharedPreferences(context)
     private val uiUtils = UIUtils(context)
 
     interface OnItemClickListener {
@@ -51,9 +49,9 @@ class LocationListAdapter(
     override fun onBindViewHolder(holder: AppViewHolder, position: Int) {
         val app = apps[position]
 
-        uiUtils.setAppAlignment(context, preferences, holder.textView, null ,holder.regionText)
+        uiUtils.setAppAlignment(holder.textView, null, holder.regionText)
 
-        uiUtils.setAppSize(preferences, holder.textView, null, holder.regionText)
+        uiUtils.setAppSize(holder.textView, null, holder.regionText)
 
         holder.textView.text = app["name"]
         holder.regionText.text = context.getString(R.string.region_text, app["region"], app["country"])

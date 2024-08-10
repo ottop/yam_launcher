@@ -11,89 +11,87 @@ class SharedPreferenceManager (context: Context) {
 
     fun setShortcut(textView: TextView, packageName: String, profile: Int) {
         val editor = preferences.edit()
-        val key = "shortcut${textView.id}"
-        editor.putString(key, "$packageName§splitter§$profile§splitter§${textView.text}")
+        editor.putString("shortcut${textView.id}", "$packageName§splitter§$profile§splitter§${textView.text}")
         editor.apply()
     }
 
     fun getShortcut(textView: TextView): List<String>? {
-        val key = "shortcut${textView.id}"
-        val value = preferences.getString(key, "e§splitter§e")
+        val value = preferences.getString("shortcut${textView.id}", "e§splitter§e")
         return value?.split("§splitter§")
+    }
+
+    fun getShortcutNumber(): Int? {
+        return preferences.getString("shortcutNo", "4")?.toInt()
     }
 
     fun setAppHidden(packageName: String, profile: Int, hidden: Boolean) {
         val editor = preferences.edit()
-        val key = "hidden$packageName-$profile"
-        editor.putBoolean(key, hidden)
+        editor.putBoolean("hidden$packageName-$profile", hidden)
         editor.apply()
     }
 
     fun isAppHidden(packageName: String, profile: Int): Boolean {
-        val key = "hidden$packageName-$profile"
-        return preferences.getBoolean(key, false) // Default to false (visible)
+        return preferences.getBoolean("hidden$packageName-$profile", false) // Default to false (visible)
     }
 
     fun setAppVisible(packageName: String, profile: Int) {
         val editor = preferences.edit()
-        val key = "hidden$packageName-$profile"
-        editor.remove(key)
+        editor.remove("hidden$packageName-$profile")
         editor.apply()
     }
 
     fun setAppName(packageName: String, profile: Int, newName: String) {
         val editor = preferences.edit()
-        val key = "name$packageName-$profile"
-        editor.putString(key, newName)
+        editor.putString("name$packageName-$profile", newName)
         editor.apply()
     }
 
     fun getAppName(packageName: String, profile: Int, appName: CharSequence): CharSequence? {
-        val key = "name$packageName-$profile"
-        return preferences.getString(key, appName.toString())
+        return preferences.getString("name$packageName-$profile", appName.toString())
     }
 
     fun resetAppName(packageName: String, profile: Int) {
         val editor = preferences.edit()
-        val key = "name$packageName-$profile"
-        editor.remove(key)
+        editor.remove("name$packageName-$profile")
         editor.apply()
     }
 
     fun setWeatherLocation(location: String, region: String?) {
         val editor = preferences.edit()
-        val key = "location"
-        val regionKey = "location_region"
-        editor.putString(key, location)
-        editor.putString(regionKey, region)
+        editor.putString("location", location)
+        editor.putString("location_region", region)
         editor.apply()
     }
 
     fun getWeatherLocation(): String? {
-        val key = "location"
-        return preferences.getString(key, "")
+        return preferences.getString("location", "")
     }
 
     fun getWeatherRegion(): String? {
-        val key = "location_region"
-        return preferences.getString(key, "")
+        return preferences.getString("location_region", "")
     }
 
     fun setGestures(direction: String, appName: String?) {
         val editor = preferences.edit()
-        val nameKey = "${direction}SwipeApp"
-        editor.putString(nameKey, appName)
+        editor.putString("${direction}SwipeApp", appName)
         editor.apply()
     }
 
     fun getGestureName(direction: String) : String? {
-        val key = "${direction}SwipeApp"
-        val name = preferences.getString(key, "")?.split("§splitter§")
+        val name = preferences.getString("${direction}SwipeApp", "")?.split("§splitter§")
         return name?.get(0)
     }
 
     fun getGestureInfo(direction: String) : List<String>? {
         return preferences.getString("${direction}SwipeApp", "")?.split("§splitter§")
+    }
+
+    fun isGestureEnabled(direction: String) : Boolean {
+        return preferences.getBoolean("${direction}Swipe", false)
+    }
+
+    fun isDoubleTapEnabled(): Boolean {
+        return preferences.getBoolean("doubleTap", false)
     }
 
     fun getBgColor(): Int {
@@ -108,4 +106,59 @@ class SharedPreferenceManager (context: Context) {
         return preferences.getString("clockAlignment", "left")
     }
 
+    fun getShortcutAlignment(): String? {
+        return preferences.getString("shortcutAlignment", "left")
+    }
+
+    fun getAppAlignment(): String? {
+        return preferences.getString("appMenuAlignment", "left")
+    }
+
+    fun getSearchAlignment(): String? {
+        return preferences.getString("searchAlignment", "left")
+    }
+
+    fun getClockSize(): String? {
+        return preferences.getString("clockSize","medium")
+    }
+
+    fun getDateSize(): String? {
+        return preferences.getString("dateSize", "medium")
+    }
+
+    fun getShortcutSize(): String? {
+        return preferences.getString("shortcutSize", "medium")
+    }
+
+    fun getAppSize(): String? {
+        return preferences.getString("appMenuSize", "medium")
+    }
+
+    fun getSearchSize(): String? {
+        return preferences.getString("searchSize", "medium")
+    }
+
+    fun isBarVisible(): Boolean {
+        return preferences.getBoolean("barVisibility", false)
+    }
+
+    fun isAutoKeyboardEnabled(): Boolean {
+        return preferences.getBoolean("autoKeyboard", false)
+    }
+
+    fun getTempUnits(): String? {
+        return preferences.getString("tempUnits", "celsius")
+    }
+
+    fun isWeatherEnabled(): Boolean {
+        return preferences.getBoolean("weather_enabled", false)
+    }
+
+    fun isWeatherGPS(): Boolean {
+        return preferences.getBoolean("gps_location", false)
+    }
+
+    fun isBatteryEnabled(): Boolean {
+        return preferences.getBoolean("battery_enabled", false)
+    }
 }

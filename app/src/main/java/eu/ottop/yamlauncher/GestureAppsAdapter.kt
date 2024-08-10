@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 
 class GestureAppsAdapter(
@@ -21,7 +20,6 @@ class GestureAppsAdapter(
     RecyclerView.Adapter<GestureAppsAdapter.AppViewHolder>() {
 
     private val sharedPreferenceManager = SharedPreferenceManager(context)
-    private var preferences = PreferenceManager.getDefaultSharedPreferences(context)
     private val uiUtils = UIUtils(context)
 
     interface OnItemClickListener {
@@ -58,9 +56,9 @@ class GestureAppsAdapter(
             holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(context.resources, R.drawable.ic_empty, null),null,null,null)
         }
 
-        uiUtils.setAppAlignment(context, preferences, holder.textView)
+        uiUtils.setAppAlignment(holder.textView)
 
-        uiUtils.setAppSize(preferences, holder.textView)
+        uiUtils.setAppSize(holder.textView)
 
         val appInfo = app.first.activityInfo.applicationInfo
         holder.textView.text = sharedPreferenceManager.getAppName(

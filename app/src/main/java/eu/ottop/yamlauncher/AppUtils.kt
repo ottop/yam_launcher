@@ -10,11 +10,11 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class AppUtils(private val context: Context) {
+class AppUtils(private val context: Context, private val launcherApps: LauncherApps) {
 
     private val sharedPreferenceManager = SharedPreferenceManager(context)
 
-    suspend fun getInstalledApps(launcherApps: LauncherApps): List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>> {
+    suspend fun getInstalledApps(): List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>> {
         val allApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
         var sortedApps = listOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
         withContext(Dispatchers.Default) {
@@ -44,7 +44,6 @@ class AppUtils(private val context: Context) {
 
     fun getHiddenApps(): List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>> {
         val allApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
-        val launcherApps = context.getSystemService(AppCompatActivity.LAUNCHER_APPS_SERVICE) as LauncherApps
         for (i in launcherApps.profiles.indices) {
             launcherApps.getActivityList(null, launcherApps.profiles[i]).forEach { app ->
                 if (sharedPreferenceManager.isAppHidden(app.applicationInfo.packageName, i)) {
@@ -62,7 +61,6 @@ class AppUtils(private val context: Context) {
     }
 
     fun getAppInfo(
-        launcherApps: LauncherApps,
         packageName: String,
         profile: Int
     ): ApplicationInfo? {
@@ -73,7 +71,7 @@ class AppUtils(private val context: Context) {
         }
     }
 
-    fun launchApp(launcherApps: LauncherApps, appInfo: LauncherActivityInfo, userHandle: UserHandle) {
+    fun launchApp(appInfo: LauncherActivityInfo, userHandle: UserHandle) {
         val mainActivity = launcherApps.getActivityList(appInfo.applicationInfo.packageName, userHandle).firstOrNull()
         if (mainActivity != null) {
             launcherApps.startMainActivity(mainActivity.componentName,  userHandle, null, null)

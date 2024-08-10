@@ -18,8 +18,6 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.lifecycle.lifecycleScope
 import eu.ottop.yamlauncher.databinding.ActivityMainBinding
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class AppActionMenu {

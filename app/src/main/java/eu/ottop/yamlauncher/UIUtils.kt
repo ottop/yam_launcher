@@ -1,7 +1,6 @@
 package eu.ottop.yamlauncher
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.graphics.BlendMode
 import android.graphics.BlendModeColorFilter
 import android.graphics.Color
@@ -20,7 +19,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.children
 import com.google.android.material.textfield.TextInputEditText
 
-class UIUtils(context: Context) {
+class UIUtils(private val context: Context) {
 
     private val sharedPreferenceManager = SharedPreferenceManager(context)
 
@@ -95,13 +94,13 @@ class UIUtils(context: Context) {
         setTextAlignment(dateText, alignment)
     }
 
-    fun setShortcutAlignment(preferences: SharedPreferences, shortcuts: LinearLayout) {
+    fun setShortcutAlignment(shortcuts: LinearLayout) {
         shortcuts.children.forEach {
 
             if (it is TextView) {
 
                 try {
-                    when (preferences.getString("shortcutAlignment", "left")) {
+                    when (sharedPreferenceManager.getShortcutAlignment()) {
                         "left" -> {
                             it.setCompoundDrawablesWithIntrinsicBounds(
                                 it.compoundDrawables.filterNotNull().first(), null, null, null
@@ -134,8 +133,12 @@ class UIUtils(context: Context) {
         }
     }
 
-    fun setAppAlignment(activity: Context, preferences: SharedPreferences, textView: TextView, editText: TextInputEditText? = null, regionText: TextView? = null) {
-        val alignment = preferences.getString("appMenuAlignment", "left")
+    fun setAppAlignment(
+        textView: TextView,
+        editText: TextInputEditText? = null,
+        regionText: TextView? = null
+    ) {
+        val alignment = sharedPreferenceManager.getAppAlignment()
         setTextGravity(textView, alignment)
 
         if (regionText != null) {
@@ -146,7 +149,7 @@ class UIUtils(context: Context) {
 
         when (alignment) {
             "left" -> {
-                textView.setCompoundDrawablesWithIntrinsicBounds(textView.compoundDrawables.filterNotNull().first(),null, ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null), null)
+                textView.setCompoundDrawablesWithIntrinsicBounds(textView.compoundDrawables.filterNotNull().first(),null, ResourcesCompat.getDrawable(context.resources, R.drawable.ic_empty, null), null)
                 editText?.gravity = Gravity.CENTER_VERTICAL or Gravity.START
 
             }
@@ -156,19 +159,19 @@ class UIUtils(context: Context) {
 
             }
             "right" -> {
-                textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null),null, textView.compoundDrawables.filterNotNull().first(), null)
+                textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(context.resources, R.drawable.ic_empty, null),null, textView.compoundDrawables.filterNotNull().first(), null)
                 editText?.gravity = Gravity.CENTER_VERTICAL or Gravity.END
             }
         }
 
     }
 
-    fun setSearchAlignment(preferences: SharedPreferences, searchView: TextInputEditText) {
-        setTextAlignment(searchView, preferences.getString("searchAlignment", "left"))
+    fun setSearchAlignment(searchView: TextInputEditText) {
+        setTextAlignment(searchView, sharedPreferenceManager.getSearchAlignment())
     }
 
-    fun setMenuTitleAlignment(preferences: SharedPreferences, menuTitle: TextView) {
-        setTextGravity(menuTitle, preferences.getString("appMenuAlignment", "left"))
+    fun setMenuTitleAlignment(menuTitle: TextView) {
+        setTextGravity(menuTitle, sharedPreferenceManager.getAppAlignment())
 
     }
 
@@ -196,15 +199,15 @@ class UIUtils(context: Context) {
         }
     }
 
-    fun setClockSize(preferences: SharedPreferences, clock: TextClock) {
-        setTextSize(clock, preferences.getString("clockSize","medium"), 48F, 58F, 68F)
+    fun setClockSize(clock: TextClock) {
+        setTextSize(clock, sharedPreferenceManager.getClockSize(), 48F, 58F, 68F)
     }
 
-    fun setDateSize(preferences: SharedPreferences, dateText: TextClock) {
-        setTextSize(dateText, preferences.getString("dateSize", "medium"), 17F, 20F, 23F)
+    fun setDateSize(dateText: TextClock) {
+        setTextSize(dateText, sharedPreferenceManager.getDateSize(), 17F, 20F, 23F)
     }
 
-    fun setShortcutSize(preferences: SharedPreferences, shortcuts: LinearLayout) {
+    fun setShortcutSize(shortcuts: LinearLayout) {
 
         val viewTreeObserver = shortcuts.viewTreeObserver
         val globalLayoutListener = object : ViewTreeObserver.OnGlobalLayoutListener {
@@ -213,7 +216,7 @@ class UIUtils(context: Context) {
                 shortcuts.children.forEach {
                     if (it is TextView) {
 
-                        when (preferences.getString("shortcutSize", "medium")) {
+                        when (sharedPreferenceManager.getShortcutSize()) {
                             "small" -> {
                                 it.setPadding(
                                     it.paddingLeft,
@@ -249,8 +252,12 @@ class UIUtils(context: Context) {
         }
     }
 
-    fun setAppSize(preferences: SharedPreferences, textView: TextView, editText: TextInputEditText? = null, regionText: TextView? = null) {
-        val size = preferences.getString("appMenuSize", "medium")
+    fun setAppSize(
+        textView: TextView,
+        editText: TextInputEditText? = null,
+        regionText: TextView? = null
+    ) {
+        val size = sharedPreferenceManager.getAppSize()
         setTextSize(textView, size, 24F, 26F, 28F)
         if (editText != null) {
             setTextSize(editText, size, 24F, 26F, 28F)
@@ -260,8 +267,8 @@ class UIUtils(context: Context) {
         }
     }
 
-    fun setSearchSize(preferences: SharedPreferences, searchView: TextInputEditText) {
-        setTextSize(searchView, preferences.getString("searchSize", "medium"), 21F, 23F, 25F)
+    fun setSearchSize(searchView: TextInputEditText) {
+        setTextSize(searchView, sharedPreferenceManager.getSearchSize(), 21F, 23F, 25F)
     }
 
     private fun setTextSize(view: TextView, size: String?, s: Float, m: Float, l: Float) {
@@ -276,11 +283,11 @@ class UIUtils(context: Context) {
         }
     }
 
-    fun setStatusBar(window: Window, preferences: SharedPreferences) {
+    fun setStatusBar(window: Window) {
         val windowInsetsController = window.insetsController
 
         windowInsetsController?.let {
-            if (preferences.getBoolean("barVisibility", false)) {
+            if (sharedPreferenceManager.isBarVisible()) {
                 it.show(WindowInsets.Type.statusBars())
             }
             else {
