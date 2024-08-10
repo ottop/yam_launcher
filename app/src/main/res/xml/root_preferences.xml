@@ -102,7 +102,7 @@
             android:layout_height="wrap_content"
             android:defaultValue="false"
             android:title="Battery Indicator"
-            app:key="battery_enabled" />
+            app:key="batteryEnabled" />
     </PreferenceCategory>
     <PreferenceCategory
         android:layout_width="wrap_content"
@@ -114,26 +114,26 @@
             android:layout_height="wrap_content"
             android:defaultValue="false"
             android:title="Weather"
-            app:key="weather_enabled" />
+            app:key="weatherEnabled" />
         <SwitchPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:defaultValue="false"
             android:title="GPS Location"
-            app:dependency="weather_enabled"
-            app:key="gps_location" />
+            app:dependency="weatherEnabled"
+            app:key="gpsLocation" />
         <Preference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:dependency="weather_enabled"
-            app:key="manual_location"
+            app:dependency="weatherEnabled"
+            app:key="manualLocation"
             app:selectable="true"
             app:title="Set Manual Location" />
         <ListPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:defaultValue="celsius"
-            app:dependency="weather_enabled"
+            app:dependency="weatherEnabled"
             app:entries="@array/temp_units"
             app:entryValues="@array/unit_values"
             app:key="tempUnits"
@@ -235,7 +235,7 @@
         <Preference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:key="hidden_apps"
+            app:key="hiddenApps"
             app:selectable="true"
             app:title="Manage Hidden Apps" />
     </PreferenceCategory>
@@ -247,7 +247,7 @@
         <Preference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:key="about_page"
+            app:key="aboutPage"
             app:selectable="true"
             app:title="About YAM Launcher" />
     </PreferenceCategory>

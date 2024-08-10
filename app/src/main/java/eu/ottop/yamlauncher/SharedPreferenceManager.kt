@@ -59,7 +59,7 @@ class SharedPreferenceManager (context: Context) {
     fun setWeatherLocation(location: String, region: String?) {
         val editor = preferences.edit()
         editor.putString("location", location)
-        editor.putString("location_region", region)
+        editor.putString("locationRegion", region)
         editor.apply()
     }
 
@@ -68,7 +68,7 @@ class SharedPreferenceManager (context: Context) {
     }
 
     fun getWeatherRegion(): String? {
-        return preferences.getString("location_region", "")
+        return preferences.getString("locationRegion", "")
     }
 
     fun setGestures(direction: String, appName: String?) {
@@ -151,15 +151,15 @@ class SharedPreferenceManager (context: Context) {
     }
 
     fun isWeatherEnabled(): Boolean {
-        return preferences.getBoolean("weather_enabled", false)
+        return preferences.getBoolean("weatherEnabled", false)
     }
 
     fun isWeatherGPS(): Boolean {
-        return preferences.getBoolean("gps_location", false)
+        return preferences.getBoolean("gpsLocation", false)
     }
 
     fun isBatteryEnabled(): Boolean {
-        return preferences.getBoolean("battery_enabled", false)
+        return preferences.getBoolean("batteryEnabled", false)
     }
 
     fun getAnimationSpeed(): Long {

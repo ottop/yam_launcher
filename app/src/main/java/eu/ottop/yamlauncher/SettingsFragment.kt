@@ -17,12 +17,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         sharedPreferenceManager = SharedPreferenceManager(requireContext())
 
-        val gpsLocationPref: SwitchPreference? = findPreference("gps_location")
-        manualLocationPref = findPreference("manual_location")
+        val gpsLocationPref: SwitchPreference? = findPreference("gpsLocation")
+        manualLocationPref = findPreference("manualLocation")
         val leftSwipePref = findPreference<Preference?>("leftSwipeApp")
         val rightSwipePref = findPreference<Preference?>("rightSwipeApp")
-        val aboutPref = findPreference<Preference?>("about_page")
-        val hiddenPref = findPreference<Preference?>("hidden_apps")
+        val aboutPref = findPreference<Preference?>("aboutPage")
+        val hiddenPref = findPreference<Preference?>("hiddenApps")
 
         manualLocationPref?.summary = sharedPreferenceManager.getWeatherRegion()
         leftSwipePref?.summary = sharedPreferenceManager.getGestureName("left")

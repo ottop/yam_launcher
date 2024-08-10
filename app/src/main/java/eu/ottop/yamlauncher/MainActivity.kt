@@ -344,7 +344,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     rightSwipeActivity = gestureUtils.getSwipeInfo(launcherApps, "right")
                 }
 
-                "battery_enabled" -> {
+                "batteryEnabled" -> {
                     if (sharedPreferenceManager.isBatteryEnabled()) {
                         registerBatteryReceiver()
                     } else {
