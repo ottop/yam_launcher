@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 class GestureAppsAdapter(
     private val context: Context,
-    var apps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>,
+    var apps: MutableList<Triple<LauncherActivityInfo, UserHandle, Int>>,
     private val itemClickListener: OnItemClickListener
 ) :
     RecyclerView.Adapter<GestureAppsAdapter.AppViewHolder>() {
@@ -34,7 +34,7 @@ class GestureAppsAdapter(
             textView.setOnClickListener {
                 val position = bindingAdapterPosition
                 val app = apps[position].first
-                itemClickListener.onItemClick(app, apps[position].second.second)
+                itemClickListener.onItemClick(app, apps[position].third)
 
             }
         }
@@ -49,7 +49,7 @@ class GestureAppsAdapter(
     override fun onBindViewHolder(holder: AppViewHolder, position: Int) {
         val app = apps[position]
 
-        if (app.second.second != 0) {
+        if (app.third != 0) {
             holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(context.resources, R.drawable.ic_work_app, null),null,null,null)
         }
         else {
@@ -65,7 +65,7 @@ class GestureAppsAdapter(
 
         holder.textView.text = sharedPreferenceManager.getAppName(
             app.first.applicationInfo.packageName,
-            app.second.second,
+            app.third,
             holder.itemView.context.packageManager.getApplicationLabel(appInfo)
         )
 
@@ -77,7 +77,7 @@ class GestureAppsAdapter(
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateApps(newApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
+    fun updateApps(newApps: List<Triple<LauncherActivityInfo, UserHandle, Int>>) {
         apps = newApps.toMutableList()
         notifyDataSetChanged()
     }

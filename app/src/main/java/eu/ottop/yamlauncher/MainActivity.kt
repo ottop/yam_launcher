@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var launcherApps: LauncherApps
-    private lateinit var installedApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>
+    private lateinit var installedApps: List<Triple<LauncherActivityInfo, UserHandle, Int>>
 
     private lateinit var preferences: SharedPreferences
 
@@ -420,11 +420,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
     }
 
-    private fun listsEqual(list1: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>, list2: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>): Boolean {
+    private fun listsEqual(list1: List<Triple<LauncherActivityInfo, UserHandle, Int>>, list2: List<Triple<LauncherActivityInfo, UserHandle, Int>>): Boolean {
         if (list1.size != list2.size) return false
 
         for (i in list1.indices) {
-            if (list1[i].first.componentName != list2[i].first.componentName || list1[i].second.first != list2[i].second.first) {
+            if (list1[i].first.componentName != list2[i].first.componentName || list1[i].second != list2[i].second) {
                 return false
             }
         }
@@ -432,7 +432,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         return true
     }
 
-    private suspend fun updateMenu(updatedApps : List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
+    private suspend fun updateMenu(updatedApps: List<Triple<LauncherActivityInfo, UserHandle, Int>>) {
         withContext(Dispatchers.Main) {
             adapter?.updateApps(updatedApps)
         }
@@ -474,7 +474,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     }
 
-    private suspend fun setupRecyclerView(newApps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
+    private suspend fun setupRecyclerView(newApps: MutableList<Triple<LauncherActivityInfo, UserHandle, Int>>) {
         adapter = AppMenuAdapter(this@MainActivity, newApps, this@MainActivity, this@MainActivity, this@MainActivity, launcherApps)
         appMenuLinearLayoutManager.stackFromEnd = true
         recyclerView = findViewById(R.id.recyclerView)
@@ -531,13 +531,13 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private suspend fun filterItems(query: String?) {
 
         val cleanQuery = stringUtils.cleanString(query)
-        val newFilteredApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
+        val newFilteredApps = mutableListOf<Triple<LauncherActivityInfo, UserHandle, Int>>()
         val updatedApps = appUtils.getInstalledApps()
 
         getFilteredApps(cleanQuery, newFilteredApps, updatedApps)
     }
 
-    private suspend fun getFilteredApps(cleanQuery: String?, newFilteredApps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>, updatedApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
+    private suspend fun getFilteredApps(cleanQuery: String?, newFilteredApps: MutableList<Triple<LauncherActivityInfo, UserHandle, Int>>, updatedApps: List<Triple<LauncherActivityInfo, UserHandle, Int>>) {
         if (cleanQuery.isNullOrEmpty()) {
             isJobActive = true
             updateMenu(updatedApps)
@@ -546,7 +546,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             updatedApps.forEach {
                 val cleanItemText = stringUtils.cleanString(sharedPreferenceManager.getAppName(
                     it.first.applicationInfo.packageName,
-                    it.second.second,
+                    it.third,
                     packageManager.getApplicationLabel(it.first.applicationInfo)
                 ).toString())
                 if (cleanItemText != null) {
@@ -559,7 +559,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
     }
 
-    private suspend fun applySearchFilter(newFilteredApps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
+    private suspend fun applySearchFilter(newFilteredApps: MutableList<Triple<LauncherActivityInfo, UserHandle, Int>>) {
         if (!listsEqual(installedApps, newFilteredApps)) {
             updateMenu(newFilteredApps)
 

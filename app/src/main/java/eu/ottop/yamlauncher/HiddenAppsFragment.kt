@@ -97,7 +97,7 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
     private suspend fun filterItems(query: String?) {
 
         val cleanQuery = stringUtils.cleanString(query)
-        val newFilteredApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
+        val newFilteredApps = mutableListOf<Triple<LauncherActivityInfo, UserHandle, Int>>()
         val updatedApps = appUtils.getHiddenApps()
 
         getFilteredApps(cleanQuery, newFilteredApps, updatedApps)
@@ -106,14 +106,14 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
 
     }
 
-    private fun getFilteredApps(cleanQuery: String?, newFilteredApps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>, updatedApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
+    private fun getFilteredApps(cleanQuery: String?, newFilteredApps: MutableList<Triple<LauncherActivityInfo, UserHandle, Int>>, updatedApps: List<Triple<LauncherActivityInfo, UserHandle, Int>>) {
         if (cleanQuery.isNullOrEmpty()) {
             newFilteredApps.addAll(updatedApps)
         } else {
             updatedApps.forEach {
                 val cleanItemText = stringUtils.cleanString(sharedPreferenceManager.getAppName(
                     it.first.applicationInfo.packageName,
-                    it.second.second,
+                    it.third,
                     requireActivity().packageManager.getApplicationLabel(it.first.applicationInfo)
                 ).toString())
                 if (cleanItemText != null) {
@@ -125,7 +125,7 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
         }
     }
 
-    private fun applySearch(newFilteredApps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
+    private fun applySearch(newFilteredApps: MutableList<Triple<LauncherActivityInfo, UserHandle, Int>>) {
         adapter?.updateApps(newFilteredApps)
     }
 

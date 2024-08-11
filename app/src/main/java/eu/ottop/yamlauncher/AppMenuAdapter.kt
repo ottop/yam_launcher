@@ -22,7 +22,7 @@ import com.google.android.material.textfield.TextInputEditText
 class AppMenuAdapter(
 
     private val context: Context,
-    private var apps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>,
+    private var apps: MutableList<Triple<LauncherActivityInfo, UserHandle, Int>>,
     private val itemClickListener: OnItemClickListener,
     private val shortcutListener: OnShortcutListener,
     private val itemLongClickListener: OnItemLongClickListener,
@@ -74,10 +74,10 @@ class AppMenuAdapter(
 
                     // If opened to select a shortcut, set the shortcut instead of launching the app
                     if (shortcutTextView != null) {
-                        shortcutListener.onShortcut(app, apps[position].second.first, textView, apps[position].second.second, shortcutTextView!!)
+                        shortcutListener.onShortcut(app, apps[position].second, textView, apps[position].third, shortcutTextView!!)
                     }
                     else {
-                        itemClickListener.onItemClick(app, apps[position].second.first)
+                        itemClickListener.onItemClick(app, apps[position].second)
                     }
             }
 
@@ -88,14 +88,14 @@ class AppMenuAdapter(
 
                 // If opened to select a shortcut, set the shortcut instead of opening the action menu
                 if (shortcutTextView != null) {
-                    shortcutListener.onShortcut(app, apps[position].second.first, textView, apps[position].second.second, shortcutTextView!!)
+                    shortcutListener.onShortcut(app, apps[position].second, textView, apps[position].third, shortcutTextView!!)
                     return@setOnLongClickListener true
                 } else {
 
                 itemLongClickListener.onItemLongClick(
                     app,
-                    apps[position].second.first,
-                    apps[position].second.second,
+                    apps[position].second,
+                    apps[position].third,
                     textView,
                     actionMenuLayout,
                     editView,
@@ -117,7 +117,7 @@ class AppMenuAdapter(
         val app = apps[position]
 
         // Set initial drawables
-        if (app.second.second != 0) {
+        if (app.third != 0) {
             holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(context.resources, R.drawable.ic_work_app, null),null, ResourcesCompat.getDrawable(context.resources, R.drawable.ic_empty, null),null)
             holder.textView.compoundDrawables[0].colorFilter =
                 BlendModeColorFilter(sharedPreferenceManager.getTextColor(), BlendMode.SRC_ATOP)
@@ -133,7 +133,7 @@ class AppMenuAdapter(
         // Update the application information (allows updating apps to work)
         val appInfo = appUtils.getAppInfo(
             app.first.applicationInfo.packageName,
-            app.second.second
+            app.third
         )
 
         holder.textView.setTextColor(sharedPreferenceManager.getTextColor())
@@ -144,7 +144,7 @@ class AppMenuAdapter(
         if (appInfo != null) {
             holder.textView.text = sharedPreferenceManager.getAppName(
                 appInfo.packageName,
-                app.second.second,
+                app.third,
                 appLabel
             )
 
@@ -169,7 +169,7 @@ class AppMenuAdapter(
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateApps(newApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
+    fun updateApps(newApps: List<Triple<LauncherActivityInfo, UserHandle, Int>>) {
         apps = newApps.toMutableList()
         notifyDataSetChanged()
     }

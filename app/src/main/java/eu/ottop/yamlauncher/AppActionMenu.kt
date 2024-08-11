@@ -72,7 +72,7 @@ class AppActionMenu {
             val editText = editLayout.findViewById<EditText>(R.id.appNameEdit)
             val resetButton = editLayout.findViewById<AppCompatButton>(R.id.reset)
 
-            val app = Pair(mainActivity!!, Pair(userHandle, workProfile))
+            val app = Triple(mainActivity!!, userHandle, workProfile)
 
             searchView.visibility = View.INVISIBLE
             editText.requestFocus()
@@ -127,7 +127,7 @@ class AppActionMenu {
                 imm.hideSoftInputFromWindow(editLayout.windowToken, 0)
                 sharedPreferenceManager.resetAppName(
                     app.first.applicationInfo.packageName,
-                    app.second.second
+                    app.third
                 )
 
                 activity.lifecycleScope.launch {

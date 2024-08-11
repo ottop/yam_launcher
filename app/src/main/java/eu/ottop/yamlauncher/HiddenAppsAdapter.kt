@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 class HiddenAppsAdapter(
     private val context: Context,
-    private var apps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>,
+    private var apps: MutableList<Triple<LauncherActivityInfo, UserHandle, Int>>,
     private val itemClickListener: OnItemClickListener
 ) :
     RecyclerView.Adapter<HiddenAppsAdapter.AppViewHolder>() {
@@ -35,7 +35,7 @@ class HiddenAppsAdapter(
             textView.setOnClickListener {
                 val position = bindingAdapterPosition
                 val app = apps[position].first
-                itemClickListener.onItemClick(app, apps[position].second.second)
+                itemClickListener.onItemClick(app, apps[position].third)
 
             }
         }
@@ -50,7 +50,7 @@ class HiddenAppsAdapter(
     override fun onBindViewHolder(holder: AppViewHolder, position: Int) {
         val app = apps[position]
 
-        if (app.second.second != 0) {
+        if (app.third != 0) {
             holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(context.resources, R.drawable.ic_work_app, null),null,null,null)
         }
         else {
@@ -61,10 +61,11 @@ class HiddenAppsAdapter(
 
         uiUtils.setAppSize(holder.textView)
 
+        // Separate activity from Main so does not need special update
         val appInfo = app.first.activityInfo.applicationInfo
         holder.textView.text = sharedPreferenceManager.getAppName(
             app.first.applicationInfo.packageName,
-            app.second.second,
+            app.third,
             holder.itemView.context.packageManager.getApplicationLabel(appInfo)
         )
 
@@ -76,7 +77,7 @@ class HiddenAppsAdapter(
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateApps(newApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
+    fun updateApps(newApps: List<Triple<LauncherActivityInfo, UserHandle, Int>>) {
         apps = newApps.toMutableList()
         notifyDataSetChanged()
     }

@@ -10,6 +10,8 @@ import androidx.preference.SwitchPreference
 class SettingsFragment : PreferenceFragmentCompat() {
 
     private var manualLocationPref: Preference? = null
+    private var leftSwipePref: Preference? = null
+    private var rightSwipePref: Preference? = null
     private lateinit var sharedPreferenceManager: SharedPreferenceManager
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -17,10 +19,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         sharedPreferenceManager = SharedPreferenceManager(requireContext())
 
-        val gpsLocationPref: SwitchPreference? = findPreference("gpsLocation")
+        val gpsLocationPref = findPreference<SwitchPreference?>("gpsLocation")
         manualLocationPref = findPreference("manualLocation")
-        val leftSwipePref = findPreference<Preference?>("leftSwipeApp")
-        val rightSwipePref = findPreference<Preference?>("rightSwipeApp")
+        leftSwipePref = findPreference("leftSwipeApp")
+        rightSwipePref = findPreference("rightSwipeApp")
         val aboutPref = findPreference<Preference?>("aboutPage")
         val hiddenPref = findPreference<Preference?>("hiddenApps")
 
@@ -28,16 +30,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
         leftSwipePref?.summary = sharedPreferenceManager.getGestureName("left")
         rightSwipePref?.summary = sharedPreferenceManager.getGestureName("right")
 
+        // Only enable manual location when gps location is disabled
         if (gpsLocationPref != null && manualLocationPref != null) {
-            // Initial setup
             manualLocationPref?.isEnabled = !gpsLocationPref.isChecked
 
-            // Set up a listener to update the enabled state of manualLocationPref
             gpsLocationPref.onPreferenceChangeListener =
                 Preference.OnPreferenceChangeListener { _, newValue ->
                     val isGpsEnabled = newValue as Boolean
                     manualLocationPref?.isEnabled = !isGpsEnabled
-                    true // Returning true means the change is persisted
+                    true
                 }
 
             manualLocationPref?.onPreferenceClickListener =
@@ -64,40 +65,18 @@ class SettingsFragment : PreferenceFragmentCompat() {
             Preference.OnPreferenceClickListener {
                 requireActivity().supportFragmentManager
                     .beginTransaction()
-                    .replace(R.id.settingsLayout, GestureAppsFragment())
+                    .replace(R.id.settingsLayout, GestureAppsFragment("left"))
                     .addToBackStack(null)
                     .commit()
-                setFragmentResultListener("request_key") { _, bundle ->
-                    clearFragmentResultListener("request_key")
-                    val result = bundle.getString("gesture_app")
-
-                    sharedPreferenceManager.setGestures(
-                        "left", result
-                    )
-
-                    val appName = sharedPreferenceManager.getGestureName("left")
-                    leftSwipePref?.summary = appName
-                }
                 true }
 
         rightSwipePref?.onPreferenceClickListener =
             Preference.OnPreferenceClickListener {
                 requireActivity().supportFragmentManager
                     .beginTransaction()
-                    .replace(R.id.settingsLayout, GestureAppsFragment())
+                    .replace(R.id.settingsLayout, GestureAppsFragment("right"))
                     .addToBackStack(null)
                     .commit()
-                setFragmentResultListener("request_key") { _, bundle ->
-                    clearFragmentResultListener("request_key")
-                    val result = bundle.getString("gesture_app")
-
-                    sharedPreferenceManager.setGestures(
-                        "right", result
-                    )
-
-                    val appName = sharedPreferenceManager.getGestureName("right")
-                    rightSwipePref?.summary = appName
-                }
                 true }
 
         aboutPref?.onPreferenceClickListener =
@@ -113,5 +92,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
     override fun onResume() {
         super.onResume()
         manualLocationPref?.summary = sharedPreferenceManager.getWeatherRegion()
+
+        leftSwipePref?.summary = sharedPreferenceManager.getGestureName("left")
+
+        rightSwipePref?.summary = sharedPreferenceManager.getGestureName("right")
     }
 }

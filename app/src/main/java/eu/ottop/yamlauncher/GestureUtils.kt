@@ -21,7 +21,6 @@ class GestureUtils(private val context: Context) {
 
         if (app != null) {
             if (app.size >= 3)
-
                 return Pair(
                     launcherApps.getActivityList(
                         app[1], launcherApps.profiles[app[2]

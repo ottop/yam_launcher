@@ -20,7 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class GestureAppsFragment : Fragment(), GestureAppsAdapter.OnItemClickListener {
+class GestureAppsFragment(private val direction: String) : Fragment(), GestureAppsAdapter.OnItemClickListener {
 
     private var adapter: GestureAppsAdapter? = null
     private lateinit var sharedPreferenceManager: SharedPreferenceManager
@@ -44,7 +44,6 @@ class GestureAppsFragment : Fragment(), GestureAppsAdapter.OnItemClickListener {
         sharedPreferenceManager = SharedPreferenceManager(requireContext())
 
         lifecycleScope.launch {
-
             adapter = GestureAppsAdapter(
                 requireContext(),
                 appUtils.getInstalledApps().toMutableList(),
@@ -100,7 +99,7 @@ class GestureAppsFragment : Fragment(), GestureAppsAdapter.OnItemClickListener {
     private suspend fun filterItems(query: String?) {
 
         val cleanQuery = stringUtils.cleanString(query)
-        val newFilteredApps = mutableListOf<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>()
+        val newFilteredApps = mutableListOf<Triple<LauncherActivityInfo, UserHandle, Int>>()
         val updatedApps = appUtils.getInstalledApps()
 
         getFilteredApps(cleanQuery, newFilteredApps, updatedApps)
@@ -109,14 +108,14 @@ class GestureAppsFragment : Fragment(), GestureAppsAdapter.OnItemClickListener {
 
     }
 
-    private fun getFilteredApps(cleanQuery: String?, newFilteredApps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>, updatedApps: List<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
+    private fun getFilteredApps(cleanQuery: String?, newFilteredApps: MutableList<Triple<LauncherActivityInfo, UserHandle, Int>>, updatedApps: List<Triple<LauncherActivityInfo, UserHandle, Int>>) {
         if (cleanQuery.isNullOrEmpty()) {
             newFilteredApps.addAll(updatedApps)
         } else {
             updatedApps.forEach {
                 val cleanItemText = stringUtils.cleanString(sharedPreferenceManager.getAppName(
                     it.first.applicationInfo.packageName,
-                    it.second.second,
+                    it.third,
                     requireActivity().packageManager.getApplicationLabel(it.first.applicationInfo)
                 ).toString())
                 if (cleanItemText != null) {
@@ -128,7 +127,7 @@ class GestureAppsFragment : Fragment(), GestureAppsAdapter.OnItemClickListener {
         }
     }
 
-    private fun applySearch(newFilteredApps: MutableList<Pair<LauncherActivityInfo, Pair<UserHandle, Int>>>) {
+    private fun applySearch(newFilteredApps: MutableList<Triple<LauncherActivityInfo, UserHandle, Int>>) {
         adapter?.updateApps(newFilteredApps)
     }
 
@@ -148,10 +147,9 @@ class GestureAppsFragment : Fragment(), GestureAppsAdapter.OnItemClickListener {
     }
 
     private fun performConfirmedAction(appInfo: LauncherActivityInfo, appName: String, profile: Int) {
-        val result = Bundle().apply {
-            putString("gesture_app", "$appName§splitter§${appInfo.applicationInfo.packageName}§splitter§$profile")
-        }
-        setFragmentResult("request_key", result)
+        sharedPreferenceManager.setGestures(
+            direction, "$appName§splitter§${appInfo.applicationInfo.packageName}§splitter§$profile"
+        )
         requireActivity().supportFragmentManager.popBackStack()
     }
 
