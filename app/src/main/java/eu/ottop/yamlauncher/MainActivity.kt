@@ -95,6 +95,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         setMainVariables()
 
         setPreferences()
+
         setShortcuts()
 
         setHomeListeners()
@@ -116,7 +117,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 }
             }
         }
-
         setupApps()
     }
 

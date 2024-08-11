@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.BlendMode
 import android.graphics.BlendModeColorFilter
 import android.graphics.Color
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -68,14 +69,12 @@ class UIUtils(context: Context) {
 
         val globalLayoutListener = object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
+                searchView.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                println("yoooooooo")
                 val color = sharedPreferenceManager.getTextColor()
                 searchView.setTextColor(color)
                 searchView.setHintTextColor(setAlpha(color, "A9"))
                 searchView.compoundDrawables[0].mutate().colorFilter = BlendModeColorFilter(color, BlendMode.SRC_ATOP)
-
-                if (viewTreeObserver.isAlive) {
-                    viewTreeObserver.removeOnGlobalLayoutListener(this)
-                }
             }
         }
 
@@ -200,50 +199,57 @@ class UIUtils(context: Context) {
     }
 
     fun setShortcutsSize(shortcuts: LinearLayout) {
-        val viewTreeObserver = shortcuts.viewTreeObserver
-        val globalLayoutListener = object : ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
 
-                val size = sharedPreferenceManager.getShortcutSize()
+        val size = sharedPreferenceManager.getShortcutSize()
 
-                shortcuts.children.forEach {
-                    if (it is TextView) {
-                        setShortcutSize(it, size)
-
-                    }
-                }
-                if (viewTreeObserver.isAlive) {
-                    viewTreeObserver.removeOnGlobalLayoutListener(this)
-                }
+        shortcuts.children.forEach {
+            if (it is TextView) {
+                setShortcutSize(it, size)
             }
         }
 
-        if (viewTreeObserver.isAlive) {
-            viewTreeObserver.addOnGlobalLayoutListener(globalLayoutListener)
-        }
+
     }
 
     private fun setShortcutSize(shortcut: TextView, size: String?) {
         try {
-            val layoutParams = shortcut.layoutParams as LinearLayout.LayoutParams
             when (size) {
                 "small" -> {
-                    layoutParams.weight = 0.08F
+                    shortcut.setAutoSizeTextTypeUniformWithConfiguration(
+                        18,   // Min text size in SP
+                        24,   // Max text size in SP
+                        2,    // Step granularity in SP
+                        TypedValue.COMPLEX_UNIT_SP // Unit of measurement
+                    )
                 }
 
                 "medium" -> {
-                   layoutParams.weight = 0.092F
+                    shortcut.setAutoSizeTextTypeUniformWithConfiguration(
+                        23,   // Min text size in SP
+                        29,   // Max text size in SP
+                        2,    // Step granularity in SP
+                        TypedValue.COMPLEX_UNIT_SP // Unit of measurement
+                    )
                 }
 
                 "large" -> {
-                    layoutParams.weight = 0.1F
+                    shortcut.setAutoSizeTextTypeUniformWithConfiguration(
+                        26,   // Min text size in SP
+                        32,   // Max text size in SP
+                        2,    // Step granularity in SP
+                        TypedValue.COMPLEX_UNIT_SP // Unit of measurement
+                    )
                 }
 
                 "extra" -> {
-                    layoutParams.weight = 0.12F
+                    shortcut.setAutoSizeTextTypeUniformWithConfiguration(
+                        30,   // Min text size in SP
+                        36,   // Max text size in SP
+                        2,    // Step granularity in SP
+                        TypedValue.COMPLEX_UNIT_SP // Unit of measurement
+                    )
                 }
             }
-            shortcut.layoutParams = layoutParams
         } catch(_: Exception) {}
     }
 
@@ -253,17 +259,17 @@ class UIUtils(context: Context) {
         regionText: TextView? = null
     ) {
         val size = sharedPreferenceManager.getAppSize()
-        setTextSize(textView, size, 24F, 26F, 30F)
+        setTextSize(textView, size, 24F, 27F, 30F)
         if (editText != null) {
-            setTextSize(editText, size, 24F, 26F, 30F)
+            setTextSize(editText, size, 24F, 27F, 30F)
         }
         if (regionText != null) {
-            setTextSize(regionText, size, 14F, 16F, 20F)
+            setTextSize(regionText, size, 14F, 17F, 20F)
         }
     }
 
     fun setSearchSize(searchView: TextInputEditText) {
-        setTextSize(searchView, sharedPreferenceManager.getSearchSize(), 21F, 23F, 27F)
+        setTextSize(searchView, sharedPreferenceManager.getSearchSize(), 21F, 23F, 25F)
     }
 
     private fun setTextSize(view: TextView, size: String?, s: Float, m: Float, l: Float) {
