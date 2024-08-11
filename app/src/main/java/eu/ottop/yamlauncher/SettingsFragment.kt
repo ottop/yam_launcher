@@ -1,6 +1,9 @@
 package eu.ottop.yamlauncher
 
+import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
+import android.widget.Toast
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
@@ -23,6 +26,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         rightSwipePref = findPreference("rightSwipeApp")
         val aboutPref = findPreference<Preference?>("aboutPage")
         val hiddenPref = findPreference<Preference?>("hiddenApps")
+        val homePref = findPreference<Preference?>("defaultHome")
 
         // Only enable manual location when gps location is disabled
         if (gpsLocationPref != null && manualLocationPref != null) {
@@ -80,6 +84,16 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     .replace(R.id.settingsLayout, AboutFragment())
                     .addToBackStack(null)
                     .commit()
+                true }
+
+        homePref?.onPreferenceClickListener =
+            Preference.OnPreferenceClickListener {
+                val intent = Intent(Settings.ACTION_HOME_SETTINGS)
+                if (intent.resolveActivity(requireContext().packageManager) != null) {
+                    startActivity(intent)
+                } else {
+                    Toast.makeText(requireContext(), "Unable to launch settings", Toast.LENGTH_SHORT).show()
+                }
                 true }
     }
 
