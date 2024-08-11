@@ -55,16 +55,6 @@ class UIUtils(context: Context) {
         }
     }
 
-    private fun setAlpha(color: Int, alphaHex: String): Int {
-        val newAlpha = Integer.parseInt(alphaHex, 16)
-
-        val r = Color.red(color)
-        val g = Color.green(color)
-        val b = Color.blue(color)
-
-        return Color.argb(newAlpha, r, g, b)
-    }
-
     fun setSearchColors(searchView: TextInputEditText) {
         val viewTreeObserver = searchView.viewTreeObserver
 
@@ -81,6 +71,16 @@ class UIUtils(context: Context) {
         if (viewTreeObserver.isAlive) {
             viewTreeObserver.addOnGlobalLayoutListener(globalLayoutListener)
         }
+    }
+
+    private fun setAlpha(color: Int, alphaHex: String): Int {
+        val newAlpha = Integer.parseInt(alphaHex, 16)
+
+        val r = Color.red(color)
+        val g = Color.green(color)
+        val b = Color.blue(color)
+
+        return Color.argb(newAlpha, r, g, b)
     }
 
     // Alignment
