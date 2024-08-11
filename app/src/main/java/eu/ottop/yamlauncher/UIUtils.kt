@@ -193,7 +193,7 @@ class UIUtils(context: Context) {
 
     // Size
     fun setClockSize(clock: TextClock) {
-        setTextSize(clock, sharedPreferenceManager.getClockSize(), 58F, 68F, 78F)
+        setTextSize(clock, sharedPreferenceManager.getClockSize(), 58F, 70F, 78F)
     }
 
     fun setDateSize(dateText: TextClock) {
@@ -227,8 +227,8 @@ class UIUtils(context: Context) {
 
                 "medium" -> {
                     shortcut.setAutoSizeTextTypeUniformWithConfiguration(
-                        23,   // Min text size in SP
-                        29,   // Max text size in SP
+                        22,   // Min text size in SP
+                        28,   // Max text size in SP
                         2,    // Step granularity in SP
                         TypedValue.COMPLEX_UNIT_SP // Unit of measurement
                     )
@@ -261,12 +261,12 @@ class UIUtils(context: Context) {
         regionText: TextView? = null
     ) {
         val size = sharedPreferenceManager.getAppSize()
-        setTextSize(textView, size, 24F, 27F, 30F)
+        setTextSize(textView, size, 24F, 26F, 30F)
         if (editText != null) {
-            setTextSize(editText, size, 24F, 27F, 30F)
+            setTextSize(editText, size, 24F, 26F, 30F)
         }
         if (regionText != null) {
-            setTextSize(regionText, size, 14F, 17F, 20F)
+            setTextSize(regionText, size, 14F, 16F, 20F)
         }
     }
 
