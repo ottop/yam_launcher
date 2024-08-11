@@ -24,7 +24,7 @@ class AppUtils(private val context: Context, private val launcherApps: LauncherA
                             i
                         ) && app.applicationInfo.packageName != context.applicationInfo.packageName // Hide the launcher itself
                     ) {
-                        allApps.add(Triple(app, launcherApps.profiles[i], i))
+                        allApps.add(Triple(app, launcherApps.profiles[i], i)) // The i variable gets used to determine whether an app is in the personal profile or work profile
                     }
                 }
             }

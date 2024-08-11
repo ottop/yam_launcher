@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 class LocationListAdapter(
     private val context: Context,
-    private var apps: MutableList<Map<String, String>>,
+    private var locations: MutableList<Map<String, String>>,
     private val itemClickListener: OnItemClickListener
 ) :
     RecyclerView.Adapter<LocationListAdapter.AppViewHolder>() {
@@ -31,9 +31,9 @@ class LocationListAdapter(
 
             listItem.setOnClickListener {
                 val position = bindingAdapterPosition
-                val name = apps[position]["name"]
-                val latitude = apps[position]["latitude"]
-                val longitude = apps[position]["longitude"]
+                val name = locations[position]["name"]
+                val latitude = locations[position]["latitude"]
+                val longitude = locations[position]["longitude"]
                 itemClickListener.onItemClick(name, latitude, longitude)
 
             }
@@ -47,26 +47,26 @@ class LocationListAdapter(
     }
 
     override fun onBindViewHolder(holder: AppViewHolder, position: Int) {
-        val app = apps[position]
+        val location = locations[position]
 
         uiUtils.setAppAlignment(holder.textView, null, holder.regionText)
 
         uiUtils.setAppSize(holder.textView, null, holder.regionText)
 
-        holder.textView.text = app["name"]
-        holder.regionText.text = context.getString(R.string.region_text, app["region"], app["country"])
+        holder.textView.text = location["name"]
+        holder.regionText.text = context.getString(R.string.region_text, location["region"], location["country"])
 
         holder.textView.visibility = View.VISIBLE
     }
 
     override fun getItemCount(): Int {
-        return apps.size
+        return locations.size
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateApps(newApps: MutableList<Map<String, String>>) {
-        apps.clear()
-        apps = newApps
+    fun updateLocations(newApps: MutableList<Map<String, String>>) {
+        locations.clear()
+        locations = newApps
         notifyDataSetChanged()
     }
 }

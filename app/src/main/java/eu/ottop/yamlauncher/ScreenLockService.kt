@@ -7,11 +7,9 @@ import android.view.accessibility.AccessibilityEvent
 class ScreenLockService : AccessibilityService() {
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
-        // Handle accessibility events if needed
     }
 
     override fun onInterrupt() {
-        // Handle interrupt
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

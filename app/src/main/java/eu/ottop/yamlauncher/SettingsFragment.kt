@@ -1,8 +1,6 @@
 package eu.ottop.yamlauncher
 
 import android.os.Bundle
-import androidx.fragment.app.clearFragmentResultListener
-import androidx.fragment.app.setFragmentResultListener
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
@@ -25,10 +23,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         rightSwipePref = findPreference("rightSwipeApp")
         val aboutPref = findPreference<Preference?>("aboutPage")
         val hiddenPref = findPreference<Preference?>("hiddenApps")
-
-        manualLocationPref?.summary = sharedPreferenceManager.getWeatherRegion()
-        leftSwipePref?.summary = sharedPreferenceManager.getGestureName("left")
-        rightSwipePref?.summary = sharedPreferenceManager.getGestureName("right")
 
         // Only enable manual location when gps location is disabled
         if (gpsLocationPref != null && manualLocationPref != null) {

@@ -77,19 +77,19 @@ class LocationFragment : Fragment(), LocationListAdapter.OnItemClickListener {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                // Filtering is not needed since we are creating a list with data pulled from the Open-Meteo api instead of searching an existing list
                 lifecycleScope.launch(Dispatchers.IO){
                     val locations = weatherSystem.getSearchedLocations(
                         searchView.text.toString()
                     )
                     withContext(Dispatchers.Main) {
-                        adapter?.updateApps(locations)
+                        adapter?.updateLocations(locations)
                     }
                 }
-
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-
             }
         })
 

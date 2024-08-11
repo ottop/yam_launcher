@@ -100,6 +100,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         setHomeListeners()
 
+        // Task to update the app menu every 5 seconds
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 while (true) {
@@ -109,6 +110,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             }
         }
 
+        // Task to update the weather every 10 minutes
         lifecycleScope.launch(Dispatchers.IO) {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 while (true) {
@@ -171,9 +173,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         for (i in shortcuts.indices) {
 
             val textView = findViewById<TextView>(shortcuts[i])
-
             val shortcutNo = sharedPreferenceManager.getShortcutNumber()
 
+            // Only show the chosen number of shortcuts (default 4). Hide the rest.
             if (i >= shortcutNo!!) {
                 textView.visibility = View.GONE
             }
@@ -181,37 +183,35 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             else {
                 textView.visibility = View.VISIBLE
 
-                unsetShortcutSetup(textView)
+                
 
                 val savedView = sharedPreferenceManager.getShortcut(textView)
+
+                // Set the non-work profile drawable by default
+                textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_empty, null),null,null,null)
+
+                shortcutListeners(textView)
 
                 if (savedView?.get(1) != "e") {
                     setShortcutSetup(textView, savedView)
                 }
+                else {
+                    unsetShortcutSetup(textView)
+                }
 
                 uiUtils.setShortcutsAlignment(binding.homeView)
             }
-
         }
-
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun unsetShortcutSetup(textView: TextView) {
+    private fun shortcutListeners(textView: TextView) {
+        // Don't go to settings on long click, but keep other gestures functional
         textView.setOnTouchListener {_, event ->
             shortcutGestureDetector.onTouchEvent(event)
             super.onTouchEvent(event)
         }
 
-        textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_empty, null),null,null,null)
-
-        unsetShortcutListeners(textView)
-    }
-
-    private fun unsetShortcutListeners(textView: TextView) {
-        textView.setOnClickListener {
-            Toast.makeText(this, "Long click to select an app", Toast.LENGTH_SHORT).show()
-        }
         textView.setOnLongClickListener {
             uiUtils.setMenuTitleAlignment(binding.menuTitle)
             binding.menuTitle.visibility = View.VISIBLE
@@ -225,6 +225,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private fun toAppMenu() {
         try {
+            // The menu opens from the top
             recyclerView.scrollToPosition(0)
         }
         catch (_: UninitializedPropertyAccessException) {
@@ -240,13 +241,22 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
     }
 
+    private fun unsetShortcutSetup(textView: TextView) {
+        unsetShortcutListeners(textView)
+    }
+
+    private fun unsetShortcutListeners(textView: TextView) {
+        textView.setOnClickListener {
+            Toast.makeText(this, "Long click to select an app", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     private fun setShortcutSetup(textView: TextView, savedView: List<String>?) {
+        // Set the work profile drawable for work profile apps
         if (savedView?.get(1) != "0") {
             textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_work_app, null),null,null,null)
         }
-        else {
-            textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_empty, null),null,null,null)
-        }
+
         textView.text = savedView?.get(2)
         setShortcutListeners(textView, savedView)
     }
@@ -278,6 +288,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             true
         }
 
+        // Return to home on back
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 backToHome()
@@ -299,6 +310,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
     }
 
+    // Only reload items that have had preferences changed
     override fun onSharedPreferenceChanged(preferences: SharedPreferences?, key: String?) {
         if (preferences != null) {
             when (key) {
@@ -368,6 +380,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     fun modifyDate(value: String, index: Int) {
+        /*Indexes:
+        0 = 12h time
+        1 = 24h time
+        2 = Weather
+        3 = Battery level*/
         dateElements[index] = value
         dateText.format12Hour = "${dateElements[0]}${stringUtils.addStartTextIfNotEmpty(dateElements[2], " | ")}${stringUtils.addStartTextIfNotEmpty(dateElements[3], " | ")}"
         dateText.format24Hour = "${dateElements[1]}${stringUtils.addStartTextIfNotEmpty(dateElements[2], " | ")}${stringUtils.addStartTextIfNotEmpty(dateElements[3], " | ")}"
@@ -378,6 +395,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         animations.showHome(binding.homeView, binding.appView)
         animations.backgroundOut(this@MainActivity)
         val animSpeed = sharedPreferenceManager.getAnimationSpeed()
+
+        // Delay app menu changes so that the user doesn't see them
+
         val handler = Handler(Looper.getMainLooper())
         handler.postDelayed({
             try {
@@ -405,6 +425,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     suspend fun refreshAppMenu() {
         try {
+
+            // Don't reset app menu while under a search
             if (isJobActive) {
                 val updatedApps = appUtils.getInstalledApps()
                 if (!listsEqual(installedApps, updatedApps)) {
@@ -487,6 +509,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         setupRecyclerListener()
     }
 
+    // Inform the layout manager of scroll states to calculate whether the menu is on the top
     private fun setupRecyclerListener() {
         recyclerView.addOnScrollListener(object: RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -502,10 +525,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         binding.appView.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
 
             if (bottom - top > oldBottom - oldTop) {
+                // Allow the app menu to be closed after the keyboard is closed
                 canExit = true
                 searchView.clearFocus()
             }
             else if (bottom - top < oldBottom - oldTop) {
+                // The app menu can't be closed with the keyboard open
                 canExit = false
             }
         }
@@ -572,6 +597,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
     }
 
+    // On home key or swipe, return to home screen
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         backToHome()

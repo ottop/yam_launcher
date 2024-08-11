@@ -32,23 +32,24 @@ class WeatherSystem(private val context: Context) {
         }
 
         locationManager.getCurrentLocation(
-            LocationManager.GPS_PROVIDER,          // Use GPS provider
-            null,                                  // No cancellation signal
+            LocationManager.GPS_PROVIDER, // Only GPS provider functions on my phone with CalyxOS, so that's what you get.
+            null,
             ContextCompat.getMainExecutor(context)
         )
-        { location: Location? ->               // Lambda expression for the callback
+        { location: Location? ->
             if (location != null) {
                 CoroutineScope(Dispatchers.IO).launch {
                 val latitude = location.latitude
                 val longitude = location.longitude
                 sharedPreferenceManager.setWeatherLocation("latitude=${latitude}&longitude=${longitude}", sharedPreferenceManager.getWeatherRegion())
-                activity.updateWeatherText()}
+                activity.updateWeatherText()
+                }
             }
         }
 
     }
 
-    // Run within Dispatchers.IO from the outside (doesn't refresh properly otherwise)
+    // Run within Dispatchers.IO from the outside (doesn't seem to refresh properly otherwise)
     fun getSearchedLocations(searchTerm: String?) : MutableList<Map<String, String>> {
         val foundLocations = mutableListOf<Map<String, String>>()
 
@@ -79,6 +80,7 @@ class WeatherSystem(private val context: Context) {
         return foundLocations
     }
 
+    // Run with Dispatchers.IO from the outside
     fun getTemp() : String {
 
             val tempUnits = sharedPreferenceManager.getTempUnits()
@@ -103,19 +105,19 @@ class WeatherSystem(private val context: Context) {
 
                         when (currentData.getInt("weather_code")) {
                             0, 1 -> {
-                                weatherType = "☀\uFE0E"
+                                weatherType = "☀\uFE0E" // Sunny
                             }
                             2, 3, 45, 48 -> {
-                                weatherType = "☁\uFE0E"
+                                weatherType = "☁\uFE0E" // Sunny
                             }
                             51, 53, 55, 56, 57, 61, 63, 65, 67, 80, 81, 82 -> {
-                                weatherType = "☂\uFE0E"
+                                weatherType = "☂\uFE0E" // Rain
                             }
                             71, 73, 75, 77, 85, 86 -> {
-                                weatherType = "❄\uFE0E"
+                                weatherType = "❄\uFE0E" // Snow
                             }
                             95, 96, 99 -> {
-                                weatherType = "⛈\uFE0E"
+                                weatherType = "⛈\uFE0E" // Thunder
                             }
 
                         }

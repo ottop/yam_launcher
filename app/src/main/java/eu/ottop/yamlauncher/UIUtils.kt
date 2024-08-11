@@ -22,6 +22,7 @@ class UIUtils(context: Context) {
 
     private val sharedPreferenceManager = SharedPreferenceManager(context)
 
+    // Colors
     fun setBackground(window: Window) {
         window.decorView.setBackgroundColor(
             sharedPreferenceManager.getBgColor()
@@ -70,7 +71,6 @@ class UIUtils(context: Context) {
         val globalLayoutListener = object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 searchView.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                println("yoooooooo")
                 val color = sharedPreferenceManager.getTextColor()
                 searchView.setTextColor(color)
                 searchView.setHintTextColor(setAlpha(color, "A9"))
@@ -83,6 +83,7 @@ class UIUtils(context: Context) {
         }
     }
 
+    // Alignment
     fun setClockAlignment(clock: TextClock, dateText: TextClock) {
         val alignment = sharedPreferenceManager.getClockAlignment()
         setTextAlignment(clock, alignment)
@@ -190,6 +191,7 @@ class UIUtils(context: Context) {
         } catch (_: Exception) {}
     }
 
+    // Size
     fun setClockSize(clock: TextClock) {
         setTextSize(clock, sharedPreferenceManager.getClockSize(), 58F, 68F, 78F)
     }
@@ -288,6 +290,7 @@ class UIUtils(context: Context) {
         } catch (_: Exception) {}
     }
 
+    // Status bar visibility
     fun setStatusBar(window: Window) {
         val windowInsetsController = window.insetsController
 
