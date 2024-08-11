@@ -192,7 +192,7 @@ class UIUtils(context: Context) {
     }
 
     fun setClockSize(clock: TextClock) {
-        setTextSize(clock, sharedPreferenceManager.getClockSize(), 48F, 58F, 68F)
+        setTextSize(clock, sharedPreferenceManager.getClockSize(), 58F, 68F, 78F)
     }
 
     fun setDateSize(dateText: TextClock) {
@@ -200,15 +200,15 @@ class UIUtils(context: Context) {
     }
 
     fun setShortcutsSize(shortcuts: LinearLayout) {
-        val alignment = sharedPreferenceManager.getShortcutSize()
-
         val viewTreeObserver = shortcuts.viewTreeObserver
         val globalLayoutListener = object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
 
+                val size = sharedPreferenceManager.getShortcutSize()
+
                 shortcuts.children.forEach {
                     if (it is TextView) {
-                        setShortcutSize(it, alignment)
+                        setShortcutSize(it, size)
 
                     }
                 }
@@ -223,31 +223,27 @@ class UIUtils(context: Context) {
         }
     }
 
-    private fun setShortcutSize(shortcut: TextView, alignment: String?) {
+    private fun setShortcutSize(shortcut: TextView, size: String?) {
         try {
-            when (alignment) {
+            val layoutParams = shortcut.layoutParams as LinearLayout.LayoutParams
+            when (size) {
                 "small" -> {
-                    shortcut.setPadding(
-                        shortcut.paddingLeft,
-                        shortcut.height / 4,
-                        shortcut.paddingRight,
-                        shortcut.height / 4
-                    )
+                    layoutParams.weight = 0.08F
                 }
 
                 "medium" -> {
-                    shortcut.setPadding(
-                        shortcut.paddingLeft,
-                        (shortcut.height / 4.5).toInt(),
-                        shortcut.paddingRight,
-                        (shortcut.height / 4.5).toInt()
-                    )
+                   layoutParams.weight = 0.092F
                 }
 
                 "large" -> {
-                    shortcut.setPadding(shortcut.paddingLeft, 0, shortcut.paddingRight, 0)
+                    layoutParams.weight = 0.1F
+                }
+
+                "extra" -> {
+                    layoutParams.weight = 0.12F
                 }
             }
+            shortcut.layoutParams = layoutParams
         } catch(_: Exception) {}
     }
 
@@ -257,17 +253,17 @@ class UIUtils(context: Context) {
         regionText: TextView? = null
     ) {
         val size = sharedPreferenceManager.getAppSize()
-        setTextSize(textView, size, 24F, 26F, 28F)
+        setTextSize(textView, size, 24F, 26F, 30F)
         if (editText != null) {
-            setTextSize(editText, size, 24F, 26F, 28F)
+            setTextSize(editText, size, 24F, 26F, 30F)
         }
         if (regionText != null) {
-            setTextSize(regionText, size, 14F, 16F, 18F)
+            setTextSize(regionText, size, 14F, 16F, 20F)
         }
     }
 
     fun setSearchSize(searchView: TextInputEditText) {
-        setTextSize(searchView, sharedPreferenceManager.getSearchSize(), 21F, 23F, 25F)
+        setTextSize(searchView, sharedPreferenceManager.getSearchSize(), 21F, 23F, 27F)
     }
 
     private fun setTextSize(view: TextView, size: String?, s: Float, m: Float, l: Float) {

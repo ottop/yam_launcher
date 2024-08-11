@@ -77,7 +77,6 @@ class LocationFragment : Fragment(), LocationListAdapter.OnItemClickListener {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                println(searchView.text.toString())
                 lifecycleScope.launch(Dispatchers.IO){
                     val locations = weatherSystem.getSearchedLocations(
                         searchView.text.toString()

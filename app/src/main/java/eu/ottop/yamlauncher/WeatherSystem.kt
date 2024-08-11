@@ -58,7 +58,6 @@ class WeatherSystem(private val context: Context) {
                 try {
                 inputStream.bufferedReader().use {
                     val response = it.readText()
-                    println("yo")
                     val jsonObject = JSONObject(response)
                     val resultArray = jsonObject.getJSONArray("results")
 
@@ -74,8 +73,7 @@ class WeatherSystem(private val context: Context) {
                         ))
                     }
                 }
-            }catch (e: Exception){
-                    e.printStackTrace()
+            }catch (_: Exception){
             }
         }
         return foundLocations

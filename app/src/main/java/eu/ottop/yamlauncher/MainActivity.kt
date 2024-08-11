@@ -224,6 +224,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     private fun toAppMenu() {
+        try {
+            recyclerView.scrollToPosition(0)
+        }
+        catch (_: UninitializedPropertyAccessException) {
+
+        }
         animations.showApps(binding.homeView, binding.appView)
         animations.backgroundIn(this@MainActivity)
         if (sharedPreferenceManager.isAutoKeyboardEnabled()) {
@@ -386,14 +392,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             lifecycleScope.launch {
                 refreshAppMenu()
 
-                try {
-                    withContext(Dispatchers.Main) {
-                        recyclerView.scrollToPosition(0)
-                    }
-                }
-                catch (_: UninitializedPropertyAccessException) {
 
-                }
             }}, animSpeed + 50)
 
     }
@@ -482,7 +481,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             recyclerView.layoutManager = appMenuLinearLayoutManager
             recyclerView.edgeEffectFactory = appMenuEdgeFactory
             recyclerView.adapter = adapter
-            recyclerView.scrollToPosition(0)
+
         }
 
         setupRecyclerListener()
@@ -500,7 +499,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     private suspend fun setupSearch() {
-        recyclerView.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
+        binding.appView.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
 
             if (bottom - top > oldBottom - oldTop) {
                 canExit = true
@@ -589,12 +588,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         super.onStart()
         // Keyboard is sometimes open when going back to the app, so close it.
         closeKeyboard()
-        try {
-            recyclerView.scrollToPosition(0)
-        }
-        catch (_: UninitializedPropertyAccessException) {
 
-        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
