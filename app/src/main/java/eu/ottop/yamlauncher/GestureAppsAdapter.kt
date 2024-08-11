@@ -66,7 +66,7 @@ class GestureAppsAdapter(
         holder.textView.text = sharedPreferenceManager.getAppName(
             app.first.applicationInfo.packageName,
             app.third,
-            holder.itemView.context.packageManager.getApplicationLabel(appInfo)
+            context.packageManager.getApplicationLabel(appInfo)
         )
 
         holder.textView.visibility = View.VISIBLE

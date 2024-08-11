@@ -79,7 +79,7 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
 
             override fun afterTextChanged(s: Editable?) {
                 lifecycleScope.launch {
-                    filterItems(searchView.text.toString())
+                    filterItems(s.toString())
                 }
 
             }
@@ -114,7 +114,7 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
                 val cleanItemText = stringUtils.cleanString(sharedPreferenceManager.getAppName(
                     it.first.applicationInfo.packageName,
                     it.third,
-                    requireActivity().packageManager.getApplicationLabel(it.first.applicationInfo)
+                    requireContext().packageManager.getApplicationLabel(it.first.applicationInfo)
                 ).toString())
                 if (cleanItemText != null) {
                     if (cleanItemText.contains(cleanQuery, ignoreCase = true)) {

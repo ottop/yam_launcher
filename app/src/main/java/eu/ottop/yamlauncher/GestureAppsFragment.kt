@@ -12,13 +12,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class GestureAppsFragment(private val direction: String) : Fragment(), GestureAppsAdapter.OnItemClickListener {
 
@@ -88,7 +85,7 @@ class GestureAppsFragment(private val direction: String) : Fragment(), GestureAp
 
                 override fun afterTextChanged(s: Editable?) {
                     lifecycleScope.launch {
-                        filterItems(searchView.text.toString())
+                        filterItems(s.toString())
                     }
 
                 }
@@ -116,7 +113,7 @@ class GestureAppsFragment(private val direction: String) : Fragment(), GestureAp
                 val cleanItemText = stringUtils.cleanString(sharedPreferenceManager.getAppName(
                     it.first.applicationInfo.packageName,
                     it.third,
-                    requireActivity().packageManager.getApplicationLabel(it.first.applicationInfo)
+                    requireContext().packageManager.getApplicationLabel(it.first.applicationInfo)
                 ).toString())
                 if (cleanItemText != null) {
                     if (cleanItemText.contains(cleanQuery, ignoreCase = true)) {
@@ -134,9 +131,9 @@ class GestureAppsFragment(private val direction: String) : Fragment(), GestureAp
     private fun showConfirmationDialog(appInfo: LauncherActivityInfo, appName: String, profile: Int) {
         AlertDialog.Builder(requireContext()).apply {
             setTitle("Confirmation")
-            setMessage("Are you sure you want to set $appName? as the gesture app")
+            setMessage("Are you sure you want to choose $appName?")
+
             setPositiveButton("Yes") { _, _ ->
-                // Perform action on confirmation
                 performConfirmedAction(appInfo, appName, profile)
             }
 

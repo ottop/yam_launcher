@@ -34,7 +34,7 @@ class AppUtils(private val context: Context, private val launcherApps: LauncherA
                 sharedPreferenceManager.getAppName(
                     it.first.applicationInfo.packageName,
                     it.third,
-                    it.first.applicationInfo.loadLabel(context.packageManager)
+                    context.packageManager.getApplicationLabel(it.first.applicationInfo)
                 ).toString().lowercase()
             }
         }

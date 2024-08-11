@@ -139,7 +139,7 @@ class AppMenuAdapter(
         holder.textView.setTextColor(sharedPreferenceManager.getTextColor())
 
         // Set app name on the menu. If the app has been uninstalled, replace it with "Removing" until the app menu updates.
-        val appLabel: CharSequence = appInfo?.loadLabel(context.packageManager) ?: "Removing..."
+        val appLabel: CharSequence = appInfo?.let { context.packageManager.getApplicationLabel(it) } ?: "Removing..."
 
         if (appInfo != null) {
             holder.textView.text = sharedPreferenceManager.getAppName(

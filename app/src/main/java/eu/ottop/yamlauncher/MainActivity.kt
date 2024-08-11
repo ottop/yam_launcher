@@ -522,7 +522,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
             override fun afterTextChanged(s: Editable?) {
                 lifecycleScope.launch(Dispatchers.Default) {
-                    filterItems(searchView.text.toString())
+                    filterItems(s.toString())
                 }
             }
         })
