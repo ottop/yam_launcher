@@ -261,17 +261,17 @@ class UIUtils(context: Context) {
         regionText: TextView? = null
     ) {
         val size = sharedPreferenceManager.getAppSize()
-        setTextSize(textView, size, 24F, 26F, 30F)
+        setTextSize(textView, size, 24F, 27F, 30F)
         if (editText != null) {
-            setTextSize(editText, size, 24F, 26F, 30F)
+            setTextSize(editText, size, 24F, 27F, 30F)
         }
         if (regionText != null) {
-            setTextSize(regionText, size, 14F, 16F, 20F)
+            setTextSize(regionText, size, 14F, 17F, 20F)
         }
     }
 
     fun setSearchSize(searchView: TextInputEditText) {
-        setTextSize(searchView, sharedPreferenceManager.getSearchSize(), 21F, 23F, 25F)
+        setTextSize(searchView, sharedPreferenceManager.getSearchSize(), 21F, 25F, 27F)
     }
 
     private fun setTextSize(view: TextView, size: String?, s: Float, m: Float, l: Float) {
