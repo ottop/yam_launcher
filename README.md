@@ -42,6 +42,11 @@ To fix (only if you want to enable the double tap to lock feature):
 2. Click on the three-dot button on the top right of the screen. 
 3. Allow restricted settings
 
+## Screenshots
+
+![yamscreenshots](https://github.com/user-attachments/assets/4435e05e-3f8e-4b65-b5c1-e7e718db14f5)
+
+
 ## Bugs, feature requests, etc
 
 Submit an issue on the *Issues* tab.
