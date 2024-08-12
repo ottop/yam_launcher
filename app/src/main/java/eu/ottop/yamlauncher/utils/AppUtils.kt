@@ -1,4 +1,4 @@
-package eu.ottop.yamlauncher
+package eu.ottop.yamlauncher.utils
 
 import android.content.Context
 import android.content.pm.ApplicationInfo
@@ -6,6 +6,7 @@ import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
 import android.os.UserHandle
 import android.widget.Toast
+import eu.ottop.yamlauncher.settings.SharedPreferenceManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

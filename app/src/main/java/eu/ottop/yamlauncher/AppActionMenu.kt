@@ -18,6 +18,8 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.lifecycle.lifecycleScope
 import eu.ottop.yamlauncher.databinding.ActivityMainBinding
+import eu.ottop.yamlauncher.settings.SharedPreferenceManager
+import eu.ottop.yamlauncher.utils.Animations
 import kotlinx.coroutines.launch
 
 class AppActionMenu {
@@ -33,7 +35,7 @@ class AppActionMenu {
         userHandle: UserHandle,
         workProfile: Int,
         launcherApps: LauncherApps,
-        mainActivity: LauncherActivityInfo?
+        appActivity: LauncherActivityInfo?
     ){
         val animations = Animations(activity)
         val sharedPreferenceManager = SharedPreferenceManager(activity)
@@ -41,9 +43,9 @@ class AppActionMenu {
         actionMenu.findViewById<TextView>(R.id.info).setOnClickListener {
 
             // Launch app info in phone settings
-            if (mainActivity != null) {
+            if (appActivity != null) {
                 launcherApps.startAppDetailsActivity(
-                    mainActivity.componentName,
+                    appActivity.componentName,
                     userHandle,
                     null,
                     null
@@ -72,7 +74,7 @@ class AppActionMenu {
             val editText = editLayout.findViewById<EditText>(R.id.appNameEdit)
             val resetButton = editLayout.findViewById<AppCompatButton>(R.id.reset)
 
-            val app = Triple(mainActivity!!, userHandle, workProfile)
+            val app = Triple(appActivity!!, userHandle, workProfile)
 
             searchView.visibility = View.INVISIBLE
             editText.requestFocus()

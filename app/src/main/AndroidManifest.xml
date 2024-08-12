@@ -25,7 +25,7 @@
         android:theme="@style/Theme.YamLauncher"
         tools:targetApi="34">
         <activity
-            android:name=".SettingsActivity"
+            android:name=".settings.SettingsActivity"
             android:theme="@style/SettingsTheme"
             android:exported="false" />
         <activity
@@ -46,7 +46,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name=".ScreenLockService"
+            android:name=".tasks.ScreenLockService"
             android:exported="false"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter>

@@ -17,6 +17,9 @@ import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
+import eu.ottop.yamlauncher.settings.SharedPreferenceManager
+import eu.ottop.yamlauncher.utils.AppUtils
+import eu.ottop.yamlauncher.utils.UIUtils
 
 
 class AppMenuAdapter(

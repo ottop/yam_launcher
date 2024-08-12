@@ -1,10 +1,11 @@
-package eu.ottop.yamlauncher
+package eu.ottop.yamlauncher.tasks
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
+import eu.ottop.yamlauncher.MainActivity
 
 class BatteryReceiver(private val activity: MainActivity) : BroadcastReceiver() {
 

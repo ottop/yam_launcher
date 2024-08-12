@@ -33,6 +33,18 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import eu.ottop.yamlauncher.databinding.ActivityMainBinding
+import eu.ottop.yamlauncher.settings.SettingsActivity
+import eu.ottop.yamlauncher.settings.SharedPreferenceManager
+import eu.ottop.yamlauncher.tasks.BatteryReceiver
+import eu.ottop.yamlauncher.tasks.ScreenLockService
+import eu.ottop.yamlauncher.utils.Animations
+import eu.ottop.yamlauncher.utils.AppMenuEdgeFactory
+import eu.ottop.yamlauncher.utils.AppMenuLinearLayoutManager
+import eu.ottop.yamlauncher.utils.AppUtils
+import eu.ottop.yamlauncher.utils.GestureUtils
+import eu.ottop.yamlauncher.utils.StringUtils
+import eu.ottop.yamlauncher.utils.UIUtils
+import eu.ottop.yamlauncher.utils.WeatherSystem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -74,8 +86,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private lateinit var preferences: SharedPreferences
 
     private var isBatteryReceiverRegistered = false
-    private var isJobActive = true
-    var canExit = true
+    var isJobActive = true
 
     private val swipeThreshold = 100
     private val swipeVelocityThreshold = 100
@@ -525,14 +536,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         binding.appView.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
 
             if (bottom - top > oldBottom - oldTop) {
-                // Allow the app menu to be closed after the keyboard is closed
-                canExit = true
+                // If keyboard is closed, remove cursor from the search bar
                 searchView.clearFocus()
             }
-            else if (bottom - top < oldBottom - oldTop) {
-                // The app menu can't be closed with the keyboard open
-                canExit = false
-            }
+
         }
 
         searchView.addTextChangedListener(object :
@@ -666,7 +673,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     ) {
         textView.visibility = View.INVISIBLE
         animations.fadeViewIn(actionMenuLayout)
-        val mainActivity =
+        val appActivity =
             launcherApps.getActivityList(appInfo.applicationInfo.packageName, userHandle)
                 .firstOrNull()
         appActionMenu.setActionListeners(
@@ -680,7 +687,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             userHandle,
             userProfile,
             launcherApps,
-            mainActivity
+            appActivity
         )
     }
 

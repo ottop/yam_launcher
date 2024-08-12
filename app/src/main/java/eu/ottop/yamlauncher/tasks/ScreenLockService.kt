@@ -1,4 +1,4 @@
-package eu.ottop.yamlauncher
+package eu.ottop.yamlauncher.tasks
 
 import android.accessibilityservice.AccessibilityService
 import android.content.Intent

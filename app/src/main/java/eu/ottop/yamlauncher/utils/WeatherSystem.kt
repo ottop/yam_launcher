@@ -1,4 +1,4 @@
-package eu.ottop.yamlauncher
+package eu.ottop.yamlauncher.utils
 
 import android.Manifest
 import android.content.Context
@@ -7,6 +7,8 @@ import android.location.Location
 import android.location.LocationManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import eu.ottop.yamlauncher.MainActivity
+import eu.ottop.yamlauncher.settings.SharedPreferenceManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

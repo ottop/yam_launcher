@@ -1,10 +1,16 @@
-package eu.ottop.yamlauncher
+package eu.ottop.yamlauncher.settings
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
+import eu.ottop.yamlauncher.R
+import eu.ottop.yamlauncher.utils.StringUtils
 
 class AboutFragment : Fragment() {
 
@@ -27,7 +33,12 @@ class AboutFragment : Fragment() {
         stringUtils.setLink(requireActivity().findViewById(R.id.stripeLink), getString(R.string.stripe_link))
         stringUtils.setLink(requireActivity().findViewById(R.id.liberaLink), getString(R.string.libera_link))
         stringUtils.setLink(requireActivity().findViewById(R.id.weatherLink), getString(R.string.weather_link))
+
+        requireActivity().findViewById<ImageView>(R.id.iconView).setOnClickListener {
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.parse("package:${requireContext().packageName}")
+            }
+            startActivity(intent)
+        }
     }
-
-
 }

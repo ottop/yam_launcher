@@ -1,4 +1,4 @@
-package eu.ottop.yamlauncher
+package eu.ottop.yamlauncher.settings
 
 import android.content.Context
 import android.graphics.Color

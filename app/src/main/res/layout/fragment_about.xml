@@ -5,10 +5,10 @@
     android:id="@+id/aboutLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AboutFragment">
+    tools:context=".settings.AboutFragment">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/iconView"
         android:layout_width="0dp"
         android:layout_height="200dp"
         android:contentDescription="@string/app_icon"
@@ -25,9 +25,9 @@
         android:textAlignment="center"
         android:textSize="34sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="@+id/iconView"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintTop_toBottomOf="@+id/iconView" />
 
     <TextView
         android:id="@+id/creditText"

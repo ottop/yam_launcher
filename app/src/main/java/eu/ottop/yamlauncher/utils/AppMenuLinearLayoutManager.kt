@@ -1,7 +1,8 @@
-package eu.ottop.yamlauncher
+package eu.ottop.yamlauncher.utils
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import eu.ottop.yamlauncher.MainActivity
 
 class AppMenuLinearLayoutManager(private val activity: MainActivity) : LinearLayoutManager(activity) {
 
@@ -18,7 +19,7 @@ class AppMenuLinearLayoutManager(private val activity: MainActivity) : LinearLay
         val overscroll: Int = dy - scrollRange
 
         // If the user scrolls up when already on top, go back to home. Only if the keyboard isn't open, though
-        if (overscroll < 0 && (firstVisibleItemPosition == 0 || firstVisibleItemPosition < 0) && scrollStarted && activity.canExit) {
+        if (overscroll < 0 && (firstVisibleItemPosition == 0 || firstVisibleItemPosition < 0) && scrollStarted) {
             activity.backToHome()
         }
 

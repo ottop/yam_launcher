@@ -1,4 +1,4 @@
-package eu.ottop.yamlauncher
+package eu.ottop.yamlauncher.settings
 
 import android.app.AlertDialog
 import android.content.Context
@@ -13,6 +13,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
+import eu.ottop.yamlauncher.utils.AppMenuEdgeFactory
+import eu.ottop.yamlauncher.R
+import eu.ottop.yamlauncher.utils.WeatherSystem
+import eu.ottop.yamlauncher.utils.StringUtils
+import eu.ottop.yamlauncher.utils.UIUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

@@ -1,7 +1,8 @@
-package eu.ottop.yamlauncher
+package eu.ottop.yamlauncher.settings
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import eu.ottop.yamlauncher.R
 import eu.ottop.yamlauncher.databinding.ActivitySettingsBinding
 
 class SettingsActivity : AppCompatActivity() {

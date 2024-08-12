@@ -1,4 +1,4 @@
-package eu.ottop.yamlauncher
+package eu.ottop.yamlauncher.settings
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -11,16 +11,18 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
+import eu.ottop.yamlauncher.R
+import eu.ottop.yamlauncher.utils.UIUtils
 
-class HiddenAppsAdapter(
+class GestureAppsAdapter(
     private val context: Context,
-    private var apps: MutableList<Triple<LauncherActivityInfo, UserHandle, Int>>,
+    var apps: MutableList<Triple<LauncherActivityInfo, UserHandle, Int>>,
     private val itemClickListener: OnItemClickListener
 ) :
-    RecyclerView.Adapter<HiddenAppsAdapter.AppViewHolder>() {
+    RecyclerView.Adapter<GestureAppsAdapter.AppViewHolder>() {
 
-        private val sharedPreferenceManager = SharedPreferenceManager(context)
-        private val uiUtils = UIUtils(context)
+    private val sharedPreferenceManager = SharedPreferenceManager(context)
+    private val uiUtils = UIUtils(context)
 
     interface OnItemClickListener {
         fun onItemClick(appInfo: LauncherActivityInfo, profile: Int)
@@ -31,7 +33,6 @@ class HiddenAppsAdapter(
         val textView: TextView = listItem.findViewById(R.id.appName)
 
         init {
-
             textView.setOnClickListener {
                 val position = bindingAdapterPosition
                 val app = apps[position].first
@@ -51,18 +52,21 @@ class HiddenAppsAdapter(
         val app = apps[position]
 
         if (app.third != 0) {
-            holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(context.resources, R.drawable.ic_work_app, null),null,null,null)
+            holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(context.resources,
+                R.drawable.ic_work_app, null),null,null,null)
         }
         else {
-            holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(context.resources, R.drawable.ic_empty, null),null,null,null)
+            holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(context.resources,
+                R.drawable.ic_empty, null),null,null,null)
         }
 
         uiUtils.setAppAlignment(holder.textView)
 
         uiUtils.setAppSize(holder.textView)
 
-        // Separate activity from Main so does not need special update
+        // Does not need to be specially updated since it's in a separate activity and thus reloads when opened again
         val appInfo = app.first.activityInfo.applicationInfo
+
         holder.textView.text = sharedPreferenceManager.getAppName(
             app.first.applicationInfo.packageName,
             app.third,

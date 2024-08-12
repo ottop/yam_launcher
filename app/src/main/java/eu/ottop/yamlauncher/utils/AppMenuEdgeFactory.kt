@@ -1,4 +1,4 @@
-package eu.ottop.yamlauncher
+package eu.ottop.yamlauncher.utils
 
 import android.app.Activity
 import android.widget.EdgeEffect

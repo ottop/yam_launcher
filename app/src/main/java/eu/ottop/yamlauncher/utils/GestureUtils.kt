@@ -1,4 +1,4 @@
-package eu.ottop.yamlauncher
+package eu.ottop.yamlauncher.utils
 
 import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.AccessibilityServiceInfo
@@ -11,6 +11,7 @@ import android.content.pm.ServiceInfo
 import android.provider.Settings
 import android.view.accessibility.AccessibilityManager
 import androidx.appcompat.app.AppCompatActivity.ACCESSIBILITY_SERVICE
+import eu.ottop.yamlauncher.settings.SharedPreferenceManager
 
 class GestureUtils(private val context: Context) {
 

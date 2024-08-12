@@ -1,4 +1,4 @@
-package eu.ottop.yamlauncher
+package eu.ottop.yamlauncher.utils
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -9,7 +9,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.View
-import eu.ottop.yamlauncher.databinding.ActivityMainBinding
+import eu.ottop.yamlauncher.settings.SharedPreferenceManager
 
 class Animations (context: Context) {
 

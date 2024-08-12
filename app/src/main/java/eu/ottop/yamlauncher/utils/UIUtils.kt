@@ -1,4 +1,4 @@
-package eu.ottop.yamlauncher
+package eu.ottop.yamlauncher.utils
 
 import android.content.Context
 import android.graphics.BlendMode
@@ -17,6 +17,7 @@ import android.widget.TextClock
 import android.widget.TextView
 import androidx.core.view.children
 import com.google.android.material.textfield.TextInputEditText
+import eu.ottop.yamlauncher.settings.SharedPreferenceManager
 
 class UIUtils(context: Context) {
 

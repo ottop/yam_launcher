@@ -1,4 +1,4 @@
-package eu.ottop.yamlauncher
+package eu.ottop.yamlauncher.settings
 
 import android.app.AlertDialog
 import android.content.Context
@@ -15,9 +15,15 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
+import eu.ottop.yamlauncher.utils.AppMenuEdgeFactory
+import eu.ottop.yamlauncher.R
+import eu.ottop.yamlauncher.utils.AppUtils
+import eu.ottop.yamlauncher.utils.StringUtils
+import eu.ottop.yamlauncher.utils.UIUtils
 import kotlinx.coroutines.launch
 
-class GestureAppsFragment(private val direction: String) : Fragment(), GestureAppsAdapter.OnItemClickListener {
+class GestureAppsFragment(private val direction: String) : Fragment(),
+    GestureAppsAdapter.OnItemClickListener {
 
     private var adapter: GestureAppsAdapter? = null
     private lateinit var sharedPreferenceManager: SharedPreferenceManager
