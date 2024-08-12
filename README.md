@@ -44,8 +44,9 @@ To fix (only if you want to enable the double tap to lock feature):
 
 ## Screenshots
 
-![yamscreenshots](https://github.com/user-attachments/assets/4435e05e-3f8e-4b65-b5c1-e7e718db14f5)
-
+<p align="center">
+<img src=https://github.com/user-attachments/assets/4435e05e-3f8e-4b65-b5c1-e7e718db14f5 />
+</p>
 
 ## Bugs, feature requests, etc
 
