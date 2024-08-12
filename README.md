@@ -28,7 +28,19 @@ Coming soon...
 
 ### APK
 
-Coming soon...
+1. Download the APK.
+2. Enable permission to install apps to your browser/files (app you are installing the launcher from).
+3. Install the launcher.
+
+#### Important for APK installations
+
+If you wish to use the double tap to lock feature, Android blocks the accessibility settings for manually installed APKs by default. 
+
+To fix (only if you want to enable the double tap to lock feature):
+
+1. Go to Settings -> Apps -> YAM Launcher
+2. Click on the three-dot button on the top right of the screen. 
+3. Allow restricted settings
 
 ## Bugs, feature requests, etc
 
