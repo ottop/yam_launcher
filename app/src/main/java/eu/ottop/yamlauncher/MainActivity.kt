@@ -86,7 +86,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private lateinit var preferences: SharedPreferences
 
     private var isBatteryReceiverRegistered = false
-    var isJobActive = true
+    private var isJobActive = true
 
     private val swipeThreshold = 100
     private val swipeVelocityThreshold = 100
