@@ -47,3 +47,19 @@ If you wish to support me and my work financially, I welcome all donations. Thes
 One-time donations: [Stripe](https://donate.stripe.com/14k6s2bMJdnDgtW288)
 
 Recurring donations: [Liberapay](https://liberapay.com/ottoptj/donate)
+
+## Privacy
+
+[Privacy Policy](https://codeberg.org/ottoptj/yamlauncher/src/branch/main/PrivacyPolicy.md)
+
+No data leaves your device by default and no data is sent to the developer, ever. 
+
+Enabling weather integration will send the coordinates that are set for the weather to Open-Meteo and they may also store your IP address.
+
+### Permissions
+
+- `REQUEST_DELETE_PACKAGES` - Allows uninstallation of apps through the launcher's activity menu.
+- `EXPAND_STATUS_BAR` - Allows pulling down the status bar from the app.
+- `INTERNET` - Required for API calls to Open-Meteo.
+- `ACCESS_COARSE_LOCATION` - Requested when enabling GPS location. Needs to be allowed to use GPS location.
+- `QUERY_ALL_PACKAGES` - Used to ensure that the app properly detects all installed apps. 
