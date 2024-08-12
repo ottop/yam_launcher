@@ -60,6 +60,6 @@ Enabling weather integration will send the coordinates that are set for the weat
 
 - `REQUEST_DELETE_PACKAGES` - Allows uninstallation of apps through the launcher's activity menu.
 - `EXPAND_STATUS_BAR` - Allows pulling down the status bar from the app.
-- `INTERNET` - Required for API calls to Open-Meteo.
+- `INTERNET` - Required for API calls to Open-Meteo. Only used if weather integration is enabled.
 - `ACCESS_COARSE_LOCATION` - Requested when enabling GPS location. Needs to be allowed to use GPS location.
 - `QUERY_ALL_PACKAGES` - Used to ensure that the app properly detects all installed apps. 
