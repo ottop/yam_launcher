@@ -1,3 +1,2 @@
-<p align="center">
-  <img src=https://github.com/user-attachments/assets/6f946536-8118-4c75-b534-3d2f74328108 />
-</p>
+
+![ic_launcher-playstore](https://github.com/user-attachments/assets/a767cb80-ed70-49a7-aa0e-de8bcfa6aee4)
