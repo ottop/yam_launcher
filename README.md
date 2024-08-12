@@ -1,2 +1,1 @@
-
-![ic_launcher-playstore](https://github.com/user-attachments/assets/a767cb80-ed70-49a7-aa0e-de8bcfa6aee4)
+![app_icon](https://github.com/ottop/yam_launcher/blob/30fff17692b0726aef2e5be712e97a71404f0a3c/app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp)
