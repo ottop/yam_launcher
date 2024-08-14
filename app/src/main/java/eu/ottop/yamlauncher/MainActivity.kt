@@ -105,9 +105,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         setMainVariables()
 
-        setPreferences()
-
         setShortcuts()
+
+        setPreferences()
 
         setHomeListeners()
 
@@ -159,25 +159,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         preferences = PreferenceManager.getDefaultSharedPreferences(this)
     }
 
-    private fun setPreferences() {
-        uiUtils.setBackground(window)
-        uiUtils.setTextColors(binding.homeView)
-        uiUtils.setSearchColors(searchView)
-
-        uiUtils.setClockAlignment(clock, dateText)
-        uiUtils.setSearchAlignment(searchView)
-
-        uiUtils.setClockSize(clock)
-        uiUtils.setDateSize(dateText)
-        uiUtils.setShortcutsSize(binding.homeView)
-        uiUtils.setSearchSize(searchView)
-
-        uiUtils.setStatusBar(window)
-
-        leftSwipeActivity = gestureUtils.getSwipeInfo(launcherApps, "left")
-        rightSwipeActivity = gestureUtils.getSwipeInfo(launcherApps, "right")
-    }
-
     private fun setShortcuts() {
         val shortcuts = arrayOf(R.id.app1, R.id.app2, R.id.app3, R.id.app4, R.id.app5, R.id.app6, R.id.app7, R.id.app8)
 
@@ -194,7 +175,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             else {
                 textView.visibility = View.VISIBLE
 
-                
+
 
                 val savedView = sharedPreferenceManager.getShortcut(textView)
 
@@ -283,6 +264,26 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
     }
 
+    private fun setPreferences() {
+        uiUtils.setBackground(window)
+        uiUtils.setTextColors(binding.homeView)
+        uiUtils.setMenuItemColors(searchView)
+        uiUtils.setMenuItemColors(binding.menuTitle, "A9")
+
+        uiUtils.setClockAlignment(clock, dateText)
+        uiUtils.setSearchAlignment(searchView)
+
+        uiUtils.setClockSize(clock)
+        uiUtils.setDateSize(dateText)
+        uiUtils.setShortcutsSize(binding.homeView)
+        uiUtils.setSearchSize(searchView)
+
+        uiUtils.setStatusBar(window)
+
+        leftSwipeActivity = gestureUtils.getSwipeInfo(launcherApps, "left")
+        rightSwipeActivity = gestureUtils.getSwipeInfo(launcherApps, "right")
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     private fun setHomeListeners() {
         registerBatteryReceiver()
@@ -331,7 +332,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
                 "textColor" -> {
                     uiUtils.setTextColors(binding.homeView)
-                    uiUtils.setSearchColors(searchView)
+                    uiUtils.setMenuItemColors(searchView)
+                    uiUtils.setMenuItemColors(binding.menuTitle, "A9")
                 }
 
                 "clockAlignment" -> {

@@ -39,7 +39,15 @@ class UIUtils(context: Context) {
                 }
             }
             hasMethod(view, "setTextColor") -> {
-                (view as? TextView)?.setTextColor(color)
+                (view as TextView).setTextColor(color)
+                view.compoundDrawables[0]?.colorFilter =
+                    BlendModeColorFilter(sharedPreferenceManager.getTextColor(), BlendMode.SRC_ATOP)
+                view.compoundDrawables[2]?.colorFilter =
+                    BlendModeColorFilter(sharedPreferenceManager.getTextColor(), BlendMode.SRC_ATOP)
+
+            }
+            view is TextView && view.compoundDrawables[0] != null -> {
+                println(view.text)
             }
             else -> {
                 view.setBackgroundColor(color)
@@ -56,16 +64,18 @@ class UIUtils(context: Context) {
         }
     }
 
-    fun setSearchColors(searchView: TextInputEditText) {
-        val viewTreeObserver = searchView.viewTreeObserver
+    fun setMenuItemColors(view: TextView, alphaHex: String = "FF") {
+        val viewTreeObserver = view.viewTreeObserver
 
         val globalLayoutListener = object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
-                searchView.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                view.viewTreeObserver.removeOnGlobalLayoutListener(this)
                 val color = sharedPreferenceManager.getTextColor()
-                searchView.setTextColor(color)
-                searchView.setHintTextColor(setAlpha(color, "A9"))
-                searchView.compoundDrawables[0].mutate().colorFilter = BlendModeColorFilter(color, BlendMode.SRC_ATOP)
+                view.setTextColor(setAlpha(color, alphaHex))
+                view.setHintTextColor(setAlpha(color, "A9"))
+                if (view.compoundDrawables[0] != null) {
+                    view.compoundDrawables[0].mutate().colorFilter = BlendModeColorFilter(color, BlendMode.SRC_ATOP)
+                }
             }
         }
 

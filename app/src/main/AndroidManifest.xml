@@ -29,7 +29,9 @@
         <activity
             android:name=".settings.SettingsActivity"
             android:theme="@style/SettingsTheme"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity"/>
         <activity
             android:name=".MainActivity"
             android:excludeFromRecents="true"
