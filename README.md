@@ -19,8 +19,7 @@ Key features:
 ## Installation
 
 ### F-Droid
-
-Coming soon...
+[<img src="https://github.com/user-attachments/assets/0e6a8084-f056-4db1-9ba3-58b4edb578d0">](https://apt.izzysoft.de/fdroid/index/apk/eu.ottop.yamlauncher)
 
 ### Google Play
 
