@@ -73,9 +73,9 @@ class UIUtils(context: Context) {
                 val color = sharedPreferenceManager.getTextColor()
                 view.setTextColor(setAlpha(color, alphaHex))
                 view.setHintTextColor(setAlpha(color, "A9"))
-                if (view.compoundDrawables[0] != null) {
-                    view.compoundDrawables[0].mutate().colorFilter = BlendModeColorFilter(color, BlendMode.SRC_ATOP)
-                }
+
+                view.compoundDrawables[0]?.mutate()?.colorFilter = BlendModeColorFilter(color, BlendMode.SRC_ATOP)
+
             }
         }
 
