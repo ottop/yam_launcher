@@ -1,0 +1,6 @@
+A minor bugfix release.
+
+ - Screen rotation is no longer allowed in settings menu
+ - Work profile drawable now changes color on shortcuts properly with preferences
+ - The title in the shortcut app selection menu now changes colors properly with preferences
+ - A dependency info blob has been removed
