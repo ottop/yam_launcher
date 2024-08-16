@@ -1,0 +1,5 @@
+A feature release
+
+- Material You support for text and background.
+- Clicking on the time can now open the clock.
+- Sha checks added for Gradle.
