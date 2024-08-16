@@ -13,6 +13,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.UserHandle
+import android.provider.AlarmClock
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.GestureDetector
@@ -300,6 +301,15 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             super.onTouchEvent(event)
             gestureDetector.onTouchEvent(event)
             true
+        }
+
+        binding.clockLayout.setOnClickListener {_ ->
+            if (sharedPreferenceManager.isClockGestureEnabled()) {
+                val intent = Intent(AlarmClock.ACTION_SHOW_ALARMS)
+                if (intent.resolveActivity(packageManager) != null) {
+                    startActivity(intent)
+                }
+            }
         }
 
         // Return to home on back

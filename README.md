@@ -79,4 +79,5 @@ Enabling weather integration will send the coordinates that are set for the weat
 - `EXPAND_STATUS_BAR` - Allows pulling down the status bar from the app.
 - `INTERNET` - Required for API calls to Open-Meteo. Only used if weather integration is enabled.
 - `ACCESS_COARSE_LOCATION` - Requested when enabling GPS location. Needs to be allowed to use GPS location.
+- `SET_ALARM` - Used for the clock opening gesture on clicking the time. 
 - `QUERY_ALL_PACKAGES` - Used to ensure that the app properly detects all installed apps. 

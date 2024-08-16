@@ -98,6 +98,10 @@ class SharedPreferenceManager (context: Context) {
         return preferences.getString("tempUnits", "celsius")
     }
 
+    fun isClockGestureEnabled() : Boolean {
+        return preferences.getBoolean("clockClick", true)
+    }
+
     // Gestures
     fun setGestures(direction: String, appName: String?) {
         val editor = preferences.edit()
