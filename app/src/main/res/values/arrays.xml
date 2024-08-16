@@ -6,6 +6,8 @@
         <item>Black</item>
         <item>Grey</item>
         <item>White</item>
+        <item>Material</item>
+
     </string-array>
 
     <string-array name="bg_values">
@@ -13,16 +15,20 @@
         <item>#FF000000</item>
         <item>#FF1B1B1B</item>
         <item>#FFD6D6D6</item>
+        <item>material</item>
+
     </string-array>
 
     <string-array name="color_options">
         <item>Light</item>
         <item>Dark</item>
+        <item>Material</item>
     </string-array>
 
     <string-array name="color_values">
         <item>#FFF3F3F3</item>
         <item>#FF0C0C0C</item>
+        <item>material</item>
     </string-array>
 
     <string-array name="animation_options">

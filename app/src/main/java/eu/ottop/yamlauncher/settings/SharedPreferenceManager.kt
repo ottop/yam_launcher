@@ -2,20 +2,39 @@ package eu.ottop.yamlauncher.settings
 
 import android.content.Context
 import android.graphics.Color
+import android.util.TypedValue
 import android.widget.TextView
+import androidx.core.graphics.toColor
 import androidx.preference.PreferenceManager
+import eu.ottop.yamlauncher.R
 
-class SharedPreferenceManager (context: Context) {
+class SharedPreferenceManager (private val context: Context) {
 
     private val preferences = PreferenceManager.getDefaultSharedPreferences(context)
 
     // General UI
     fun getBgColor(): Int {
-        return Color.parseColor(preferences.getString("bgColor",  "#00000000"))
+        val bgColor = preferences.getString("bgColor",  "#00000000")
+        if(bgColor == "material") {
+            return getThemeColor(com.google.android.material.R.attr.colorOnPrimary)
+        }
+        return Color.parseColor(bgColor)
     }
 
     fun getTextColor(): Int {
-        return Color.parseColor(preferences.getString("textColor",  "#FFF3F3F3"))
+        val textColor = preferences.getString("textColor",  "#FFF3F3F3")
+        if(textColor == "material") {
+            return getThemeColor(com.google.android.material.R.attr.colorPrimary)
+        }
+        return Color.parseColor(textColor)
+    }
+
+
+    private fun getThemeColor(attr: Int): Int {
+        val typedValue = TypedValue()
+        val theme = context.theme
+        theme.resolveAttribute(attr, typedValue, true)
+        return typedValue.data
     }
 
     fun isBarVisible(): Boolean {
