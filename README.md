@@ -13,6 +13,7 @@ Key features:
 - Work profile support.
 - Search on the bottom of the screen.
 - System fonts for an uniform look with your Android.
+- Material You support.
 - Simple by default, customizable under the hood. 
 - Open-source under the MIT License.
 
