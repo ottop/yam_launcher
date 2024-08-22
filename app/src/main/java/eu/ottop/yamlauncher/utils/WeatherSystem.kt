@@ -41,10 +41,10 @@ class WeatherSystem(private val context: Context) {
         { location: Location? ->
             if (location != null) {
                 CoroutineScope(Dispatchers.IO).launch {
-                val latitude = location.latitude
-                val longitude = location.longitude
-                sharedPreferenceManager.setWeatherLocation("latitude=${latitude}&longitude=${longitude}", "Latest GPS location")
-                activity.updateWeatherText()
+                    val latitude = location.latitude
+                    val longitude = location.longitude
+                    sharedPreferenceManager.setWeatherLocation("latitude=${latitude}&longitude=${longitude}", "Latest GPS location")
+                    activity.updateWeatherText()
                 }
             }
         }
@@ -55,10 +55,10 @@ class WeatherSystem(private val context: Context) {
     fun getSearchedLocations(searchTerm: String?) : MutableList<Map<String, String>> {
         val foundLocations = mutableListOf<Map<String, String>>()
 
-            val url = URL("https://geocoding-api.open-meteo.com/v1/search?name=$searchTerm&count=50&language=en&format=json")
-            with(url.openConnection() as HttpURLConnection) {
-                requestMethod = "GET"
-                try {
+        val url = URL("https://geocoding-api.open-meteo.com/v1/search?name=$searchTerm&count=50&language=en&format=json")
+        with(url.openConnection() as HttpURLConnection) {
+            requestMethod = "GET"
+            try {
                 inputStream.bufferedReader().use {
                     val response = it.readText()
                     val jsonObject = JSONObject(response)
@@ -85,50 +85,57 @@ class WeatherSystem(private val context: Context) {
     // Run with Dispatchers.IO from the outside
     fun getTemp() : String {
 
-            val tempUnits = sharedPreferenceManager.getTempUnits()
-            var currentWeather = ""
+        val tempUnits = sharedPreferenceManager.getTempUnits()
+        var currentWeather = ""
 
-            val location = sharedPreferenceManager.getWeatherLocation()
+        val location = sharedPreferenceManager.getWeatherLocation()
 
         if (location != null) {
             if (location.isNotEmpty()) {
-                val url = URL("https://api.open-meteo.com/v1/forecast?$location&temperature_unit=${tempUnits}&current=temperature_2m,weather_code")
+                val url =
+                    URL("https://api.open-meteo.com/v1/forecast?$location&temperature_unit=${tempUnits}&current=temperature_2m,weather_code")
                 with(url.openConnection() as HttpURLConnection) {
                     requestMethod = "GET"
 
-                    inputStream.bufferedReader().use {
-                        val response = it.readText()
+                    try {
+                        inputStream.bufferedReader().use {
+                            val response = it.readText()
 
-                        val jsonObject = JSONObject(response)
+                            val jsonObject = JSONObject(response)
 
-                        val currentData = jsonObject.getJSONObject("current")
+                            val currentData = jsonObject.getJSONObject("current")
 
-                        var weatherType = ""
+                            var weatherType = ""
 
-                        when (currentData.getInt("weather_code")) {
-                            0, 1 -> {
-                                weatherType = "☀\uFE0E" // Sunny
+                            when (currentData.getInt("weather_code")) {
+                                0, 1 -> {
+                                    weatherType = "☀\uFE0E" // Sunny
+                                }
+
+                                2, 3, 45, 48 -> {
+                                    weatherType = "☁\uFE0E" // Sunny
+                                }
+
+                                51, 53, 55, 56, 57, 61, 63, 65, 67, 80, 81, 82 -> {
+                                    weatherType = "☂\uFE0E" // Rain
+                                }
+
+                                71, 73, 75, 77, 85, 86 -> {
+                                    weatherType = "❄\uFE0E" // Snow
+                                }
+
+                                95, 96, 99 -> {
+                                    weatherType = "⛈\uFE0E" // Thunder
+                                }
+
                             }
-                            2, 3, 45, 48 -> {
-                                weatherType = "☁\uFE0E" // Sunny
-                            }
-                            51, 53, 55, 56, 57, 61, 63, 65, 67, 80, 81, 82 -> {
-                                weatherType = "☂\uFE0E" // Rain
-                            }
-                            71, 73, 75, 77, 85, 86 -> {
-                                weatherType = "❄\uFE0E" // Snow
-                            }
-                            95, 96, 99 -> {
-                                weatherType = "⛈\uFE0E" // Thunder
-                            }
+
+                            currentWeather = "$weatherType ${currentData.getInt("temperature_2m")}"
 
                         }
 
-                        currentWeather = "$weatherType ${currentData.getInt("temperature_2m")}"
-
-                    }
-                }
-            }
+                    } catch(_: Exception) {}
+                }}
         }
 
         return when (tempUnits) {

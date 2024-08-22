@@ -5,4 +5,4 @@
     android:accessibilityEventTypes="typeViewClicked"
     android:accessibilityFeedbackType="feedbackGeneric"
     android:notificationTimeout="100"
-    android:settingsActivity="eu.ottop.yamlauncher.SettingsActivity"/>
+    android:settingsActivity="eu.ottop.yamlauncher.settings.SettingsActivity"/>
