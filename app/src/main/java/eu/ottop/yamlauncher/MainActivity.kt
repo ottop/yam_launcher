@@ -312,6 +312,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             }
         }
 
+        binding.clockLayout.setOnLongClickListener {_ ->
+            startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
+            true
+        }
+
         // Return to home on back
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
