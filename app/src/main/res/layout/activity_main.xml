@@ -92,7 +92,7 @@
                 android:layout_marginTop="45dp"
                 android:layout_marginBottom="27dp"
                 android:fontFamily="@null"
-                android:format12Hour="hh:mm a"
+                android:format12Hour="hh:mm"
                 android:format24Hour="HH:mm"
                 android:textAlignment="textStart"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault"
