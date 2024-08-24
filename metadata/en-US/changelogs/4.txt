@@ -1,0 +1,5 @@
+First full release of YAM Launcher!
+
+- Fixed a startup crash when the user has weather enabled, but has no internet connection
+- Added a long click listener to the clock so that long pressing the clock opens settings
+- Removed AM/PM text from clock because it took up too much space
