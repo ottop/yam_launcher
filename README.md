@@ -20,7 +20,14 @@ Key features:
 ## Installation
 
 ### F-Droid
-[<img src="https://github.com/user-attachments/assets/0e6a8084-f056-4db1-9ba3-58b4edb578d0">](https://apt.izzysoft.de/fdroid/index/apk/eu.ottop.yamlauncher)
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+    alt="Get it on F-Droid"
+    height="80">](https://f-droid.org/en/packages/eu.ottop.yamlauncher)
+
+### IzzyOnDroid
+[<img src="https://github.com/user-attachments/assets/0e6a8084-f056-4db1-9ba3-58b4edb578d0"
+alt="Get it on IzzyOnDroid"
+height="55">](https://apt.izzysoft.de/fdroid/index/apk/eu.ottop.yamlauncher)
 
 ### Google Play
 
