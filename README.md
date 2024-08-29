@@ -89,3 +89,13 @@ Enabling weather integration will send the coordinates that are set for the weat
 - `ACCESS_COARSE_LOCATION` - Requested when enabling GPS location. Needs to be allowed to use GPS location.
 - `SET_ALARM` - Used for the clock opening gesture on clicking the time. 
 - `QUERY_ALL_PACKAGES` - Used to ensure that the app properly detects all installed apps. 
+
+### Accessibility Services
+
+You can optionally enable accessibility services for YAM Launcher if you choose to use the "Double Tap to Lock Screen" gesture. The accessibility services are exclusively used to lock the screen and are not used to collect any data.
+
+## Mirrors
+
+[Codeberg (primary)](https://codeberg.org/ottoptj/yamlauncher)
+
+[GitHub (secondary)](https://github.com/ottop/yam_launcher)
