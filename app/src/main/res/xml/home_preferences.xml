@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        android:title="Clock"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false">
+
+        <SwitchPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="true"
+            android:title="Show Clock"
+            app:key="clockEnabled" />
+        <ListPreference
+            app:defaultValue="left"
+            app:dependency="clockEnabled"
+            app:entries="@array/h_alignment_options"
+            app:entryValues="@array/h_alignment_values"
+            app:key="clockAlignment"
+            app:title="Clock Alignment"
+            app:useSimpleSummaryProvider="true" />
+        <ListPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:defaultValue="medium"
+            app:dependency="clockEnabled"
+            app:entries="@array/size_options"
+            app:entryValues="@array/size_values"
+            app:key="clockSize"
+            app:title="Clock Size"
+            app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="true"
+            android:title="Clicking Time Opens Clock"
+            app:dependency="clockEnabled"
+            app:key="clockClick" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="Date"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false">
+
+        <SwitchPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="true"
+            android:title="Show Date"
+            app:key="dateEnabled" />
+        <ListPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:defaultValue="medium"
+            app:dependency="dateEnabled"
+            app:entries="@array/size_options"
+            app:entryValues="@array/size_values"
+            app:key="dateSize"
+            app:title="Date Size"
+            app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="false"
+            android:title="Battery Indicator"
+            app:dependency="dateEnabled"
+            app:key="batteryEnabled" />
+        <SwitchPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="true"
+            android:title="Clicking Date Opens Calendar"
+            app:dependency="dateEnabled"
+            app:key="dateClick" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
+        app:title="Weather">
+        <SwitchPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="false"
+            android:title="Weather"
+            app:dependency="dateEnabled"
+            app:key="weatherEnabled" />
+        <SwitchPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="false"
+            android:title="GPS Location"
+            app:dependency="weatherEnabled"
+            app:key="gpsLocation" />
+        <Preference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:dependency="weatherEnabled"
+            app:key="manualLocation"
+            app:selectable="true"
+            app:title="Set Manual Location" />
+        <ListPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:defaultValue="celsius"
+            app:dependency="weatherEnabled"
+            app:entries="@array/temp_units"
+            app:entryValues="@array/unit_values"
+            app:key="tempUnits"
+            app:title="Units"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
+        app:title="Shortcuts">
+        <ListPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:defaultValue="4"
+            app:entries="@array/shortcut_options"
+            app:entryValues="@array/shortcut_options"
+            app:key="shortcutNo"
+            app:title="Number of Shortcuts"
+            app:useSimpleSummaryProvider="true" />
+        <ListPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:defaultValue="left"
+            app:entries="@array/h_alignment_options"
+            app:entryValues="@array/h_alignment_values"
+            app:key="shortcutAlignment"
+            app:title="Shortcut Alignment"
+            app:useSimpleSummaryProvider="true" />
+        <ListPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:defaultValue="medium"
+            app:entries="@array/size_options"
+            app:entryValues="@array/size_values"
+            app:key="shortcutSize"
+            app:title="Shortcut Size"
+            app:useSimpleSummaryProvider="true" />
+        <ListPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:defaultValue="0.09"
+            app:entries="@array/shortcut_spacing_options"
+            app:entryValues="@array/shortcut_spacing_values"
+            app:key="shortcutWeight"
+            app:title="Shortcut Spacing"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
+        app:title="Gestures">
+        <SwitchPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="false"
+            android:title="Swipe Left"
+            app:key="leftSwipe" />
+        <Preference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:dependency="leftSwipe"
+            app:key="leftSwipeApp"
+            app:selectable="true"
+            app:title="Left Swipe App" />
+        <SwitchPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="false"
+            android:title="Swipe Right"
+            app:key="rightSwipe" />
+        <Preference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:dependency="rightSwipe"
+            app:key="rightSwipeApp"
+            app:selectable="true"
+            app:title="Right Swipe App" />
+        <SwitchPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="false"
+            android:title="Double Tap to Lock Screen"
+            app:key="doubleTap" />
+    </PreferenceCategory>
+
+</PreferenceScreen>
