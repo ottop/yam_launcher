@@ -79,8 +79,8 @@ class AppUtils(private val context: Context, private val launcherApps: LauncherA
         }
     }
 
-    fun launchApp(appInfo: LauncherActivityInfo, userHandle: UserHandle) {
-        val mainActivity = launcherApps.getActivityList(appInfo.applicationInfo.packageName, userHandle).firstOrNull()
+    fun launchApp(packageName: String, userHandle: UserHandle) {
+        val mainActivity = launcherApps.getActivityList(packageName, userHandle).firstOrNull()
         if (mainActivity != null) {
             launcherApps.startMainActivity(mainActivity.componentName,  userHandle, null, null)
         } else {

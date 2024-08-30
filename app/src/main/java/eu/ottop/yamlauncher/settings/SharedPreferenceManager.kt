@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Color
 import android.util.TypedValue
 import android.widget.TextView
-import androidx.core.graphics.toColor
 import androidx.preference.PreferenceManager
 import eu.ottop.yamlauncher.R
 

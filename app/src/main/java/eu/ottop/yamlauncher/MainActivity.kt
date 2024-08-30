@@ -258,11 +258,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private fun setShortcutListeners(textView: TextView, savedView: List<String>?) {
         textView.setOnClickListener {
-            val mainActivity = launcherApps.getActivityList(savedView?.get(0).toString(), launcherApps.profiles[savedView?.get(1)!!.toInt()]).firstOrNull()
-            if (mainActivity != null) {
-                launcherApps.startMainActivity(mainActivity.componentName,  launcherApps.profiles[savedView[1].toInt()], null, null)
-            } else {
-                Toast.makeText(this, "Cannot launch app", Toast.LENGTH_SHORT).show()
+            if (savedView != null) {
+                appUtils.launchApp(savedView[0], launcherApps.profiles[savedView[1].toInt()])
             }
         }
     }
@@ -425,11 +422,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         dateText.format24Hour = "${dateElements[1]}${stringUtils.addStartTextIfNotEmpty(dateElements[2], " | ")}${stringUtils.addStartTextIfNotEmpty(dateElements[3], " | ")}"
     }
 
-    fun backToHome() {
+    fun backToHome(animSpeed: Long = sharedPreferenceManager.getAnimationSpeed()) {
         closeKeyboard()
-        animations.showHome(binding.homeView, binding.appView)
-        animations.backgroundOut(this@MainActivity)
-        val animSpeed = sharedPreferenceManager.getAnimationSpeed()
+        animations.showHome(binding.homeView, binding.appView, animSpeed)
+        animations.backgroundOut(this@MainActivity, animSpeed)
 
         // Delay app menu changes so that the user doesn't see them
 
@@ -651,11 +647,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     @SuppressLint("NotifyDataSetChanged")
     override fun onResume() {
         super.onResume()
+        backToHome(0)
         adapter?.notifyDataSetChanged()
     }
 
     override fun onItemClick(appInfo: LauncherActivityInfo, userHandle: UserHandle) {
-        appUtils.launchApp(appInfo, userHandle)
+        appUtils.launchApp(appInfo.applicationInfo.packageName, userHandle)
     }
 
     override fun onShortcut(
@@ -678,7 +675,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         shortcutView.text = textView.text.toString()
         shortcutView.setOnClickListener {
-            appUtils.launchApp(appInfo, userHandle)
+            appUtils.launchApp(appInfo.applicationInfo.packageName, userHandle)
         }
         sharedPreferenceManager.setShortcut(
             shortcutView,

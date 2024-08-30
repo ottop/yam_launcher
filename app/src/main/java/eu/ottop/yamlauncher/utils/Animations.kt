@@ -25,9 +25,9 @@ class Animations (context: Context) {
         view.fadeOut()
     }
 
-    fun showHome(homeView: View, appView: View) {
-        appView.slideOutToBottom()
-        homeView.fadeIn()
+    fun showHome(homeView: View, appView: View, duration: Long) {
+        appView.slideOutToBottom(duration)
+        homeView.fadeIn(duration)
     }
 
     fun showApps(homeView: View, appView: View) {
@@ -58,7 +58,7 @@ class Animations (context: Context) {
         }
     }
 
-    fun backgroundOut(activity: Activity) {
+    fun backgroundOut(activity: Activity, duration: Long) {
         val newColor = sharedPreferenceManager.getBgColor()
 
         // Only animate darkness onto the transparent background
@@ -72,7 +72,6 @@ class Animations (context: Context) {
                 colorDrawable.color = animator.animatedValue as Int
             }
 
-            val duration = sharedPreferenceManager.getAnimationSpeed()
             backgroundColorAnimator.duration = duration
 
             backgroundColorAnimator.start()
@@ -97,9 +96,8 @@ class Animations (context: Context) {
         }
     }
 
-    private fun View.slideOutToBottom() {
+    private fun View.slideOutToBottom(duration: Long) {
         if (visibility == View.VISIBLE) {
-            val duration = sharedPreferenceManager.getAnimationSpeed()
 
             animate()
                 .translationY(height.toFloat() / 5)
@@ -114,12 +112,11 @@ class Animations (context: Context) {
         }
     }
 
-    private fun View.fadeIn() {
+    private fun View.fadeIn(duration: Long = sharedPreferenceManager.getAnimationSpeed()) {
         if (visibility != View.VISIBLE) {
             alpha = 0f
             translationY = -height.toFloat()/100
             visibility = View.VISIBLE
-            val duration = sharedPreferenceManager.getAnimationSpeed()
 
             animate()
                 .alpha(1f)
