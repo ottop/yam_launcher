@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <style name="Base.Theme.YamLauncher" parent="Theme.Material3.DynamicColors.DayNight.NoActionBar">
         <item name="android:windowBackground">@android:color/transparent</item>
@@ -14,7 +14,7 @@
 
     </style>
 
-    <style name="SettingsTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="SettingsTheme" parent="Theme.AppCompat">
         <item name="android:windowBackground">@color/settings_bg</item>
         <item name="android:windowShowWallpaper">false</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
@@ -24,6 +24,13 @@
         <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
         <item name="android:enforceNavigationBarContrast">false</item>
         <item name="android:enforceStatusBarContrast">false</item>
+        <item name="actionBarStyle">@style/TransparentActionBar</item>
+    </style>
+
+    <style name="TransparentActionBar" parent="Widget.AppCompat.ActionBar">
+        <!-- Transparent background for ActionBar -->
+        <item name="background">@android:color/transparent</item>
+
     </style>
 
     <style name="AppSearchView" parent="Widget.AppCompat.SearchView" >

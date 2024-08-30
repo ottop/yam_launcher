@@ -22,7 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class LocationFragment : Fragment(), LocationListAdapter.OnItemClickListener {
+class LocationFragment : Fragment(), LocationListAdapter.OnItemClickListener, TitleProvider {
 
     private var adapter: LocationListAdapter? = null
     private lateinit var weatherSystem: WeatherSystem
@@ -58,7 +58,6 @@ class LocationFragment : Fragment(), LocationListAdapter.OnItemClickListener {
         adapter = LocationListAdapter(requireContext(), locationList, this)
         val recyclerView = view.findViewById<RecyclerView>(R.id.locationRecycler)
         val appMenuEdgeFactory = AppMenuEdgeFactory(requireActivity())
-        uiUtils.setMenuTitleAlignment(view.findViewById(R.id.locationMenuTitle))
         uiUtils.setSearchAlignment(searchView)
         uiUtils.setSearchSize(searchView)
 
@@ -130,6 +129,8 @@ class LocationFragment : Fragment(), LocationListAdapter.OnItemClickListener {
         showConfirmationDialog(name, latitude, longitude)
     }
 
-
+    override fun getTitle(): String {
+        return "Search for Your City"
+    }
 
 }

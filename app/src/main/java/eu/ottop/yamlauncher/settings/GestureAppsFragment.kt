@@ -23,7 +23,7 @@ import eu.ottop.yamlauncher.utils.UIUtils
 import kotlinx.coroutines.launch
 
 class GestureAppsFragment(private val direction: String) : Fragment(),
-    GestureAppsAdapter.OnItemClickListener {
+    GestureAppsAdapter.OnItemClickListener, TitleProvider {
 
     private var adapter: GestureAppsAdapter? = null
     private lateinit var sharedPreferenceManager: SharedPreferenceManager
@@ -64,7 +64,6 @@ class GestureAppsFragment(private val direction: String) : Fragment(),
 
             val searchView = view.findViewById<TextInputEditText>(R.id.gestureAppSearch)
 
-            uiUtils.setMenuTitleAlignment(view.findViewById(R.id.gestureMenuTitle))
             uiUtils.setSearchAlignment(searchView)
             uiUtils.setSearchSize(searchView)
 
@@ -165,5 +164,8 @@ class GestureAppsFragment(private val direction: String) : Fragment(),
         ).toString(), profile)
     }
 
+    override fun getTitle(): String {
+        return "Select an App"
+    }
 
 }

@@ -8,7 +8,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import eu.ottop.yamlauncher.R
 
-class SettingsFragment : PreferenceFragmentCompat() {
+class SettingsFragment : PreferenceFragmentCompat(), TitleProvider {
 
     private lateinit var sharedPreferenceManager: SharedPreferenceManager
 
@@ -72,5 +72,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 true }
 
 
+    }
+
+    override fun getTitle(): String {
+        return "Launcher Settings"
     }
 }

@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment
 import eu.ottop.yamlauncher.R
 import eu.ottop.yamlauncher.utils.StringUtils
 
-class AboutFragment : Fragment() {
+class AboutFragment : Fragment(), TitleProvider {
 
     private val stringUtils = StringUtils()
 
@@ -40,5 +40,9 @@ class AboutFragment : Fragment() {
             }
             startActivity(intent)
         }
+    }
+
+    override fun getTitle(): String {
+        return "About YAM Launcher"
     }
 }

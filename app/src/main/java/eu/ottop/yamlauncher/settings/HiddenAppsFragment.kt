@@ -23,7 +23,7 @@ import eu.ottop.yamlauncher.utils.StringUtils
 import eu.ottop.yamlauncher.utils.UIUtils
 import kotlinx.coroutines.launch
 
-class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
+class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener, TitleProvider {
 
     private lateinit var sharedPreferenceManager: SharedPreferenceManager
     private var adapter: HiddenAppsAdapter? = null
@@ -62,7 +62,6 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
 
         val searchView = view.findViewById<TextInputEditText>(R.id.hiddenAppSearch)
 
-        uiUtils.setMenuTitleAlignment(view.findViewById(R.id.hiddenMenuTitle))
         uiUtils.setSearchAlignment(searchView)
         uiUtils.setSearchSize(searchView)
 
@@ -160,6 +159,10 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener {
             profile,
             requireContext().packageManager.getApplicationLabel(appInfo.applicationInfo)
         ).toString(), profile)
+    }
+
+    override fun getTitle(): String {
+        return "Hidden Apps"
     }
 
 }

@@ -6,7 +6,7 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import eu.ottop.yamlauncher.R
 
-class HomeSettingsFragment : PreferenceFragmentCompat() {
+class HomeSettingsFragment : PreferenceFragmentCompat(), TitleProvider {
 
     private lateinit var sharedPreferenceManager: SharedPreferenceManager
 
@@ -72,5 +72,9 @@ class HomeSettingsFragment : PreferenceFragmentCompat() {
         leftSwipePref?.summary = sharedPreferenceManager.getGestureName("left")
 
         rightSwipePref?.summary = sharedPreferenceManager.getGestureName("right")
+    }
+
+    override fun getTitle(): String {
+        return "Home Screen Settings"
     }
 }
