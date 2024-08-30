@@ -100,8 +100,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:defaultValue="medium"
-            app:entries="@array/shortcut_size_options"
-            app:entryValues="@array/shortcut_size_values"
+            app:entries="@array/size_options"
+            app:entryValues="@array/size_values"
             app:key="shortcutSize"
             app:title="Shortcut Size"
             app:useSimpleSummaryProvider="true" />

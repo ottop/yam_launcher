@@ -204,11 +204,11 @@ class UIUtils(private val context: Context) {
 
     // Size
     fun setClockSize(clock: TextClock) {
-        setTextSize(clock, sharedPreferenceManager.getClockSize(), 58F, 70F, 78F)
+        setTextSize(clock, sharedPreferenceManager.getClockSize(), 48F, 58F, 70F, 78F, 82F, 84F)
     }
 
     fun setDateSize(dateText: TextClock) {
-        setTextSize(dateText, sharedPreferenceManager.getDateSize(), 17F, 20F, 23F)
+        setTextSize(dateText, sharedPreferenceManager.getDateSize(), 14F, 17F, 20F, 23F, 26F, 29F)
     }
 
     fun setShortcutsSize(shortcuts: LinearLayout) {
@@ -220,13 +220,20 @@ class UIUtils(private val context: Context) {
                 setShortcutSize(it, size)
             }
         }
-
-
     }
 
     private fun setShortcutSize(shortcut: TextView, size: String?) {
         try {
             when (size) {
+                "tiny" -> {
+                    shortcut.setAutoSizeTextTypeUniformWithConfiguration(
+                        5,   // Min text size in SP
+                        20,   // Max text size in SP
+                        2,    // Step granularity in SP
+                        TypedValue.COMPLEX_UNIT_SP // Unit of measurement
+                    )
+                }
+
                 "small" -> {
                     shortcut.setAutoSizeTextTypeUniformWithConfiguration(
                         5,   // Min text size in SP
@@ -262,6 +269,15 @@ class UIUtils(private val context: Context) {
                         TypedValue.COMPLEX_UNIT_SP // Unit of measurement
                     )
                 }
+
+                "huge" -> {
+                    shortcut.setAutoSizeTextTypeUniformWithConfiguration(
+                        5,   // Min text size in SP
+                        40,   // Max text size in SP
+                        2,    // Step granularity in SP
+                        TypedValue.COMPLEX_UNIT_SP // Unit of measurement
+                    )
+                }
             }
         } catch(_: Exception) {}
     }
@@ -272,27 +288,33 @@ class UIUtils(private val context: Context) {
         regionText: TextView? = null
     ) {
         val size = sharedPreferenceManager.getAppSize()
-        setTextSize(textView, size, 24F, 27F, 30F)
+        setTextSize(textView, size, 21F, 24F, 27F, 30F, 33F, 36F)
         if (editText != null) {
-            setTextSize(editText, size, 24F, 27F, 30F)
+            setTextSize(editText, size, 21F, 24F, 27F, 30F, 33F, 36F)
         }
         if (regionText != null) {
-            setTextSize(regionText, size, 14F, 17F, 20F)
+            setTextSize(regionText, size, 11F, 14F, 17F, 20F, 23F, 26F)
         }
     }
 
     fun setSearchSize(searchView: TextInputEditText) {
-        setTextSize(searchView, sharedPreferenceManager.getSearchSize(), 21F, 25F, 27F)
+        setTextSize(searchView, sharedPreferenceManager.getSearchSize(), 18F, 21F, 25F, 27F, 30F, 33F)
     }
 
-    private fun setTextSize(view: TextView, size: String?, s: Float, m: Float, l: Float) {
+    private fun setTextSize(view: TextView, size: String?, t: Float, s: Float, m: Float, l: Float, x: Float, h: Float) {
         try {
             view.textSize = when (size) {
+                "tiny" -> t
+
                 "small" -> s
 
                 "medium" -> m
 
                 "large" -> l
+
+                "extra" -> x
+
+                "huge" -> h
 
                 else -> {
                     0F
