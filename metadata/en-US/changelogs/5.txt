@@ -1,0 +1,12 @@
+Feature update and bug fix.
+
+- Fixed a bug where, after opening an app's context menu, contexts menus would open for other apps further down the list.
+- Added additional shortcuts. You can now have up to 15 shortcuts.
+- Added more text size options.
+- Added the ability to customize the spacing between shortcuts.
+- Added the ability to customize the spacing between apps in the app menu.
+- Added show/hide toggles for the clock, date and search.
+- Added a gesture to launch calendar upon clicking the date (can be disabled).
+- Exiting an app with the back button now returns you to the home screen instead of the app menu.
+- Added Accessibility Actions support for improved usage with accessibility tools, such as TalkBack.
+- Improved launcher settings.
