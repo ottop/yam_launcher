@@ -229,7 +229,7 @@ class UIUtils(context: Context) {
             when (size) {
                 "small" -> {
                     shortcut.setAutoSizeTextTypeUniformWithConfiguration(
-                        18,   // Min text size in SP
+                        5,   // Min text size in SP
                         24,   // Max text size in SP
                         2,    // Step granularity in SP
                         TypedValue.COMPLEX_UNIT_SP // Unit of measurement
@@ -238,7 +238,7 @@ class UIUtils(context: Context) {
 
                 "medium" -> {
                     shortcut.setAutoSizeTextTypeUniformWithConfiguration(
-                        22,   // Min text size in SP
+                        5,   // Min text size in SP
                         28,   // Max text size in SP
                         2,    // Step granularity in SP
                         TypedValue.COMPLEX_UNIT_SP // Unit of measurement
@@ -247,7 +247,7 @@ class UIUtils(context: Context) {
 
                 "large" -> {
                     shortcut.setAutoSizeTextTypeUniformWithConfiguration(
-                        26,   // Min text size in SP
+                        5,   // Min text size in SP
                         32,   // Max text size in SP
                         2,    // Step granularity in SP
                         TypedValue.COMPLEX_UNIT_SP // Unit of measurement
@@ -256,7 +256,7 @@ class UIUtils(context: Context) {
 
                 "extra" -> {
                     shortcut.setAutoSizeTextTypeUniformWithConfiguration(
-                        30,   // Min text size in SP
+                        5,   // Min text size in SP
                         36,   // Max text size in SP
                         2,    // Step granularity in SP
                         TypedValue.COMPLEX_UNIT_SP // Unit of measurement

@@ -163,7 +163,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     private fun setShortcuts() {
-        val shortcuts = arrayOf(R.id.app1, R.id.app2, R.id.app3, R.id.app4, R.id.app5, R.id.app6, R.id.app7, R.id.app8)
+        val shortcuts = arrayOf(R.id.app1, R.id.app2, R.id.app3, R.id.app4, R.id.app5, R.id.app6, R.id.app7, R.id.app8, R.id.app9, R.id.app10, R.id.app11, R.id.app12, R.id.app13, R.id.app14, R.id.app15)
 
         for (i in shortcuts.indices) {
 

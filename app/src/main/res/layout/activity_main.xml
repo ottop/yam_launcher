@@ -260,6 +260,123 @@
             android:textSize="28sp"
             android:visibility="gone" />
 
+        <TextView
+            android:id="@+id/app9"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.09"
+            android:autoSizeTextType="uniform"
+            android:clickable="false"
+            android:drawablePadding="3dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="@string/shortcut_default"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+            android:textColor="#F3F3F3"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/app10"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.09"
+            android:autoSizeMaxTextSize="32sp"
+            android:autoSizeTextType="uniform"
+            android:clickable="false"
+            android:drawablePadding="3dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="@string/shortcut_default"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+            android:textColor="#F3F3F3"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/app11"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.09"
+            android:autoSizeTextType="uniform"
+            android:clickable="false"
+            android:drawablePadding="3dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="@string/shortcut_default"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+            android:textColor="#F3F3F3"
+            android:textSize="28sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/app12"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.09"
+            android:autoSizeTextType="uniform"
+            android:clickable="false"
+            android:drawablePadding="3dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="@string/shortcut_default"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+            android:textColor="#F3F3F3"
+            android:textSize="28sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/app13"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.09"
+            android:autoSizeTextType="uniform"
+            android:clickable="false"
+            android:drawablePadding="3dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="@string/shortcut_default"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+            android:textColor="#F3F3F3"
+            android:textSize="28sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/app14"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.09"
+            android:autoSizeTextType="uniform"
+            android:clickable="false"
+            android:drawablePadding="3dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="@string/shortcut_default"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+            android:textColor="#F3F3F3"
+            android:textSize="28sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/app15"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.09"
+            android:autoSizeTextType="uniform"
+            android:clickable="false"
+            android:drawablePadding="3dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="@string/shortcut_default"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+            android:textColor="#F3F3F3"
+            android:visibility="gone" />
+
         <Space
             android:layout_width="match_parent"
             android:layout_height="0dp"
