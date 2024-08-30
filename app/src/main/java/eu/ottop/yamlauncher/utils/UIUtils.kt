@@ -316,4 +316,23 @@ class UIUtils(context: Context) {
             }
         }
     }
+
+    fun setShortcutsSpacing(shortcuts: LinearLayout) {
+        val shortcutWeight = sharedPreferenceManager.getShortcutWeight()
+        shortcuts.children.forEach {
+            if (it is TextView) {
+                setShortcutSpacing(it, shortcutWeight)
+            }
+        }
+    }
+
+    private fun setShortcutSpacing(shortcut: TextView, shortcutWeight: Float?) {
+        val layoutParams = shortcut.layoutParams as LinearLayout.LayoutParams
+
+        if (shortcutWeight != null) {
+            layoutParams.weight = shortcutWeight
+        }
+
+        shortcut.layoutParams = layoutParams
+    }
 }

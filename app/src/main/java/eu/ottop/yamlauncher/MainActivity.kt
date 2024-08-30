@@ -297,6 +297,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         uiUtils.setShortcutsSize(binding.homeView)
         uiUtils.setSearchSize(searchView)
 
+        uiUtils.setShortcutsSpacing(binding.homeView)
+
         uiUtils.setStatusBar(window)
 
         leftSwipeActivity = gestureUtils.getSwipeInfo(launcherApps, "left")
@@ -411,6 +413,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
                 "searchSize" -> {
                     uiUtils.setSearchSize(searchView)
+                }
+
+                "shortcutWeight" -> {
+                    uiUtils.setShortcutsSpacing(binding.homeView)
                 }
 
                 "barVisibility" -> {
