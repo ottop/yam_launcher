@@ -100,6 +100,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private lateinit var gestureDetector: GestureDetector
     private lateinit var shortcutGestureDetector: GestureDetector
 
+    var returnAllowed = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -721,13 +723,15 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         super.onStart()
         // Keyboard is sometimes open when going back to the app, so close it.
         closeKeyboard()
-
     }
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onResume() {
         super.onResume()
-        backToHome(0)
+        if (returnAllowed) {
+            backToHome(0)
+        }
+        returnAllowed = true
         adapter?.notifyDataSetChanged()
     }
 

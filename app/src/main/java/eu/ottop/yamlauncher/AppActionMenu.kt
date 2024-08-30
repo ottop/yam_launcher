@@ -105,6 +105,7 @@ class AppActionMenu(private val activity: MainActivity, private val binding: Act
         intent.data = Uri.parse("package:${appInfo.packageName}")
         intent.putExtra(Intent.EXTRA_USER, userHandle)
         activity.startActivity(intent)
+        activity.returnAllowed = false
     }
 
     private fun renameApp(textView: TextView, editLayout: LinearLayout, actionMenu: View, appActivity: LauncherActivityInfo?, appInfo: ApplicationInfo, userHandle: UserHandle, workProfile: Int) {
