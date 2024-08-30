@@ -64,7 +64,7 @@ class GestureAppsAdapter(
 
         uiUtils.setAppSize(holder.textView)
 
-        uiUtils.setAppSpacing(holder.textView)
+        uiUtils.setItemSpacing(holder.textView)
 
         // Does not need to be specially updated since it's in a separate activity and thus reloads when opened again
         val appInfo = app.first.activityInfo.applicationInfo

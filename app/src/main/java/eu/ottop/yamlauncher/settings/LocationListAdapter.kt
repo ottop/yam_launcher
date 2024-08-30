@@ -25,7 +25,7 @@ class LocationListAdapter(
     }
 
     inner class AppViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val listItem: ConstraintLayout = itemView.findViewById(R.id.locationPlace)
+        val listItem: ConstraintLayout = itemView.findViewById(R.id.locationPlace)
         val textView: TextView = listItem.findViewById(R.id.locationName)
         val regionText: TextView = listItem.findViewById(R.id.regionName)
 
@@ -55,7 +55,7 @@ class LocationListAdapter(
 
         uiUtils.setAppSize(holder.textView, null, holder.regionText)
 
-        uiUtils.setAppSpacing(holder.textView)
+        uiUtils.setWeatherSpacing(holder.listItem)
 
         holder.textView.text = location["name"]
         holder.regionText.text = context.getString(R.string.region_text, location["region"], location["country"])

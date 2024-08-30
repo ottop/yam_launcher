@@ -134,7 +134,7 @@ class AppMenuAdapter(
 
         uiUtils.setAppSize(holder.textView, holder.editText)
 
-        uiUtils.setAppSpacing(holder.textView)
+        uiUtils.setItemSpacing(holder.textView)
 
         // Update the application information (allows updating apps to work)
         val appInfo = appUtils.getAppInfo(

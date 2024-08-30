@@ -65,7 +65,7 @@ class HiddenAppsAdapter(
 
         uiUtils.setAppSize(holder.textView)
 
-        uiUtils.setAppSpacing(holder.textView)
+        uiUtils.setItemSpacing(holder.textView)
 
         // Separate activity from Main so does not need special update
         val appInfo = app.first.activityInfo.applicationInfo

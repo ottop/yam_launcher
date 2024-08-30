@@ -16,6 +16,7 @@ import android.view.WindowInsetsController
 import android.widget.LinearLayout
 import android.widget.TextClock
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import com.google.android.material.textfield.TextInputEditText
 import eu.ottop.yamlauncher.settings.SharedPreferenceManager
@@ -357,22 +358,7 @@ class UIUtils(private val context: Context) {
         } catch (_: Exception) {}
     }
 
-    // Status bar visibility
-    fun setStatusBar(window: Window) {
-        val windowInsetsController = window.insetsController
-
-        windowInsetsController?.let {
-            if (sharedPreferenceManager.isBarVisible()) {
-                it.show(WindowInsets.Type.statusBars())
-            }
-            else {
-                it.hide(WindowInsets.Type.statusBars())
-                it.systemBarsBehavior =
-                    WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            }
-        }
-    }
-
+    // Spacing
     fun setShortcutsSpacing(shortcuts: LinearLayout) {
         val shortcutWeight = sharedPreferenceManager.getShortcutWeight()
         shortcuts.children.forEach {
@@ -392,16 +378,40 @@ class UIUtils(private val context: Context) {
         shortcut.layoutParams = layoutParams
     }
 
-    fun setAppSpacing(app: TextView) {
+    fun setItemSpacing(item: TextView) {
         val spacing = sharedPreferenceManager.getAppSpacing()
         if (spacing != null) {
             val spacingPx = dpToPx(spacing)
-            app.setPadding(app.paddingLeft, spacingPx, app.paddingRight, spacingPx)
+            item.setPadding(item.paddingLeft, spacingPx, item.paddingRight, spacingPx)
+        }
+    }
+
+    fun setWeatherSpacing(item: ConstraintLayout) {
+        val spacing = sharedPreferenceManager.getAppSpacing()
+        if (spacing != null) {
+            val spacingPx = dpToPx(spacing)
+            item.setPadding(item.paddingLeft, spacingPx, item.paddingRight, spacingPx)
         }
     }
 
     private fun dpToPx(dp: Int): Int {
         val density = context.resources.displayMetrics.density
         return (dp * density).toInt()
+    }
+
+    // Status bar visibility
+    fun setStatusBar(window: Window) {
+        val windowInsetsController = window.insetsController
+
+        windowInsetsController?.let {
+            if (sharedPreferenceManager.isBarVisible()) {
+                it.show(WindowInsets.Type.statusBars())
+            }
+            else {
+                it.hide(WindowInsets.Type.statusBars())
+                it.systemBarsBehavior =
+                    WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            }
+        }
     }
 }
