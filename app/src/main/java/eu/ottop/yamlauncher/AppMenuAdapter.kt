@@ -134,6 +134,8 @@ class AppMenuAdapter(
 
         uiUtils.setAppSize(holder.textView, holder.editText)
 
+        uiUtils.setAppSpacing(holder.textView)
+
         // Update the application information (allows updating apps to work)
         val appInfo = appUtils.getAppInfo(
             app.first.applicationInfo.packageName,
@@ -164,8 +166,6 @@ class AppMenuAdapter(
             }
         }
         else {holder.textView.text = appLabel}
-
-        uiUtils.setAppSpacing(holder.textView)
 
         holder.textView.visibility = View.VISIBLE
 

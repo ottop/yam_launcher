@@ -55,6 +55,8 @@ class LocationListAdapter(
 
         uiUtils.setAppSize(holder.textView, null, holder.regionText)
 
+        uiUtils.setAppSpacing(holder.textView)
+
         holder.textView.text = location["name"]
         holder.regionText.text = context.getString(R.string.region_text, location["region"], location["country"])
 
