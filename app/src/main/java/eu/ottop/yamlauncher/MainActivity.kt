@@ -207,6 +207,25 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             super.onTouchEvent(event)
         }
 
+        ViewCompat.addAccessibilityAction(textView, "Set Shortcut App") { _, _ ->
+            uiUtils.setMenuTitleAlignment(binding.menuTitle)
+            binding.menuTitle.visibility = View.VISIBLE
+
+            adapter?.shortcutTextView = textView
+            toAppMenu()
+            true
+        }
+
+        ViewCompat.addAccessibilityAction(textView, "Launcher Settings") { _, _ ->
+            startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
+            true
+        }
+
+        ViewCompat.addAccessibilityAction(textView, "Open App Menu") { _, _ ->
+            openAppMenu()
+            true
+        }
+
         textView.setOnLongClickListener {
             uiUtils.setMenuTitleAlignment(binding.menuTitle)
             binding.menuTitle.visibility = View.VISIBLE
@@ -314,8 +333,13 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             true
         }
 
-        ViewCompat.addAccessibilityAction(binding.homeView, "Preferences") { _, _ ->
+        ViewCompat.addAccessibilityAction(binding.homeView, "Launcher Settings") { _, _ ->
             startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
+            true
+        }
+
+        ViewCompat.addAccessibilityAction(binding.homeView, "Open App Menu") { _, _ ->
+            openAppMenu()
             true
         }
 
@@ -339,6 +363,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             unregisterReceiver(batteryReceiver)
             isBatteryReceiverRegistered = false
         }
+    }
+
+    private fun openAppMenu() {
+        adapter?.shortcutTextView = null
+        binding.menuTitle.visibility = View.GONE
+        toAppMenu()
     }
 
     // Only reload items that have had preferences changed
@@ -771,12 +801,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
             return super.onDoubleTap(e)
 
-        }
-
-        private fun openAppMenu() {
-            adapter?.shortcutTextView = null
-            binding.menuTitle.visibility = View.GONE
-            toAppMenu()
         }
 
     }

@@ -14,6 +14,7 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import eu.ottop.yamlauncher.databinding.ActivityMainBinding
@@ -180,6 +181,10 @@ class AppMenuAdapter(
                 app.third,
                 appActivity
             )
+        }
+        ViewCompat.addAccessibilityAction(holder.textView, "Close App Menu") { _, _ ->
+            activity.backToHome()
+            true
         }
     }
 
