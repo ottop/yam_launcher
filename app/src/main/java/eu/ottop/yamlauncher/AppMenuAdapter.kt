@@ -1,7 +1,6 @@
 package eu.ottop.yamlauncher
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
@@ -17,28 +16,30 @@ import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
+import eu.ottop.yamlauncher.databinding.ActivityMainBinding
 import eu.ottop.yamlauncher.settings.SharedPreferenceManager
 import eu.ottop.yamlauncher.utils.AppUtils
 import eu.ottop.yamlauncher.utils.UIUtils
 
 
 class AppMenuAdapter(
-
-    private val context: Context,
+    private val activity: MainActivity,
+    binding: ActivityMainBinding,
     private var apps: MutableList<Triple<LauncherActivityInfo, UserHandle, Int>>,
     private val itemClickListener: OnItemClickListener,
     private val shortcutListener: OnShortcutListener,
     private val itemLongClickListener: OnItemLongClickListener,
-    launcherApps: LauncherApps
+    private val launcherApps: LauncherApps
 ) :
     RecyclerView.Adapter<AppMenuAdapter.AppViewHolder>() {
 
         // If the menu is opened to select shortcuts, the below variable is set
         var shortcutTextView: TextView? = null
 
-        private val sharedPreferenceManager = SharedPreferenceManager(context)
-        private val uiUtils = UIUtils(context)
-        private val appUtils = AppUtils(context, launcherApps)
+        private val sharedPreferenceManager = SharedPreferenceManager(activity)
+        private val uiUtils = UIUtils(activity)
+        private val appUtils = AppUtils(activity, launcherApps)
+        private var appActionMenu = AppActionMenu(activity, binding, launcherApps, activity.findViewById(R.id.searchView))
 
     interface OnItemClickListener {
         fun onItemClick(appInfo: LauncherActivityInfo, userHandle: UserHandle)
@@ -64,7 +65,7 @@ class AppMenuAdapter(
         private val listItem: FrameLayout = itemView.findViewById(R.id.listItem)
         val textView: TextView = listItem.findViewById(R.id.appName)
         val actionMenuLayout: LinearLayout = listItem.findViewById(R.id.actionMenu)
-        private val editView: LinearLayout = listItem.findViewById(R.id.renameView)
+        val editView: LinearLayout = listItem.findViewById(R.id.renameView)
         val editText: TextInputEditText = editView.findViewById(R.id.appNameEdit)
 
         init {
@@ -121,12 +122,12 @@ class AppMenuAdapter(
 
         // Set initial drawables
         if (app.third != 0) {
-            holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(context.resources, R.drawable.ic_work_app, null),null, ResourcesCompat.getDrawable(context.resources, R.drawable.ic_empty, null),null)
+            holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_work_app, null),null, ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null),null)
             holder.textView.compoundDrawables[0].colorFilter =
                 BlendModeColorFilter(sharedPreferenceManager.getTextColor(), BlendMode.SRC_ATOP)
         }
         else {
-            holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(context.resources, R.drawable.ic_empty, null),null,ResourcesCompat.getDrawable(context.resources, R.drawable.ic_empty, null),null)
+            holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null),null,ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null),null)
         }
 
         uiUtils.setAppAlignment(holder.textView, holder.editText)
@@ -142,7 +143,7 @@ class AppMenuAdapter(
         holder.textView.setTextColor(sharedPreferenceManager.getTextColor())
 
         // Set app name on the menu. If the app has been uninstalled, replace it with "Removing" until the app menu updates.
-        val appLabel: CharSequence = appInfo?.let { context.packageManager.getApplicationLabel(it) } ?: "Removing..."
+        val appLabel: CharSequence = appInfo?.let { activity.packageManager.getApplicationLabel(it) } ?: "Removing..."
 
         if (appInfo != null) {
             holder.textView.text = sharedPreferenceManager.getAppName(
@@ -165,6 +166,21 @@ class AppMenuAdapter(
         else {holder.textView.text = appLabel}
 
         holder.textView.visibility = View.VISIBLE
+
+        if (appInfo != null) {
+
+            val appActivity = launcherApps.getActivityList(appInfo.packageName, app.second).firstOrNull()
+
+            appActionMenu.setActionListeners(
+                holder.textView,
+                holder.editView,
+                holder.actionMenuLayout,
+                appInfo,
+                app.second,
+                app.third,
+                appActivity
+            )
+        }
     }
 
     override fun getItemCount(): Int {

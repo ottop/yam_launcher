@@ -28,6 +28,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.ViewCompat
 import androidx.core.view.marginLeft
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -64,7 +65,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private lateinit var uiUtils: UIUtils
     private lateinit var gestureUtils: GestureUtils
 
-    private var appActionMenu = AppActionMenu()
     private val appMenuLinearLayoutManager = AppMenuLinearLayoutManager(this@MainActivity)
     private val appMenuEdgeFactory = AppMenuEdgeFactory(this@MainActivity)
 
@@ -317,6 +317,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             true
         }
 
+        ViewCompat.addAccessibilityAction(binding.homeView, "Preferences") { _, _ ->
+            startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
+            true
+        }
+
         // Return to home on back
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -526,7 +531,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     private suspend fun setupRecyclerView(newApps: MutableList<Triple<LauncherActivityInfo, UserHandle, Int>>) {
-        adapter = AppMenuAdapter(this@MainActivity, newApps, this@MainActivity, this@MainActivity, this@MainActivity, launcherApps)
+        adapter = AppMenuAdapter(this@MainActivity, binding, newApps, this@MainActivity, this@MainActivity, this@MainActivity, launcherApps)
         appMenuLinearLayoutManager.stackFromEnd = true
         recyclerView = findViewById(R.id.recyclerView)
         withContext(Dispatchers.Main) {
@@ -696,22 +701,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     ) {
         textView.visibility = View.INVISIBLE
         animations.fadeViewIn(actionMenuLayout)
-        val appActivity =
-            launcherApps.getActivityList(appInfo.applicationInfo.packageName, userHandle)
-                .firstOrNull()
-        appActionMenu.setActionListeners(
-            this@MainActivity,
-            binding,
-            textView,
-            editView,
-            actionMenuLayout,
-            searchView,
-            appInfo.applicationInfo,
-            userHandle,
-            userProfile,
-            launcherApps,
-            appActivity
-        )
     }
 
     open inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
