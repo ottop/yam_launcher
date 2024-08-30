@@ -325,7 +325,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             true
         }
 
-        binding.clockLayout.setOnClickListener {_ ->
+        clock.setOnClickListener {_ ->
             if (sharedPreferenceManager.isClockGestureEnabled()) {
                 val intent = Intent(AlarmClock.ACTION_SHOW_ALARMS)
                 if (intent.resolveActivity(packageManager) != null) {
@@ -334,7 +334,25 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             }
         }
 
-        binding.clockLayout.setOnLongClickListener {_ ->
+        dateText.setOnClickListener { _ ->
+            if (sharedPreferenceManager.isDateGestureEnabled()) {
+                startActivity(
+                    Intent(
+                        Intent.makeMainSelectorActivity(
+                            Intent.ACTION_MAIN,
+                            Intent.CATEGORY_APP_CALENDAR
+                        )
+                    )
+                )
+            }
+        }
+
+        clock.setOnLongClickListener {_ ->
+            startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
+            true
+        }
+
+        dateText.setOnLongClickListener {_ ->
             startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
             true
         }

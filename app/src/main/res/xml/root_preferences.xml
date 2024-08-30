@@ -185,6 +185,12 @@
         <SwitchPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:defaultValue="true"
+            android:title="Clicking Date Opens Calendar"
+            app:key="dateClick" />
+        <SwitchPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:defaultValue="false"
             android:title="Swipe Left"
             app:key="leftSwipe" />

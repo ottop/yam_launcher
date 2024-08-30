@@ -131,6 +131,10 @@ class SharedPreferenceManager (private val context: Context) {
         return preferences.getBoolean("clockClick", true)
     }
 
+    fun isDateGestureEnabled() : Boolean {
+        return preferences.getBoolean("dateClick", true)
+    }
+
     // Gestures
     fun setGestures(direction: String, appName: String?) {
         val editor = preferences.edit()
