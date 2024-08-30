@@ -68,6 +68,13 @@
             android:textAppearance="@android:style/TextAppearance.DeviceDefault"
             android:textSize="25sp" />
 
+        <Space
+            android:id="@+id/searchReplacement"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.1"
+            android:visibility="gone" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -116,6 +123,7 @@
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault"
                 android:textColor="#F3F3F3"
                 android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/textClock"
                 app:layout_constraintStart_toStartOf="@+id/textClock"
                 app:layout_constraintTop_toBottomOf="@+id/textClock" />
@@ -380,8 +388,7 @@
         <Space
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.3"
-            android:visibility="visible" />
+            android:layout_weight="0.3" />
 
     </LinearLayout>
 

@@ -53,6 +53,12 @@
         android:layout_height="wrap_content"
         app:allowDividerAbove="false"
         app:title="Home Screen">
+        <SwitchPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="true"
+            android:title="Enable Clock"
+            app:key="clockEnabled" />
         <ListPreference
             app:defaultValue="left"
             app:entries="@array/h_alignment_options"
@@ -69,6 +75,12 @@
             app:key="clockSize"
             app:title="Clock Size"
             app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="true"
+            android:title="Enable Date"
+            app:key="dateEnabled" />
         <ListPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -119,6 +131,7 @@
             android:layout_height="wrap_content"
             android:defaultValue="false"
             android:title="Battery Indicator"
+            app:dependency="dateEnabled"
             app:key="batteryEnabled" />
     </PreferenceCategory>
     <PreferenceCategory
@@ -131,6 +144,7 @@
             android:layout_height="wrap_content"
             android:defaultValue="false"
             android:title="Weather"
+            app:dependency="dateEnabled"
             app:key="weatherEnabled" />
         <SwitchPreference
             android:layout_width="wrap_content"
@@ -223,6 +237,12 @@
             app:key="appMenuSize"
             app:title="App Menu Size"
             app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="true"
+            android:title="Enable Search"
+            app:key="searchEnabled" />
         <ListPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

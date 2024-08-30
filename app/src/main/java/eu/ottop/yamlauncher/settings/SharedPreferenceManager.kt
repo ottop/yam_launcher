@@ -48,12 +48,20 @@ class SharedPreferenceManager (private val context: Context) {
     }
 
     // Home Screen
+    fun isClockEnabled(): Boolean {
+        return preferences.getBoolean("clockEnabled", true)
+    }
+
     fun getClockAlignment(): String? {
         return preferences.getString("clockAlignment", "left")
     }
 
     fun getClockSize(): String? {
         return preferences.getString("clockSize","medium")
+    }
+
+    fun isDateEnabled(): Boolean {
+        return preferences.getBoolean("dateEnabled", true)
     }
 
     fun getDateSize(): String? {
@@ -154,6 +162,10 @@ class SharedPreferenceManager (private val context: Context) {
 
     fun getAppSize(): String? {
         return preferences.getString("appMenuSize", "medium")
+    }
+
+    fun isSearchEnabled(): Boolean {
+        return preferences.getBoolean("searchEnabled", true)
     }
 
     fun getSearchAlignment(): String? {

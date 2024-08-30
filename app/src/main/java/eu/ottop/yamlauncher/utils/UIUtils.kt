@@ -8,6 +8,7 @@ import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.ViewTreeObserver
 import android.view.Window
 import android.view.WindowInsets
@@ -92,6 +93,39 @@ class UIUtils(private val context: Context) {
         val b = Color.blue(color)
 
         return Color.argb(newAlpha, r, g, b)
+    }
+
+    // Visibility
+    fun setClockVisibility(clock: TextClock) {
+        val layoutParams = clock.layoutParams
+
+        if (sharedPreferenceManager.isClockEnabled()) {
+            layoutParams.height = WRAP_CONTENT
+        } else {
+            layoutParams.height = 1
+        }
+        clock.layoutParams = layoutParams
+    }
+
+    fun setDateVisibility(dateText: TextClock) {
+        dateText.visibility = when (sharedPreferenceManager.isDateEnabled()) {
+            true -> {
+                View.VISIBLE
+            }
+            false -> {
+                View.GONE
+            }
+        }
+    }
+
+    fun setSearchVisibility(searchView: TextInputEditText, replacementView: View) {
+        if (sharedPreferenceManager.isSearchEnabled()) {
+            searchView.visibility = View.VISIBLE
+            replacementView.visibility = View.GONE
+        } else {
+            searchView.visibility = View.GONE
+            replacementView.visibility = View.VISIBLE
+        }
     }
 
     // Alignment
