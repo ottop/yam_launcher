@@ -164,6 +164,10 @@ class SharedPreferenceManager (private val context: Context) {
         return preferences.getString("searchSize", "medium")
     }
 
+    fun getAppSpacing(): Int? {
+        return preferences.getString("appSpacing", "20")?.toInt()
+    }
+
     fun isAutoKeyboardEnabled(): Boolean {
         return preferences.getBoolean("autoKeyboard", false)
     }

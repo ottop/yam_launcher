@@ -108,6 +108,7 @@ class AppActionMenu(private val activity: MainActivity, private val binding: Act
     }
 
     private fun renameApp(textView: TextView, editLayout: LinearLayout, actionMenu: View, appActivity: LauncherActivityInfo?, appInfo: ApplicationInfo, userHandle: UserHandle, workProfile: Int) {
+        activity.disableAppMenuScroll()
         textView.visibility = View.INVISIBLE
         animations.fadeViewIn(editLayout)
         animations.fadeViewOut(actionMenu)
@@ -134,8 +135,9 @@ class AppActionMenu(private val activity: MainActivity, private val binding: Act
                 editLayout.clearFocus()
 
                 animations.fadeViewOut(editLayout)
-                textView.visibility = View.VISIBLE
+                animations.fadeViewIn(textView)
                 searchView.visibility = View.VISIBLE
+                activity.enableAppMenuScroll()
             }
         }
 
@@ -154,7 +156,7 @@ class AppActionMenu(private val activity: MainActivity, private val binding: Act
                 activity.lifecycleScope.launch {
                     activity.applySearch()
                 }
-
+                activity.enableAppMenuScroll()
 
                 return@setOnEditorActionListener true
             }

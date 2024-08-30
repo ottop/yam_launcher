@@ -70,9 +70,6 @@ class AppMenuAdapter(
         val editText: TextInputEditText = editView.findViewById(R.id.appNameEdit)
 
         init {
-            actionMenuLayout.visibility = View.INVISIBLE
-            editView.visibility = View.INVISIBLE
-
             textView.setOnClickListener {
                     val position = bindingAdapterPosition
                     val app = apps[position].first
@@ -119,6 +116,8 @@ class AppMenuAdapter(
     }
 
     override fun onBindViewHolder(holder: AppViewHolder, position: Int) {
+        holder.actionMenuLayout.visibility = View.INVISIBLE
+        holder.editView.visibility = View.INVISIBLE
         val app = apps[position]
 
         // Set initial drawables
@@ -165,6 +164,8 @@ class AppMenuAdapter(
             }
         }
         else {holder.textView.text = appLabel}
+
+        uiUtils.setAppSpacing(holder.textView)
 
         holder.textView.visibility = View.VISIBLE
 

@@ -19,7 +19,7 @@ import androidx.core.view.children
 import com.google.android.material.textfield.TextInputEditText
 import eu.ottop.yamlauncher.settings.SharedPreferenceManager
 
-class UIUtils(context: Context) {
+class UIUtils(private val context: Context) {
 
     private val sharedPreferenceManager = SharedPreferenceManager(context)
 
@@ -334,5 +334,18 @@ class UIUtils(context: Context) {
         }
 
         shortcut.layoutParams = layoutParams
+    }
+
+    fun setAppSpacing(app: TextView) {
+        val spacing = sharedPreferenceManager.getAppSpacing()
+        if (spacing != null) {
+            val spacingPx = dpToPx(spacing)
+            app.setPadding(app.paddingLeft, spacingPx, app.paddingRight, spacingPx)
+        }
+    }
+
+    private fun dpToPx(dp: Int): Int {
+        val density = context.resources.displayMetrics.density
+        return (dp * density).toInt()
     }
 }

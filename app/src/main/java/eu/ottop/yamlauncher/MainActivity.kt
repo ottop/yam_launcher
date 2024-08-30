@@ -660,6 +660,16 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
     }
 
+    fun disableAppMenuScroll() {
+        appMenuLinearLayoutManager.setScrollEnabled(false)
+        recyclerView.layoutManager = appMenuLinearLayoutManager
+    }
+
+    fun enableAppMenuScroll() {
+        appMenuLinearLayoutManager.setScrollEnabled(true)
+        recyclerView.layoutManager = appMenuLinearLayoutManager
+    }
+
     // On home key or swipe, return to home screen
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
