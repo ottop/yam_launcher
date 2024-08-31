@@ -15,6 +15,7 @@ Key features:
 - System fonts for an uniform look with your Android.
 - Material You support.
 - Simple by default, customizable under the hood. 
+- Accessibility Actions support.
 - Open-source under the MIT License.
 
 ## Installation
