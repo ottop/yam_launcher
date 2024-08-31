@@ -36,7 +36,7 @@ Coming soon...
 
 ### APK
 
-1. Download the APK.
+1. Download the [APK](https://codeberg.org/ottoptj/yamlauncher/releases).
 2. Enable permission to install apps to your browser/files (app you are installing the launcher from).
 3. Install the launcher.
 
