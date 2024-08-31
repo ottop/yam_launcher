@@ -149,7 +149,7 @@
         <ListPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:defaultValue="0.09"
+            app:defaultValue="0.11"
             app:entries="@array/shortcut_spacing_options"
             app:entryValues="@array/shortcut_spacing_values"
             app:key="shortcutWeight"

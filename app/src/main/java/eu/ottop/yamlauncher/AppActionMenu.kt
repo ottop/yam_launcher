@@ -118,7 +118,14 @@ class AppActionMenu(private val activity: MainActivity, private val binding: Act
 
         val app = Triple(appActivity!!, userHandle, workProfile)
 
-        searchView.visibility = View.INVISIBLE
+        val searchEnabled = sharedPreferenceManager.isSearchEnabled()
+
+        if (searchEnabled) {
+            searchView.visibility = View.INVISIBLE
+        } else {
+            searchView.visibility = View.GONE
+        }
+
         editText.requestFocus()
 
         // Open keyboard
@@ -137,7 +144,11 @@ class AppActionMenu(private val activity: MainActivity, private val binding: Act
 
                 animations.fadeViewOut(editLayout)
                 animations.fadeViewIn(textView)
-                searchView.visibility = View.VISIBLE
+                if (searchEnabled) {
+                    searchView.visibility = View.VISIBLE
+                } else {
+                    searchView.visibility = View.GONE
+                }
                 activity.enableAppMenuScroll()
             }
         }

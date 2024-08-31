@@ -98,6 +98,7 @@
     </string-array>
 
     <string-array name="shortcut_spacing_options">
+        <item>Tiny</item>
         <item>Small</item>
         <item>Medium</item>
         <item>Large</item>
@@ -109,10 +110,11 @@
     <string-array name="shortcut_spacing_values">
         <item>0.06</item>
         <item>0.09</item>
-        <item>0.12</item>
-        <item>0.15</item>
+        <item>0.11</item>
+        <item>0.14</item>
         <item>0.18</item>
         <item>0.21</item>
+        <item>0.56</item>
     </string-array>
 
     <string-array name="app_spacing_options">

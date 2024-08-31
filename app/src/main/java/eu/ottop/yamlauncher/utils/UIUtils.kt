@@ -323,12 +323,12 @@ class UIUtils(private val context: Context) {
         regionText: TextView? = null
     ) {
         val size = sharedPreferenceManager.getAppSize()
-        setTextSize(textView, size, 21F, 24F, 27F, 30F, 33F, 36F)
+        setTextSize(textView, size, 20F, 24F, 28F, 32F, 36F, 40F)
         if (editText != null) {
-            setTextSize(editText, size, 21F, 24F, 27F, 30F, 33F, 36F)
+            setTextSize(editText, size, 20F, 24F, 28F, 32F, 36F, 40F)
         }
         if (regionText != null) {
-            setTextSize(regionText, size, 11F, 14F, 17F, 20F, 23F, 26F)
+            setTextSize(regionText, size, 10F, 14F, 18F, 22F, 26F, 30F)
         }
     }
 
