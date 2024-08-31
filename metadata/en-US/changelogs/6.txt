@@ -1,5 +1,4 @@
 Minor bug fix and enhancement release.
 
 - Fixed a bug where the search bar would sho wup after renaming an app when the search bar is disabled.
-- Modified text sizes in the app menu to match maximum shortcut sizes.
 - Adjusted shortcut spacing and the huge option is now far bigger than before.
