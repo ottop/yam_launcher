@@ -305,7 +305,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         uiUtils.setShortcutsSpacing(binding.homeView)
 
-        uiUtils.setStatusBar(window)
+        // This didn't work and somehow delaying it by 0 makes it work
+        val handler = Handler(Looper.getMainLooper())
+        handler.postDelayed({
+            uiUtils.setStatusBar(window)
+        }, 0)
 
         leftSwipeActivity = gestureUtils.getSwipeInfo(launcherApps, "left")
         rightSwipeActivity = gestureUtils.getSwipeInfo(launcherApps, "right")

@@ -35,6 +35,8 @@
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+            android:textColor="#FFF3F3F3"
+            android:textColorHighlight="#5F33B5E5"
             android:textSize="28sp" />
 
         <androidx.appcompat.widget.AppCompatButton

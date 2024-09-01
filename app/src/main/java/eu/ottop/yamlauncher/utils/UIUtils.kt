@@ -48,9 +48,6 @@ class UIUtils(private val context: Context) {
                     BlendModeColorFilter(sharedPreferenceManager.getTextColor(), BlendMode.SRC_ATOP)
 
             }
-            view is TextView && view.compoundDrawables[0] != null -> {
-                println(view.text)
-            }
             else -> {
                 view.setBackgroundColor(color)
             }
