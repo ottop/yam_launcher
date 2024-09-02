@@ -5,6 +5,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import eu.ottop.yamlauncher.R
+import eu.ottop.yamlauncher.utils.UIUtils
 
 class HomeSettingsFragment : PreferenceFragmentCompat(), TitleProvider {
 
@@ -18,74 +19,55 @@ class HomeSettingsFragment : PreferenceFragmentCompat(), TitleProvider {
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.home_preferences, rootKey)
+            val uiUtils = UIUtils(requireContext())
 
-        sharedPreferenceManager = SharedPreferenceManager(requireContext())
+            sharedPreferenceManager = SharedPreferenceManager(requireContext())
 
-        clockApp = findPreference("clockSwipeApp")
-        dateApp = findPreference("dateSwipeApp")
+            clockApp = findPreference("clockSwipeApp")
+            dateApp = findPreference("dateSwipeApp")
 
-        val gpsLocationPref = findPreference<SwitchPreference?>("gpsLocation")
-        manualLocationPref = findPreference("manualLocation")
-        leftSwipePref = findPreference("leftSwipeApp")
-        rightSwipePref = findPreference("rightSwipeApp")
+            val gpsLocationPref = findPreference<SwitchPreference?>("gpsLocation")
+            manualLocationPref = findPreference("manualLocation")
+            leftSwipePref = findPreference("leftSwipeApp")
+            rightSwipePref = findPreference("rightSwipeApp")
 
-        // Only enable manual location when gps location is disabled
-        if (gpsLocationPref != null && manualLocationPref != null) {
-            manualLocationPref?.isEnabled = !gpsLocationPref.isChecked
+            // Only enable manual location when gps location is disabled
+            if (gpsLocationPref != null && manualLocationPref != null) {
+                manualLocationPref?.isEnabled = !gpsLocationPref.isChecked
 
-            gpsLocationPref.onPreferenceChangeListener =
-                Preference.OnPreferenceChangeListener { _, newValue ->
-                    val isGpsEnabled = newValue as Boolean
-                    manualLocationPref?.isEnabled = !isGpsEnabled
-                    true
-                }
+                gpsLocationPref.onPreferenceChangeListener =
+                    Preference.OnPreferenceChangeListener { _, newValue ->
+                        val isGpsEnabled = newValue as Boolean
+                        manualLocationPref?.isEnabled = !isGpsEnabled
+                        true
+                    }
 
-            manualLocationPref?.onPreferenceClickListener =
+                manualLocationPref?.onPreferenceClickListener =
+                    Preference.OnPreferenceClickListener {
+                        uiUtils.switchFragment(requireActivity(), LocationFragment())
+                        true
+                    }
+            }
+
+            leftSwipePref?.onPreferenceClickListener =
                 Preference.OnPreferenceClickListener {
-                    requireActivity().supportFragmentManager
-                        .beginTransaction()
-                        .replace(R.id.settingsLayout, LocationFragment())
-                        .addToBackStack(null)
-                        .commit()
-                    true
-                }
-        }
+                    uiUtils.switchFragment(requireActivity(), GestureAppsFragment("left"))
+                    true }
 
-        leftSwipePref?.onPreferenceClickListener =
-            Preference.OnPreferenceClickListener {
-                requireActivity().supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.settingsLayout, GestureAppsFragment("left"))
-                    .addToBackStack(null)
-                    .commit()
-                true }
+            rightSwipePref?.onPreferenceClickListener =
+                Preference.OnPreferenceClickListener {
+                    uiUtils.switchFragment(requireActivity(), GestureAppsFragment("right"))
+                    true }
 
-        rightSwipePref?.onPreferenceClickListener =
-            Preference.OnPreferenceClickListener {
-                requireActivity().supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.settingsLayout, GestureAppsFragment("right"))
-                    .addToBackStack(null)
-                    .commit()
-                true }
+            clockApp?.onPreferenceClickListener =
+                Preference.OnPreferenceClickListener {
+                    uiUtils.switchFragment(requireActivity(), GestureAppsFragment("clock"))
+                    true }
 
-        clockApp?.onPreferenceClickListener =
-            Preference.OnPreferenceClickListener {
-                requireActivity().supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.settingsLayout, GestureAppsFragment("clock"))
-                    .addToBackStack(null)
-                    .commit()
-                true }
-
-        dateApp?.onPreferenceClickListener =
-            Preference.OnPreferenceClickListener {
-                requireActivity().supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.settingsLayout, GestureAppsFragment("date"))
-                    .addToBackStack(null)
-                    .commit()
-                true }
+            dateApp?.onPreferenceClickListener =
+                Preference.OnPreferenceClickListener {
+                    uiUtils.switchFragment(requireActivity(), GestureAppsFragment("date"))
+                    true }
     }
 
     override fun onResume() {

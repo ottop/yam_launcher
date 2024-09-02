@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.BlendMode
 import android.graphics.BlendModeColorFilter
 import android.graphics.Color
+import android.os.Handler
+import android.os.Looper
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
@@ -18,8 +20,12 @@ import android.widget.TextClock
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import com.google.android.material.textfield.TextInputEditText
+import eu.ottop.yamlauncher.R
 import eu.ottop.yamlauncher.settings.SharedPreferenceManager
+import eu.ottop.yamlauncher.settings.UISettingsFragment
 
 class UIUtils(private val context: Context) {
 
@@ -410,5 +416,13 @@ class UIUtils(private val context: Context) {
                     WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             }
         }
+    }
+
+    fun switchFragment(activity: FragmentActivity, fragment: Fragment) {
+        activity.supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.settingsLayout, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 }

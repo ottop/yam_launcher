@@ -2,11 +2,16 @@ package eu.ottop.yamlauncher.settings
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import eu.ottop.yamlauncher.R
+import eu.ottop.yamlauncher.utils.UIUtils
 
 class SettingsFragment : PreferenceFragmentCompat(), TitleProvider {
 
@@ -14,6 +19,8 @@ class SettingsFragment : PreferenceFragmentCompat(), TitleProvider {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
+
+        val uiUtils = UIUtils(requireContext())
 
         sharedPreferenceManager = SharedPreferenceManager(requireContext())
 
@@ -39,47 +46,27 @@ class SettingsFragment : PreferenceFragmentCompat(), TitleProvider {
 
         uiSettings?.onPreferenceClickListener =
             Preference.OnPreferenceClickListener {
-                requireActivity().supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.settingsLayout, UISettingsFragment())
-                    .addToBackStack(null)
-                    .commit()
+                uiUtils.switchFragment(requireActivity(), UISettingsFragment())
                 true }
 
         homeSettings?.onPreferenceClickListener =
             Preference.OnPreferenceClickListener {
-                requireActivity().supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.settingsLayout, HomeSettingsFragment())
-                    .addToBackStack(null)
-                    .commit()
+                uiUtils.switchFragment(requireActivity(), HomeSettingsFragment())
                 true }
 
         appMenuSettings?.onPreferenceClickListener =
             Preference.OnPreferenceClickListener {
-                requireActivity().supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.settingsLayout, AppMenuSettingsFragment())
-                    .addToBackStack(null)
-                    .commit()
+                uiUtils.switchFragment(requireActivity(), AppMenuSettingsFragment())
                 true }
 
         hiddenPref?.onPreferenceClickListener =
             Preference.OnPreferenceClickListener {
-                requireActivity().supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.settingsLayout, HiddenAppsFragment())
-                    .addToBackStack(null)
-                    .commit()
+                uiUtils.switchFragment(requireActivity(), HiddenAppsFragment())
                 true }
 
         aboutPref?.onPreferenceClickListener =
             Preference.OnPreferenceClickListener {
-                requireActivity().supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.settingsLayout, AboutFragment())
-                    .addToBackStack(null)
-                    .commit()
+                uiUtils.switchFragment(requireActivity(), AboutFragment())
                 true }
 
         resetPref?.onPreferenceClickListener =
@@ -91,5 +78,7 @@ class SettingsFragment : PreferenceFragmentCompat(), TitleProvider {
     override fun getTitle(): String {
         return "Launcher Settings"
     }
+
+
 
 }

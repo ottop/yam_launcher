@@ -1,6 +1,7 @@
 package eu.ottop.yamlauncher.settings
 
 import android.content.Context
+import android.content.res.TypedArray
 import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
@@ -46,7 +47,7 @@ class SpinnerPreference (context: Context, attrs: AttributeSet? = null): Prefere
             spinner?.adapter = adapter
         }
 
-        val selectedIndex = entryValues?.indexOf(currentValue as? CharSequence) ?: 0
+        val selectedIndex = entryValues?.indexOf(currentValue as? CharSequence) ?:  entryValues?.indexOf(defaultNo as CharSequence) ?: 0
         spinner?.setSelection(selectedIndex)
 
         // Somehow prevents an error :D
@@ -76,13 +77,9 @@ class SpinnerPreference (context: Context, attrs: AttributeSet? = null): Prefere
         spinner?.performClick()
     }
 
-    override fun onSetInitialValue(defaultValue: Any?) {
-        currentValue = getPersistedString(defaultValue as? String)
-    }
-
-    // This is required to ensure that default values are stored (needed for full settings reset)
     override fun onAttached() {
         super.onAttached()
+        currentValue = getPersistedString(defaultNo)
         persistString(getPersistedString(defaultNo))
     }
 }
