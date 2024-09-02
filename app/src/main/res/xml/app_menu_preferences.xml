@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory
         app:allowDividerAbove="false"
         app:title="Apps">
-        <ListPreference
+        <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:defaultValue="left"
-            app:entries="@array/h_alignment_options"
-            app:entryValues="@array/h_alignment_values"
+            android:defaultValue="left"
+            android:entries="@array/h_alignment_options"
+            android:entryValues="@array/h_alignment_values"
             app:key="appMenuAlignment"
             app:title="App Alignment"
             app:useSimpleSummaryProvider="true" />
-        <ListPreference
+        <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:defaultValue="medium"
-            app:entries="@array/size_options"
-            app:entryValues="@array/size_values"
+            android:defaultValue="medium"
+            android:entries="@array/size_options"
+            android:entryValues="@array/size_values"
             app:key="appMenuSize"
             app:title="App Size"
             app:useSimpleSummaryProvider="true" />
-        <ListPreference
+        <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:defaultValue="20"
-            app:entries="@array/app_spacing_options"
-            app:entryValues="@array/app_spacing_values"
+            android:defaultValue="20"
+            android:entries="@array/app_spacing_options"
+            android:entryValues="@array/app_spacing_values"
             app:key="appSpacing"
             app:title="App Spacing"
             app:useSimpleSummaryProvider="true" />
@@ -44,23 +44,23 @@
             android:defaultValue="true"
             android:title="Enable Search"
             app:key="searchEnabled" />
-        <ListPreference
+        <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:defaultValue="left"
+            android:defaultValue="left"
             app:dependency="searchEnabled"
-            app:entries="@array/h_alignment_options"
-            app:entryValues="@array/h_alignment_values"
+            android:entries="@array/h_alignment_options"
+            android:entryValues="@array/h_alignment_values"
             app:key="searchAlignment"
             app:title="Search Alignment"
             app:useSimpleSummaryProvider="true" />
-        <ListPreference
+        <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:defaultValue="medium"
+            android:defaultValue="medium"
             app:dependency="searchEnabled"
-            app:entries="@array/size_options"
-            app:entryValues="@array/size_values"
+            android:entries="@array/size_options"
+            android:entryValues="@array/size_values"
             app:key="searchSize"
             app:title="Search Size"
             app:useSimpleSummaryProvider="true" />
@@ -74,4 +74,4 @@
 
     </PreferenceCategory>
 
-</androidx.preference.PreferenceScreen>
+</PreferenceScreen>

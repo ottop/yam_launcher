@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
@@ -7,44 +8,19 @@
         app:key="defaultHome"
         app:selectable="true"
         app:title="Set Default Home" />
+
     <PreferenceCategory
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:allowDividerAbove="false"
-        app:title="Customization">
-        <ListPreference
+        app:title="Customization" >
+        <Preference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:defaultValue="#00000000"
-            app:entries="@array/bg_options"
-            app:entryValues="@array/bg_values"
-            app:key="bgColor"
-            app:title="Background Color"
-            app:useSimpleSummaryProvider="true" />
-        <ListPreference
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:defaultValue="#FFF3F3F3"
-            app:entries="@array/color_options"
-            app:entryValues="@array/color_values"
-            app:key="textColor"
-            app:title="Text Color"
-            app:useSimpleSummaryProvider="true" />
-        <SwitchPreference
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:defaultValue="false"
-            android:title="Show Status Bar"
-            app:key="barVisibility" />
-        <ListPreference
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:defaultValue="200"
-            app:entries="@array/animation_options"
-            app:entryValues="@array/animation_values"
-            app:key="animationSpeed"
-            app:title="Animation Speed"
-            app:useSimpleSummaryProvider="true" />
+            app:key="uiSettings"
+            app:selectable="true"
+            app:summary="Configure the overall look"
+            app:title="General UI" />
         <Preference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -84,6 +60,18 @@
             app:key="aboutPage"
             app:selectable="true"
             app:title="About YAM Launcher" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:allowDividerAbove="false"
+        app:title="Reset">
+        <Preference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:key="resetAll"
+            app:selectable="true"
+            app:title="Reset All Settings" />
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -1,10 +1,13 @@
 package eu.ottop.yamlauncher.settings
 
+import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
 import android.util.TypedValue
 import android.widget.TextView
+import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
+import eu.ottop.yamlauncher.R
 
 class SharedPreferenceManager (private val context: Context) {
 
@@ -220,5 +223,40 @@ class SharedPreferenceManager (private val context: Context) {
         val editor = preferences.edit()
         editor.remove("name$packageName-$profile")
         editor.apply()
+    }
+
+    fun resetAllPreferences(activity: FragmentActivity) {
+        AlertDialog.Builder(context).apply {
+            setTitle("Confirmation")
+            setMessage("You will lose ALL changes that you have made to the launcher settings. Are you sure?")
+            setPositiveButton("Yes") { _, _ ->
+                performReset(activity)
+            }
+
+            setNegativeButton("Cancel") { _, _ ->
+            }
+        }.create().show()
+    }
+
+    private fun performReset(activity: FragmentActivity) {
+        val editor = preferences.edit()
+        editor.clear()
+        editor.apply()
+        activity.supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.settingsLayout, UISettingsFragment())
+            .commit()
+        activity.supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.settingsLayout, HomeSettingsFragment())
+            .commit()
+        activity.supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.settingsLayout, AppMenuSettingsFragment())
+            .commit()
+        activity.supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.settingsLayout, SettingsFragment())
+            .commit()
     }
 }

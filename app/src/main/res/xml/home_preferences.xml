@@ -13,21 +13,21 @@
             android:defaultValue="true"
             android:title="Show Clock"
             app:key="clockEnabled" />
-        <ListPreference
-            app:defaultValue="left"
+        <eu.ottop.yamlauncher.settings.SpinnerPreference
+            android:defaultValue="left"
             app:dependency="clockEnabled"
-            app:entries="@array/h_alignment_options"
-            app:entryValues="@array/h_alignment_values"
+            android:entries="@array/h_alignment_options"
+            android:entryValues="@array/h_alignment_values"
             app:key="clockAlignment"
             app:title="Clock Alignment"
             app:useSimpleSummaryProvider="true" />
-        <ListPreference
+        <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:defaultValue="medium"
+            android:defaultValue="medium"
             app:dependency="clockEnabled"
-            app:entries="@array/size_options"
-            app:entryValues="@array/size_values"
+            android:entries="@array/size_options"
+            android:entryValues="@array/size_values"
             app:key="clockSize"
             app:title="Clock Size"
             app:useSimpleSummaryProvider="true" />
@@ -50,13 +50,13 @@
             android:defaultValue="true"
             android:title="Show Date"
             app:key="dateEnabled" />
-        <ListPreference
+        <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:defaultValue="medium"
+            android:defaultValue="medium"
             app:dependency="dateEnabled"
-            app:entries="@array/size_options"
-            app:entryValues="@array/size_values"
+            android:entries="@array/size_options"
+            android:entryValues="@array/size_values"
             app:key="dateSize"
             app:title="Date Size"
             app:useSimpleSummaryProvider="true" />
@@ -102,13 +102,13 @@
             app:key="manualLocation"
             app:selectable="true"
             app:title="Set Manual Location" />
-        <ListPreference
+        <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:defaultValue="celsius"
+            android:defaultValue="celsius"
             app:dependency="weatherEnabled"
-            app:entries="@array/temp_units"
-            app:entryValues="@array/unit_values"
+            android:entries="@array/temp_units"
+            android:entryValues="@array/unit_values"
             app:key="tempUnits"
             app:title="Units"
             app:useSimpleSummaryProvider="true" />
@@ -119,39 +119,39 @@
         app:allowDividerAbove="false"
         app:allowDividerBelow="false"
         app:title="Shortcuts">
-        <ListPreference
+        <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:defaultValue="4"
-            app:entries="@array/shortcut_options"
-            app:entryValues="@array/shortcut_options"
+            android:defaultValue="4"
+            android:entries="@array/shortcut_options"
+            android:entryValues="@array/shortcut_options"
             app:key="shortcutNo"
             app:title="Number of Shortcuts"
             app:useSimpleSummaryProvider="true" />
-        <ListPreference
+        <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:defaultValue="left"
-            app:entries="@array/h_alignment_options"
-            app:entryValues="@array/h_alignment_values"
+            android:defaultValue="left"
+            android:entries="@array/h_alignment_options"
+            android:entryValues="@array/h_alignment_values"
             app:key="shortcutAlignment"
             app:title="Shortcut Alignment"
             app:useSimpleSummaryProvider="true" />
-        <ListPreference
+        <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:defaultValue="medium"
-            app:entries="@array/size_options"
-            app:entryValues="@array/size_values"
+            android:defaultValue="medium"
+            android:entries="@array/size_options"
+            android:entryValues="@array/size_values"
             app:key="shortcutSize"
             app:title="Shortcut Size"
             app:useSimpleSummaryProvider="true" />
-        <ListPreference
+        <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:defaultValue="0.11"
-            app:entries="@array/shortcut_spacing_options"
-            app:entryValues="@array/shortcut_spacing_values"
+            android:defaultValue="0.11"
+            android:entries="@array/shortcut_spacing_options"
+            android:entryValues="@array/shortcut_spacing_values"
             app:key="shortcutWeight"
             app:title="Shortcut Spacing"
             app:useSimpleSummaryProvider="true" />

@@ -17,13 +17,15 @@ class SettingsFragment : PreferenceFragmentCompat(), TitleProvider {
 
         sharedPreferenceManager = SharedPreferenceManager(requireContext())
 
-        val homePref = findPreference<Preference?>("defaultHome")
+        val homePref = findPreference<Preference>("defaultHome")
 
+        val uiSettings = findPreference<Preference>("uiSettings")
         val homeSettings = findPreference<Preference>("homeSettings")
         val appMenuSettings = findPreference<Preference>("appMenuSettings")
 
-        val hiddenPref = findPreference<Preference?>("hiddenApps")
-        val aboutPref = findPreference<Preference?>("aboutPage")
+        val hiddenPref = findPreference<Preference>("hiddenApps")
+        val aboutPref = findPreference<Preference>("aboutPage")
+        val resetPref = findPreference<Preference>("resetAll")
 
         homePref?.onPreferenceClickListener =
             Preference.OnPreferenceClickListener {
@@ -33,6 +35,15 @@ class SettingsFragment : PreferenceFragmentCompat(), TitleProvider {
                 } else {
                     Toast.makeText(requireContext(), "Unable to launch settings", Toast.LENGTH_SHORT).show()
                 }
+                true }
+
+        uiSettings?.onPreferenceClickListener =
+            Preference.OnPreferenceClickListener {
+                requireActivity().supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.settingsLayout, UISettingsFragment())
+                    .addToBackStack(null)
+                    .commit()
                 true }
 
         homeSettings?.onPreferenceClickListener =
@@ -71,10 +82,14 @@ class SettingsFragment : PreferenceFragmentCompat(), TitleProvider {
                     .commit()
                 true }
 
-
+        resetPref?.onPreferenceClickListener =
+            Preference.OnPreferenceClickListener {
+                sharedPreferenceManager.resetAllPreferences(requireActivity())
+                true }
     }
 
     override fun getTitle(): String {
         return "Launcher Settings"
     }
+
 }
