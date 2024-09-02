@@ -94,6 +94,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private val swipeThreshold = 100
     private val swipeVelocityThreshold = 100
 
+    private lateinit var clockApp: Pair<LauncherActivityInfo?, Int?>
+    private lateinit var dateApp: Pair<LauncherActivityInfo?, Int?>
+
     private lateinit var leftSwipeActivity: Pair<LauncherActivityInfo?, Int?>
     private lateinit var rightSwipeActivity: Pair<LauncherActivityInfo?, Int?>
 
@@ -311,6 +314,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             uiUtils.setStatusBar(window)
         }, 0)
 
+        clockApp = gestureUtils.getSwipeInfo(launcherApps, "clock")
+        dateApp = gestureUtils.getSwipeInfo(launcherApps, "date")
+
         leftSwipeActivity = gestureUtils.getSwipeInfo(launcherApps, "left")
         rightSwipeActivity = gestureUtils.getSwipeInfo(launcherApps, "right")
     }
@@ -333,23 +339,32 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         clock.setOnClickListener {_ ->
             if (sharedPreferenceManager.isClockGestureEnabled()) {
-                val intent = Intent(AlarmClock.ACTION_SHOW_ALARMS)
-                if (intent.resolveActivity(packageManager) != null) {
-                    startActivity(intent)
+                if (sharedPreferenceManager.isGestureEnabled("clock") && clockApp.first != null && clockApp.second != null) {
+                    launcherApps.startMainActivity(clockApp.first!!.componentName,  launcherApps.profiles[clockApp.second!!], null, null)
+                } else {
+                    val intent = Intent(AlarmClock.ACTION_SHOW_ALARMS)
+                    if (intent.resolveActivity(packageManager) != null) {
+                        startActivity(intent)
+                    }
                 }
             }
         }
 
         dateText.setOnClickListener { _ ->
             if (sharedPreferenceManager.isDateGestureEnabled()) {
-                startActivity(
-                    Intent(
-                        Intent.makeMainSelectorActivity(
-                            Intent.ACTION_MAIN,
-                            Intent.CATEGORY_APP_CALENDAR
+
+                if (sharedPreferenceManager.isGestureEnabled("date") && dateApp.first != null && dateApp.second != null) {
+                    launcherApps.startMainActivity(dateApp.first!!.componentName,  launcherApps.profiles[dateApp.second!!], null, null)
+                } else {
+                    startActivity(
+                        Intent(
+                            Intent.makeMainSelectorActivity(
+                                Intent.ACTION_MAIN,
+                                Intent.CATEGORY_APP_CALENDAR
+                            )
                         )
                     )
-                )
+                }
             }
         }
 
@@ -461,6 +476,30 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
                 "barVisibility" -> {
                     uiUtils.setStatusBar(window)
+                }
+
+                "clockSwipe" -> {
+                    clockApp = gestureUtils.getSwipeInfo(launcherApps, "clock")
+                }
+
+                "dateSwipe" -> {
+                    dateApp = gestureUtils.getSwipeInfo(launcherApps, "date")
+                }
+
+                "clockSwipeApp" -> {
+                    clockApp = gestureUtils.getSwipeInfo(launcherApps, "clock")
+                }
+
+                "dateSwipeApp" -> {
+                    dateApp = gestureUtils.getSwipeInfo(launcherApps, "date")
+                }
+
+                "leftSwipe" -> {
+                    leftSwipeActivity = gestureUtils.getSwipeInfo(launcherApps, "left")
+                }
+
+                "rightSwipe" -> {
+                    rightSwipeActivity = gestureUtils.getSwipeInfo(launcherApps, "right")
                 }
 
                 "leftSwipeApp" -> {
@@ -817,7 +856,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
                 // Swipe left
                 else if (deltaX < -swipeThreshold && abs(velocityX) > swipeVelocityThreshold && sharedPreferenceManager.isGestureEnabled("left")){
-
                     if (leftSwipeActivity.first != null && leftSwipeActivity.second != null) {
                         launcherApps.startMainActivity(leftSwipeActivity.first!!.componentName,  launcherApps.profiles[leftSwipeActivity.second!!], null, null)
                     } else {

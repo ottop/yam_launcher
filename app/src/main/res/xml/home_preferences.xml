@@ -38,6 +38,20 @@
             android:title="Clicking Time Opens Clock"
             app:dependency="clockEnabled"
             app:key="clockClick" />
+        <SwitchPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="false"
+            android:title="Custom Clock"
+            app:dependency="clockClick"
+            app:key="clockSwipe" />
+        <Preference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:dependency="clockSwipe"
+            app:key="clockSwipeApp"
+            app:selectable="true"
+            app:title="Set Clock App" />
     </PreferenceCategory>
     <PreferenceCategory
         android:title="Date"
@@ -74,6 +88,20 @@
             android:title="Clicking Date Opens Calendar"
             app:dependency="dateEnabled"
             app:key="dateClick" />
+        <SwitchPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="false"
+            android:title="Custom Calendar"
+            app:dependency="dateClick"
+            app:key="dateSwipe" />
+        <Preference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:dependency="dateSwipe"
+            app:key="dateSwipeApp"
+            app:selectable="true"
+            app:title="Set Calendar App" />
     </PreferenceCategory>
     <PreferenceCategory
         android:layout_width="wrap_content"

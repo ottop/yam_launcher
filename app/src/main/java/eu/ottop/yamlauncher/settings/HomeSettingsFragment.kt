@@ -13,11 +13,16 @@ class HomeSettingsFragment : PreferenceFragmentCompat(), TitleProvider {
     private var manualLocationPref: Preference? = null
     private var leftSwipePref: Preference? = null
     private var rightSwipePref: Preference? = null
+    private var clockApp: Preference? = null
+    private var dateApp: Preference? = null
 
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.home_preferences, rootKey)
 
         sharedPreferenceManager = SharedPreferenceManager(requireContext())
+
+        clockApp = findPreference("clockSwipeApp")
+        dateApp = findPreference("dateSwipeApp")
 
         val gpsLocationPref = findPreference<SwitchPreference?>("gpsLocation")
         manualLocationPref = findPreference("manualLocation")
@@ -63,10 +68,32 @@ class HomeSettingsFragment : PreferenceFragmentCompat(), TitleProvider {
                     .addToBackStack(null)
                     .commit()
                 true }
+
+        clockApp?.onPreferenceClickListener =
+            Preference.OnPreferenceClickListener {
+                requireActivity().supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.settingsLayout, GestureAppsFragment("clock"))
+                    .addToBackStack(null)
+                    .commit()
+                true }
+
+        dateApp?.onPreferenceClickListener =
+            Preference.OnPreferenceClickListener {
+                requireActivity().supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.settingsLayout, GestureAppsFragment("date"))
+                    .addToBackStack(null)
+                    .commit()
+                true }
     }
 
     override fun onResume() {
         super.onResume()
+        clockApp?.summary = sharedPreferenceManager.getGestureName("clock")
+
+        dateApp?.summary = sharedPreferenceManager.getGestureName("date")
+
         manualLocationPref?.summary = sharedPreferenceManager.getWeatherRegion()
 
         leftSwipePref?.summary = sharedPreferenceManager.getGestureName("left")

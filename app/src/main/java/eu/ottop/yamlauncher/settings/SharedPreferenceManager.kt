@@ -139,9 +139,9 @@ class SharedPreferenceManager (private val context: Context) {
     }
 
     // Gestures
-    fun setGestures(direction: String, appName: String?) {
+    fun setGestures(direction: String, appInfo: String?) {
         val editor = preferences.edit()
-        editor.putString("${direction}SwipeApp", appName)
+        editor.putString("${direction}SwipeApp", appInfo)
         editor.apply()
     }
 
