@@ -1,0 +1,10 @@
+Bug fix and feature release.
+
+- Fixed a bug where showing the status bar wouldn't persist.
+- Fixed a bug where some items in the context menu of an application were bigger than others.
+- Fixed scaling of the About page in the preferences.
+- Created a custom preference for selecting launcher setting values as ListPreference detects touches weirdly with many items.
+- Set specific colors for editing text (cursor, highlight, text color) in the search and renaming fields so that there is always enough contrast.
+- Added the ability to choose any application for the clock and date shortcuts.
+- Added an option to reset all launcher settings.
+- Moved general UI options into a separate fragment.

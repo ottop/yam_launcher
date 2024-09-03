@@ -261,6 +261,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     private fun unsetShortcutSetup(textView: TextView) {
+        textView.text = getText(R.string.shortcut_default)
         unsetShortcutListeners(textView)
     }
 
@@ -548,6 +549,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         handler.postDelayed({
             try {
                 searchView.setText(R.string.empty)
+                appMenuLinearLayoutManager.setScrollEnabled(true)
             }
             catch (_: UninitializedPropertyAccessException) {
 

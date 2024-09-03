@@ -4,8 +4,6 @@ import android.content.Context
 import android.graphics.BlendMode
 import android.graphics.BlendModeColorFilter
 import android.graphics.Color
-import android.os.Handler
-import android.os.Looper
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
@@ -25,7 +23,6 @@ import androidx.fragment.app.FragmentActivity
 import com.google.android.material.textfield.TextInputEditText
 import eu.ottop.yamlauncher.R
 import eu.ottop.yamlauncher.settings.SharedPreferenceManager
-import eu.ottop.yamlauncher.settings.UISettingsFragment
 
 class UIUtils(private val context: Context) {
 

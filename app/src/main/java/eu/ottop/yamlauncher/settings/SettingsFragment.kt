@@ -2,12 +2,8 @@ package eu.ottop.yamlauncher.settings
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.provider.Settings
 import android.widget.Toast
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import eu.ottop.yamlauncher.R

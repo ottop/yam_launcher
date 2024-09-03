@@ -228,7 +228,7 @@ class SharedPreferenceManager (private val context: Context) {
     fun resetAllPreferences(activity: FragmentActivity) {
         AlertDialog.Builder(context).apply {
             setTitle("Confirmation")
-            setMessage("You will lose ALL changes that you have made to the launcher settings. Are you sure?")
+            setMessage("You will lose ALL changes that you have made to the launcher settings, shortcuts, hidden apps, etc.\n\nAre you sure?")
             setPositiveButton("Yes") { _, _ ->
                 performReset(activity)
             }
@@ -242,6 +242,7 @@ class SharedPreferenceManager (private val context: Context) {
         val editor = preferences.edit()
         editor.clear()
         editor.apply()
+
         activity.supportFragmentManager
             .beginTransaction()
             .replace(R.id.settingsLayout, UISettingsFragment())

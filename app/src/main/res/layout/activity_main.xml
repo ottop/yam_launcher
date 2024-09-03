@@ -66,6 +66,7 @@
             android:singleLine="true"
             android:textAlignment="viewStart"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+            android:textColorHighlight="#5F33B5E5"
             android:textSize="25sp" />
 
         <Space

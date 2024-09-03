@@ -1,7 +1,6 @@
 package eu.ottop.yamlauncher.settings
 
 import android.content.Context
-import android.content.res.TypedArray
 import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
