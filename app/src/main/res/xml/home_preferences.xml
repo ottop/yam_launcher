@@ -163,7 +163,16 @@
             android:entries="@array/h_alignment_options"
             android:entryValues="@array/h_alignment_values"
             app:key="shortcutAlignment"
-            app:title="Shortcut Alignment"
+            app:title="Horizontal Alignment"
+            app:useSimpleSummaryProvider="true" />
+        <eu.ottop.yamlauncher.settings.SpinnerPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="center"
+            android:entries="@array/v_alignment_options"
+            android:entryValues="@array/v_alignment_values"
+            app:key="shortcutVAlignment"
+            app:title="Vertical Alignment"
             app:useSimpleSummaryProvider="true" />
         <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"

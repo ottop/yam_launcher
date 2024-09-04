@@ -14,6 +14,7 @@ import android.view.Window
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import android.widget.LinearLayout
+import android.widget.Space
 import android.widget.TextClock
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -146,6 +147,29 @@ class UIUtils(private val context: Context) {
         }
     }
 
+    fun setShortcutsVAlignment(topSpace: Space, bottomSpace: Space) {
+        val alignment = sharedPreferenceManager.getShortcutVAlignment()
+        val topLayoutParams = topSpace.layoutParams as LinearLayout.LayoutParams
+        val bottomLayoutParams = bottomSpace.layoutParams as LinearLayout.LayoutParams
+
+        when (alignment) {
+            "top" -> {
+                topLayoutParams.weight = 0.1F
+                bottomLayoutParams.weight = 0.42F
+            }
+            "center" -> {
+                topLayoutParams.weight = 0.22F
+                bottomLayoutParams.weight = 0.3F
+            }
+            "bottom" -> {
+                topLayoutParams.weight = 0.42F
+                bottomLayoutParams.weight = 0.1F
+            }
+        }
+
+        topSpace.layoutParams = topLayoutParams
+        bottomSpace.layoutParams = bottomLayoutParams
+    }
 
     fun setDrawables(shortcut: TextView, alignment: String?) {
         try {

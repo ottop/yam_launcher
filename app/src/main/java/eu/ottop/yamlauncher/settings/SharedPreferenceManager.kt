@@ -90,6 +90,10 @@ class SharedPreferenceManager (private val context: Context) {
         return preferences.getString("shortcutAlignment", "left")
     }
 
+    fun getShortcutVAlignment(): String? {
+        return preferences.getString("shortcutVAlignment", "left")
+    }
+
     fun getShortcutSize(): String? {
         return preferences.getString("shortcutSize", "medium")
     }

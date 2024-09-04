@@ -132,6 +132,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Space
+            android:id="@+id/topSpace"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="0.22" />
@@ -387,6 +388,7 @@
             android:visibility="gone" />
 
         <Space
+            android:id="@+id/bottomSpace"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="0.3" />

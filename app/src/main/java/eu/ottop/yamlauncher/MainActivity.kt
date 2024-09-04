@@ -200,6 +200,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 }
 
                 uiUtils.setShortcutsAlignment(binding.homeView)
+                uiUtils.setShortcutsVAlignment(binding.topSpace, binding.bottomSpace)
             }
         }
     }
@@ -449,6 +450,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
                 "shortcutAlignment" -> {
                     uiUtils.setShortcutsAlignment(binding.homeView)
+                }
+
+                "shortcutVAlignment" -> {
+                    uiUtils.setShortcutsVAlignment(binding.topSpace, binding.bottomSpace)
                 }
 
                 "searchAlignment" -> {

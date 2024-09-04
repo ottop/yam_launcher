@@ -79,6 +79,18 @@
         <item>right</item>
     </string-array>
 
+    <string-array name="v_alignment_options">
+        <item>Top</item>
+        <item>Center</item>
+        <item>Bottom</item>
+    </string-array>
+
+    <string-array name="v_alignment_values">
+        <item>top</item>
+        <item>center</item>
+        <item>bottom</item>
+    </string-array>
+
     <string-array name="size_options">
         <item>Tiny</item>
         <item>Small</item>
