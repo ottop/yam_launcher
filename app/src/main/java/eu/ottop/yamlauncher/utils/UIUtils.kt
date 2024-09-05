@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.BlendMode
 import android.graphics.BlendModeColorFilter
 import android.graphics.Color
+import android.graphics.Typeface
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
@@ -50,7 +51,6 @@ class UIUtils(private val context: Context) {
                     BlendModeColorFilter(sharedPreferenceManager.getTextColor(), BlendMode.SRC_ATOP)
                 view.compoundDrawables[2]?.colorFilter =
                     BlendModeColorFilter(sharedPreferenceManager.getTextColor(), BlendMode.SRC_ATOP)
-
             }
             else -> {
                 view.setBackgroundColor(color)
@@ -62,28 +62,56 @@ class UIUtils(private val context: Context) {
         return try {
             view.javaClass.getMethod(methodName, Int::class.java)
             true
-        } catch (e: NoSuchMethodException) {
+        } catch (_: NoSuchMethodException) {
             false
         }
     }
 
     fun setMenuItemColors(view: TextView, alphaHex: String = "FF") {
-        val viewTreeObserver = view.viewTreeObserver
+        val color = sharedPreferenceManager.getTextColor()
+        view.setTextColor(setAlpha(color, alphaHex))
+        view.setHintTextColor(setAlpha(color, "A9"))
 
-        val globalLayoutListener = object : ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                view.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                val color = sharedPreferenceManager.getTextColor()
-                view.setTextColor(setAlpha(color, alphaHex))
-                view.setHintTextColor(setAlpha(color, "A9"))
+        view.compoundDrawables[0]?.mutate()?.colorFilter = BlendModeColorFilter(color, BlendMode.SRC_ATOP)
+    }
 
-                view.compoundDrawables[0]?.mutate()?.colorFilter = BlendModeColorFilter(color, BlendMode.SRC_ATOP)
+    fun setTextFont(view: View) {
 
+        when {
+            view is ViewGroup -> {
+                view.children.forEach { child ->
+                    setTextFont(child)
+                }
+            }
+            hasMethod(view, "setTextAppearance") -> {
+                setFont(view as TextView)
             }
         }
+    }
 
-        if (viewTreeObserver.isAlive) {
-            viewTreeObserver.addOnGlobalLayoutListener(globalLayoutListener)
+    fun setFont(view: TextView) {
+        var font = sharedPreferenceManager.getTextFont()
+        val style = sharedPreferenceManager.getTextStyle()
+
+        if (font == "system") {
+            val typedArray = context.obtainStyledAttributes(android.R.style.TextAppearance_DeviceDefault, intArrayOf(android.R.attr.fontFamily))
+            font = typedArray.getString(0)
+            typedArray.recycle()
+        }
+
+        when (style) {
+            "normal" -> {
+                view.setTypeface(Typeface.create(font, Typeface.NORMAL))
+            }
+            "bold" -> {
+                view.setTypeface(Typeface.create(font, Typeface.BOLD))
+            }
+            "italic" -> {
+                view.setTypeface(Typeface.create(font, Typeface.ITALIC))
+            }
+            "bold-italic" -> {
+                view.setTypeface(Typeface.create(font, Typeface.BOLD_ITALIC))
+            }
         }
     }
 

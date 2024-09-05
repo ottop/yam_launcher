@@ -3,6 +3,8 @@ package eu.ottop.yamlauncher.settings
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
+import android.os.Handler
+import android.os.Looper
 import android.util.TypedValue
 import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
@@ -30,12 +32,19 @@ class SharedPreferenceManager (private val context: Context) {
         return Color.parseColor(textColor)
     }
 
-
     private fun getThemeColor(attr: Int): Int {
         val typedValue = TypedValue()
         val theme = context.theme
         theme.resolveAttribute(attr, typedValue, true)
         return typedValue.data
+    }
+
+    fun getTextFont(): String? {
+        return preferences.getString("textFont", "system")
+    }
+
+    fun getTextStyle(): String? {
+        return preferences.getString("textStyle", "normal")
     }
 
     fun isBarVisible(): Boolean {
@@ -247,21 +256,26 @@ class SharedPreferenceManager (private val context: Context) {
         editor.clear()
         editor.apply()
 
+        // We need to navigate through the fragments to apply all settings properly
         activity.supportFragmentManager
             .beginTransaction()
             .replace(R.id.settingsLayout, UISettingsFragment())
             .commit()
-        activity.supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.settingsLayout, HomeSettingsFragment())
-            .commit()
-        activity.supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.settingsLayout, AppMenuSettingsFragment())
-            .commit()
-        activity.supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.settingsLayout, SettingsFragment())
-            .commit()
+        // The swapping after ui settings needs to be delayed or font changes don't work in app menu
+        val handler = Handler(Looper.getMainLooper())
+        handler.postDelayed({
+            activity.supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.settingsLayout, HomeSettingsFragment())
+                .commit()
+            activity.supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.settingsLayout, AppMenuSettingsFragment())
+                .commit()
+            activity.supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.settingsLayout, SettingsFragment())
+                .commit()
+        }, 50)
     }
 }

@@ -63,7 +63,7 @@ class AppMenuAdapter(
     }
 
     inner class AppViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val listItem: FrameLayout = itemView.findViewById(R.id.listItem)
+        val listItem: FrameLayout = itemView.findViewById(R.id.listItem)
         val textView: TextView = listItem.findViewById(R.id.appName)
         val actionMenuLayout: LinearLayout = listItem.findViewById(R.id.actionMenu)
         val editView: LinearLayout = listItem.findViewById(R.id.renameView)
@@ -136,13 +136,14 @@ class AppMenuAdapter(
 
         uiUtils.setItemSpacing(holder.textView)
 
+        uiUtils.setTextFont(holder.textView)
+        holder.textView.setTextColor(sharedPreferenceManager.getTextColor())
+
         // Update the application information (allows updating apps to work)
         val appInfo = appUtils.getAppInfo(
             app.first.applicationInfo.packageName,
             app.third
         )
-
-        holder.textView.setTextColor(sharedPreferenceManager.getTextColor())
 
         // Set app name on the menu. If the app has been uninstalled, replace it with "Removing" until the app menu updates.
         val appLabel: CharSequence = appInfo?.let { activity.packageManager.getApplicationLabel(it) } ?: "Removing..."

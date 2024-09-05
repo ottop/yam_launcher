@@ -296,6 +296,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         uiUtils.setMenuItemColors(searchView)
         uiUtils.setMenuItemColors(binding.menuTitle, "A9")
 
+        uiUtils.setTextFont(binding.homeView)
+        uiUtils.setFont(searchView)
+        uiUtils.setFont(binding.menuTitle)
+
         uiUtils.setClockVisibility(clock)
         uiUtils.setDateVisibility(dateText)
         uiUtils.setSearchVisibility(searchView, binding.searchReplacement)
@@ -430,6 +434,18 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     uiUtils.setTextColors(binding.homeView)
                     uiUtils.setMenuItemColors(searchView)
                     uiUtils.setMenuItemColors(binding.menuTitle, "A9")
+                }
+
+                "textFont" -> {
+                    uiUtils.setTextFont(binding.homeView)
+                    uiUtils.setFont(searchView)
+                    uiUtils.setFont(binding.menuTitle)
+                }
+
+                "textStyle" -> {
+                    uiUtils.setTextFont(binding.homeView)
+                    uiUtils.setFont(searchView)
+                    uiUtils.setFont(binding.menuTitle)
                 }
 
                 "clockEnabled" -> {

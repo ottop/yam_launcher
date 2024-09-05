@@ -4,7 +4,7 @@
     <PreferenceCategory
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:title="Colors"
+        android:title="Appearance"
         app:allowDividerAbove="false">
         <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
@@ -23,6 +23,25 @@
             android:entryValues="@array/color_values"
             app:key="textColor"
             app:title="Text Color"
+            app:useSimpleSummaryProvider="true" />
+        <eu.ottop.yamlauncher.settings.SpinnerPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="system"
+            android:entries="@array/font_options"
+            android:entryValues="@array/font_values"
+            app:key="textFont"
+            app:title="Text Font"
+            app:useSimpleSummaryProvider="true" />
+
+        <eu.ottop.yamlauncher.settings.SpinnerPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="system"
+            android:entries="@array/style_options"
+            android:entryValues="@array/style_values"
+            app:key="textStyle"
+            app:title="Text Style"
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
     <PreferenceCategory
