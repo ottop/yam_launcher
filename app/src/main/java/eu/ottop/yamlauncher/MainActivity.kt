@@ -292,13 +292,15 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private fun setPreferences() {
         uiUtils.setBackground(window)
-        uiUtils.setTextColors(binding.homeView)
-        uiUtils.setMenuItemColors(searchView)
-        uiUtils.setMenuItemColors(binding.menuTitle, "A9")
+
 
         uiUtils.setTextFont(binding.homeView)
         uiUtils.setFont(searchView)
         uiUtils.setFont(binding.menuTitle)
+
+        uiUtils.setTextColors(binding.homeView)
+
+        uiUtils.setMenuItemColors(binding.menuTitle, "A9")
 
         uiUtils.setClockVisibility(clock)
         uiUtils.setDateVisibility(dateText)
@@ -318,6 +320,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         val handler = Handler(Looper.getMainLooper())
         handler.postDelayed({
             uiUtils.setStatusBar(window)
+            uiUtils.setMenuItemColors(searchView)
         }, 0)
 
         clockApp = gestureUtils.getSwipeInfo(launcherApps, "clock")

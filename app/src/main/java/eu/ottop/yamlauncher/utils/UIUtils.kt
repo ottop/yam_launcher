@@ -10,7 +10,6 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.view.ViewTreeObserver
 import android.view.Window
 import android.view.WindowInsets
 import android.view.WindowInsetsController
@@ -73,6 +72,7 @@ class UIUtils(private val context: Context) {
         view.setHintTextColor(setAlpha(color, "A9"))
 
         view.compoundDrawables[0]?.mutate()?.colorFilter = BlendModeColorFilter(color, BlendMode.SRC_ATOP)
+        view.compoundDrawables[0]?.alpha = "A9".toInt(16)
     }
 
     fun setTextFont(view: View) {
