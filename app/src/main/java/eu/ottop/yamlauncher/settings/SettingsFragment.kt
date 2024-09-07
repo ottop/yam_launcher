@@ -27,6 +27,8 @@ class SettingsFragment : PreferenceFragmentCompat(), TitleProvider {
         val appMenuSettings = findPreference<Preference>("appMenuSettings")
 
         val hiddenPref = findPreference<Preference>("hiddenApps")
+        val backupPref = findPreference<Preference>("backup")
+        val restorePref = findPreference<Preference>("restore")
         val aboutPref = findPreference<Preference>("aboutPage")
         val resetPref = findPreference<Preference>("resetAll")
 
@@ -58,6 +60,16 @@ class SettingsFragment : PreferenceFragmentCompat(), TitleProvider {
         hiddenPref?.onPreferenceClickListener =
             Preference.OnPreferenceClickListener {
                 uiUtils.switchFragment(requireActivity(), HiddenAppsFragment())
+                true }
+
+        backupPref?.onPreferenceClickListener =
+            Preference.OnPreferenceClickListener {
+                (requireActivity() as SettingsActivity).createBackup()
+                true }
+
+        restorePref?.onPreferenceClickListener =
+            Preference.OnPreferenceClickListener {
+                (requireActivity() as SettingsActivity).restoreBackup()
                 true }
 
         aboutPref?.onPreferenceClickListener =

@@ -53,6 +53,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:allowDividerAbove="false"
+        app:title="Backup and Restore">
+        <Preference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:key="backup"
+            app:selectable="true"
+            app:summary="Backup your settings"
+            app:title="Backup" />
+        <Preference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:key="restore"
+            app:selectable="true"
+            app:summary="Restore a backup"
+            app:title="Restore" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:allowDividerAbove="false"
         app:title="About">
         <Preference
             android:layout_width="wrap_content"
