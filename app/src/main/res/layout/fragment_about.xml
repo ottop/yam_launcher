@@ -153,6 +153,6 @@
         android:linksClickable="true"
         android:text="@string/weather_data_credit"
         android:textAlignment="center"
-        android:textSize="12sp" />
+        android:textSize="14sp" />
 
 </LinearLayout>
