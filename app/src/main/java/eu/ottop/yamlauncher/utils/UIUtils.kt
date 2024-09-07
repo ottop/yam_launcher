@@ -13,6 +13,7 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.Window
 import android.view.WindowInsets
 import android.view.WindowInsetsController
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Space
 import android.widget.TextClock
@@ -34,6 +35,10 @@ class UIUtils(private val context: Context) {
         window.decorView.setBackgroundColor(
             sharedPreferenceManager.getBgColor()
         )
+    }
+
+    fun setImageColor(view: ImageView) {
+        view.setColorFilter(sharedPreferenceManager.getTextColor())
     }
 
     fun setTextColors(view: View) {
@@ -148,13 +153,31 @@ class UIUtils(private val context: Context) {
         }
     }
 
-    fun setSearchVisibility(searchView: TextInputEditText, replacementView: View) {
+    fun setSearchVisibility(searchView: View, searchLayout: View, replacementView: View) {
+        setSearchLayoutVisibility(searchLayout, replacementView)
         if (sharedPreferenceManager.isSearchEnabled()) {
             searchView.visibility = View.VISIBLE
-            replacementView.visibility = View.GONE
         } else {
             searchView.visibility = View.GONE
+        }
+    }
+
+    fun setContactsVisibility(contactsView: View, searchLayout: View, replacementView: View) {
+        setSearchLayoutVisibility(searchLayout, replacementView)
+        if (sharedPreferenceManager.areContactsEnabled()) {
+            contactsView.visibility = View.VISIBLE
+        } else {
+            contactsView.visibility = View.GONE
+        }
+    }
+
+    private fun setSearchLayoutVisibility(searchLayout: View, replacementView: View) {
+        if (!sharedPreferenceManager.isSearchEnabled() && !sharedPreferenceManager.areContactsEnabled()) {
+            searchLayout.visibility = View.GONE
             replacementView.visibility = View.VISIBLE
+        } else {
+            replacementView.visibility = View.GONE
+            searchLayout.visibility = View.VISIBLE
         }
     }
 

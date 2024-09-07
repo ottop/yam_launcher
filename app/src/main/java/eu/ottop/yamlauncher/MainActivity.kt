@@ -1,33 +1,44 @@
 package eu.ottop.yamlauncher
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
+import android.content.pm.PackageManager
+import android.database.Cursor
 import android.graphics.BlendMode
 import android.graphics.BlendModeColorFilter
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.UserHandle
 import android.provider.AlarmClock
+import android.provider.ContactsContract
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextClock
 import android.widget.TextView
 import android.widget.Toast
+import android.widget.ViewSwitcher
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.database.getStringOrNull
 import androidx.core.view.ViewCompat
 import androidx.core.view.marginLeft
 import androidx.lifecycle.Lifecycle
@@ -49,6 +60,7 @@ import eu.ottop.yamlauncher.utils.GestureUtils
 import eu.ottop.yamlauncher.utils.StringUtils
 import eu.ottop.yamlauncher.utils.UIUtils
 import eu.ottop.yamlauncher.utils.WeatherSystem
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -57,7 +69,7 @@ import java.lang.reflect.Method
 import kotlin.math.abs
 
 
-class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener, AppMenuAdapter.OnItemClickListener, AppMenuAdapter.OnShortcutListener, AppMenuAdapter.OnItemLongClickListener {
+class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener, AppMenuAdapter.OnItemClickListener, AppMenuAdapter.OnShortcutListener, AppMenuAdapter.OnItemLongClickListener, ContactsAdapter.OnContactClickListener {
 
     private lateinit var weatherSystem: WeatherSystem
     private lateinit var appUtils: AppUtils
@@ -66,6 +78,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private lateinit var gestureUtils: GestureUtils
 
     private val appMenuLinearLayoutManager = AppMenuLinearLayoutManager(this@MainActivity)
+    private val contactMenuLinearLayoutManager = AppMenuLinearLayoutManager(this@MainActivity)
     private val appMenuEdgeFactory = AppMenuEdgeFactory(this@MainActivity)
 
     private lateinit var sharedPreferenceManager: SharedPreferenceManager
@@ -77,9 +90,13 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private lateinit var dateText: TextClock
     private var dateElements = mutableListOf<String>()
 
-    private lateinit var recyclerView: RecyclerView
+    private lateinit var menuView: ViewSwitcher
+    private lateinit var appRecycler: RecyclerView
+    private lateinit var contactRecycler: RecyclerView
+    private lateinit var searchSwitcher: ImageView
     private lateinit var searchView: TextInputEditText
-    private var adapter: AppMenuAdapter? = null
+    private var appAdapter: AppMenuAdapter? = null
+    private var contactAdapter: ContactsAdapter? = null
     private var batteryReceiver: BatteryReceiver? = null
 
     private lateinit var binding: ActivityMainBinding
@@ -104,6 +121,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private lateinit var shortcutGestureDetector: GestureDetector
 
     var returnAllowed = true
+
+    private val handler = Handler(Looper.getMainLooper())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -154,15 +173,19 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         gestureDetector = GestureDetector(this, GestureListener())
         shortcutGestureDetector = GestureDetector(this, TextGestureListener())
 
-        clock = findViewById(R.id.textClock)
+        clock = binding.textClock
 
         clockMargin = clock.marginLeft
 
-        dateText = findViewById(R.id.textDate)
+        dateText = binding.textDate
 
         dateElements = mutableListOf(dateText.format12Hour.toString(), dateText.format24Hour.toString(), "", "")
 
-        searchView = findViewById(R.id.searchView)
+        menuView = binding.menuView
+
+        searchSwitcher = binding.searchSwitcher
+
+        searchView = binding.searchView
 
         preferences = PreferenceManager.getDefaultSharedPreferences(this)
     }
@@ -182,8 +205,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
             else {
                 textView.visibility = View.VISIBLE
-
-
 
                 val savedView = sharedPreferenceManager.getShortcut(textView)
 
@@ -217,7 +238,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             uiUtils.setMenuTitleAlignment(binding.menuTitle)
             binding.menuTitle.visibility = View.VISIBLE
 
-            adapter?.shortcutTextView = textView
+            appAdapter?.shortcutTextView = textView
             toAppMenu()
             true
         }
@@ -236,7 +257,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             uiUtils.setMenuTitleAlignment(binding.menuTitle)
             binding.menuTitle.visibility = View.VISIBLE
 
-            adapter?.shortcutTextView = textView
+            appAdapter?.shortcutTextView = textView
+            searchSwitcher.visibility = View.GONE
             toAppMenu()
 
             return@setOnLongClickListener true
@@ -246,11 +268,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private fun toAppMenu() {
         try {
             // The menu opens from the top
-            recyclerView.scrollToPosition(0)
+            appRecycler.scrollToPosition(0)
+            contactRecycler.scrollToPosition(0)
+            menuView.displayedChild = 0
+            searchSwitcher.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.contacts_24px, null))
         }
-        catch (_: UninitializedPropertyAccessException) {
-
-        }
+        catch (_: UninitializedPropertyAccessException) {}
         animations.showApps(binding.homeView, binding.appView)
         animations.backgroundIn(this@MainActivity)
         if (sharedPreferenceManager.isAutoKeyboardEnabled()) {
@@ -293,7 +316,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private fun setPreferences() {
         uiUtils.setBackground(window)
 
-
         uiUtils.setTextFont(binding.homeView)
         uiUtils.setFont(searchView)
         uiUtils.setFont(binding.menuTitle)
@@ -302,9 +324,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         uiUtils.setMenuItemColors(binding.menuTitle, "A9")
 
+        uiUtils.setImageColor(searchSwitcher)
+
         uiUtils.setClockVisibility(clock)
         uiUtils.setDateVisibility(dateText)
-        uiUtils.setSearchVisibility(searchView, binding.searchReplacement)
+        uiUtils.setSearchVisibility(searchView, binding.searchLayout, binding.searchReplacement)
 
         uiUtils.setClockAlignment(clock, dateText)
         uiUtils.setSearchAlignment(searchView)
@@ -317,11 +341,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         uiUtils.setShortcutsSpacing(binding.homeView)
 
         // This didn't work and somehow delaying it by 0 makes it work
-        val handler = Handler(Looper.getMainLooper())
         handler.postDelayed({
             uiUtils.setStatusBar(window)
             uiUtils.setMenuItemColors(searchView)
-        }, 0)
+        }, 100)
 
         clockApp = gestureUtils.getSwipeInfo(launcherApps, "clock")
         dateApp = gestureUtils.getSwipeInfo(launcherApps, "date")
@@ -420,8 +443,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     private fun openAppMenu() {
-        adapter?.shortcutTextView = null
+        appAdapter?.shortcutTextView = null
         binding.menuTitle.visibility = View.GONE
+        uiUtils.setContactsVisibility(searchSwitcher, binding.searchLayout, binding.searchReplacement)
         toAppMenu()
     }
 
@@ -437,6 +461,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     uiUtils.setTextColors(binding.homeView)
                     uiUtils.setMenuItemColors(searchView)
                     uiUtils.setMenuItemColors(binding.menuTitle, "A9")
+                    uiUtils.setImageColor(searchSwitcher)
                 }
 
                 "textFont" -> {
@@ -460,7 +485,14 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 }
 
                 "searchEnabled" -> {
-                    uiUtils.setSearchVisibility(searchView, binding.searchReplacement)
+                    uiUtils.setSearchVisibility(searchView, binding.searchLayout, binding.searchReplacement)
+                }
+
+                "contactsEnabled" -> {
+                    if (sharedPreferenceManager.areContactsEnabled()) {
+                        checkContactsPermission()
+                    }
+                    uiUtils.setContactsVisibility(searchSwitcher, binding.searchLayout, binding.searchReplacement)
                 }
 
                 "clockAlignment" -> {
@@ -569,7 +601,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         // Delay app menu changes so that the user doesn't see them
 
-        val handler = Handler(Looper.getMainLooper())
         handler.postDelayed({
             try {
                 searchView.setText(R.string.empty)
@@ -583,8 +614,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         handler.postDelayed({
             lifecycleScope.launch {
                 refreshAppMenu()
-
-
             }}, animSpeed + 50)
 
     }
@@ -627,7 +656,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private suspend fun updateMenu(updatedApps: List<Triple<LauncherActivityInfo, UserHandle, Int>>) {
         withContext(Dispatchers.Main) {
-            adapter?.updateApps(updatedApps)
+            appAdapter?.updateApps(updatedApps)
         }
     }
 
@@ -660,37 +689,118 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             installedApps = appUtils.getInstalledApps()
             val newApps = installedApps.toMutableList()
 
-            setupRecyclerView(newApps)
+            setupAppRecycler(newApps)
 
             setupSearch()
+            if (sharedPreferenceManager.areContactsEnabled()) {
+                setupContactRecycler()
+            }
         }
 
     }
 
-    private suspend fun setupRecyclerView(newApps: MutableList<Triple<LauncherActivityInfo, UserHandle, Int>>) {
-        adapter = AppMenuAdapter(this@MainActivity, binding, newApps, this@MainActivity, this@MainActivity, this@MainActivity, launcherApps)
+    private suspend fun setupAppRecycler(newApps: MutableList<Triple<LauncherActivityInfo, UserHandle, Int>>) {
+        appAdapter = AppMenuAdapter(this@MainActivity, binding, newApps, this@MainActivity, this@MainActivity, this@MainActivity, launcherApps)
         appMenuLinearLayoutManager.stackFromEnd = true
-        recyclerView = findViewById(R.id.recyclerView)
+        appRecycler = binding.appRecycler
         withContext(Dispatchers.Main) {
-            recyclerView.layoutManager = appMenuLinearLayoutManager
-            recyclerView.edgeEffectFactory = appMenuEdgeFactory
-            recyclerView.adapter = adapter
+            appRecycler.layoutManager = appMenuLinearLayoutManager
+            appRecycler.edgeEffectFactory = appMenuEdgeFactory
+            appRecycler.adapter = appAdapter
 
         }
 
-        setupRecyclerListener()
+        setupRecyclerListener(appRecycler, appMenuLinearLayoutManager)
     }
 
     // Inform the layout manager of scroll states to calculate whether the menu is on the top
-    private fun setupRecyclerListener() {
-        recyclerView.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+    private fun setupRecyclerListener(recycler:RecyclerView, layoutManager: AppMenuLinearLayoutManager) {
+        recycler.addOnScrollListener(object: RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-                    appMenuLinearLayoutManager.setScrollInfo()
+                    layoutManager.setScrollInfo()
                 }
             }
         })
+    }
+
+    private suspend fun setupContactRecycler() {
+        contactAdapter = ContactsAdapter(this, mutableListOf(), this)
+        contactRecycler = binding.contactRecycler
+        withContext(Dispatchers.Main) {
+            contactRecycler.layoutManager = contactMenuLinearLayoutManager
+            contactRecycler.edgeEffectFactory = appMenuEdgeFactory
+            contactRecycler.adapter = contactAdapter
+        }
+        setupRecyclerListener(contactRecycler, contactMenuLinearLayoutManager)
+    }
+
+    private fun getContacts(filterString: String): MutableList<Pair<String, Int>> {
+        if (!checkContactsPermission()) {
+            return mutableListOf()
+        }
+
+        val contacts = mutableListOf<Pair<String, Int>>()
+
+        val contentResolver: ContentResolver = contentResolver
+
+        val projection = arrayOf(
+            ContactsContract.Contacts._ID,
+            ContactsContract.Contacts.DISPLAY_NAME
+        )
+
+        val selection = "${ContactsContract.Contacts.DISPLAY_NAME} LIKE ?"
+        val selectionArgs = arrayOf("%$filterString%")
+
+        val cursor: Cursor? = contentResolver.query(
+            ContactsContract.Contacts.CONTENT_URI,
+            projection,
+            selection,
+            selectionArgs,
+            "${ContactsContract.Contacts.DISPLAY_NAME} ASC"
+        )
+
+        cursor?.use {
+            val nameIndex = it.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)
+            val idIndex = it.getColumnIndex(ContactsContract.Contacts._ID)
+            while (it.moveToNext()) {
+                val name = it.getStringOrNull(nameIndex)
+                val id = it.getStringOrNull(idIndex)?.toInt()
+                if (name != null && id != null) {
+                    contacts.add(Pair(name, id))
+                }
+            }
+        }
+        return contacts
+    }
+
+    private fun checkContactsPermission(): Boolean {
+        try {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.READ_CONTACTS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.READ_CONTACTS),
+                    1
+                )
+                return false
+            }
+
+            return true
+        } catch(_: Exception) {
+            return false
+        }
+    }
+
+    private suspend fun updateContacts(filterString: String) {
+        val contacts = getContacts(filterString)
+        withContext(Dispatchers.Main) {
+            contactAdapter?.updateContacts(contacts)
+        }
     }
 
     private suspend fun setupSearch() {
@@ -718,6 +828,19 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 }
             }
         })
+
+        searchSwitcher.setOnClickListener {
+            menuView.showNext()
+            when (menuView.displayedChild) {
+                0 -> searchSwitcher.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.contacts_24px, null))
+                1 -> {
+                    lifecycleScope.launch(Dispatchers.Default) {
+                        updateContacts("")
+                    }
+                    searchSwitcher.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.apps_24px, null))}
+            }
+        }
+
     }
 
     private suspend fun filterItems(query: String?) {
@@ -727,6 +850,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         val updatedApps = appUtils.getInstalledApps()
 
         getFilteredApps(cleanQuery, newFilteredApps, updatedApps)
+        if (sharedPreferenceManager.areContactsEnabled() && cleanQuery != null) {
+            updateContacts(cleanQuery)
+        }
     }
 
     private suspend fun getFilteredApps(cleanQuery: String?, newFilteredApps: MutableList<Triple<LauncherActivityInfo, UserHandle, Int>>, updatedApps: List<Triple<LauncherActivityInfo, UserHandle, Int>>) {
@@ -767,12 +893,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     fun disableAppMenuScroll() {
         appMenuLinearLayoutManager.setScrollEnabled(false)
-        recyclerView.layoutManager = appMenuLinearLayoutManager
+        appRecycler.layoutManager = appMenuLinearLayoutManager
     }
 
     fun enableAppMenuScroll() {
         appMenuLinearLayoutManager.setScrollEnabled(true)
-        recyclerView.layoutManager = appMenuLinearLayoutManager
+        appRecycler.layoutManager = appMenuLinearLayoutManager
     }
 
     // On home key or swipe, return to home screen
@@ -801,7 +927,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             backToHome(0)
         }
         returnAllowed = true
-        adapter?.notifyDataSetChanged()
+        appAdapter?.notifyDataSetChanged()
     }
 
     override fun onItemClick(appInfo: LauncherActivityInfo, userHandle: UserHandle) {
@@ -931,5 +1057,16 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         override fun onLongPress(e: MotionEvent) {
 
         }
+    }
+
+    override fun onContactClick(contactId: Int) {
+        val contactUri: Uri = Uri.withAppendedPath(
+            ContactsContract.Contacts.CONTENT_URI,
+            contactId.toString()
+        )
+
+        val intent = Intent(Intent.ACTION_VIEW, contactUri)
+        startActivity(intent)
+        returnAllowed = false
     }
 }

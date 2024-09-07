@@ -136,7 +136,7 @@ class AppMenuAdapter(
 
         uiUtils.setItemSpacing(holder.textView)
 
-        uiUtils.setTextFont(holder.textView)
+        uiUtils.setTextFont(holder.listItem)
         holder.textView.setTextColor(sharedPreferenceManager.getTextColor())
 
         // Update the application information (allows updating apps to work)

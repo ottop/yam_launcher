@@ -32,6 +32,12 @@
             app:key="appSpacing"
             app:title="App Spacing"
             app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="false"
+            android:title="Contacts Menu"
+            app:key="contactsEnabled" />
 
     </PreferenceCategory>
     <PreferenceCategory

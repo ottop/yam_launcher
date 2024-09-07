@@ -69,8 +69,7 @@
         android:textAppearance="@android:style/TextAppearance.DeviceDefault"
         android:textColor="#F3F3F3"
         android:textSize="28sp"
-        android:visibility="visible"
-        app:drawableLeftCompat="@drawable/ic_work_app" />
+        android:visibility="visible" />
 
     <LinearLayout
         android:id="@+id/actionMenu"
