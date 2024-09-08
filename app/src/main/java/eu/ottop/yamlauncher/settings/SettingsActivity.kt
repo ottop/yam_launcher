@@ -1,19 +1,22 @@
 package eu.ottop.yamlauncher.settings
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import eu.ottop.yamlauncher.R
 import eu.ottop.yamlauncher.databinding.ActivitySettingsBinding
 import org.json.JSONObject
-import java.io.IOException
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -176,6 +179,33 @@ class SettingsActivity : AppCompatActivity() {
             }
         } catch (e: Exception) {
             null
+        }
+    }
+
+    fun requestContactsPermission() {
+        try {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.READ_CONTACTS),
+                1
+            )
+        } catch(_: Exception) {}
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        val fragment = supportFragmentManager.findFragmentById(R.id.settingsLayout) as AppMenuSettingsFragment
+        if (requestCode == 1) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                fragment.setContactPreference(true)
+            } else {
+                Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
+                fragment.setContactPreference(false)
+            }
         }
     }
 

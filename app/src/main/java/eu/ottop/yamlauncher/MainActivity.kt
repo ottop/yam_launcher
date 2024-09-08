@@ -57,6 +57,7 @@ import eu.ottop.yamlauncher.utils.AppMenuEdgeFactory
 import eu.ottop.yamlauncher.utils.AppMenuLinearLayoutManager
 import eu.ottop.yamlauncher.utils.AppUtils
 import eu.ottop.yamlauncher.utils.GestureUtils
+import eu.ottop.yamlauncher.utils.PermissionUtils
 import eu.ottop.yamlauncher.utils.StringUtils
 import eu.ottop.yamlauncher.utils.UIUtils
 import eu.ottop.yamlauncher.utils.WeatherSystem
@@ -74,6 +75,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private lateinit var weatherSystem: WeatherSystem
     private lateinit var appUtils: AppUtils
     private val stringUtils = StringUtils()
+    private val permissionUtils = PermissionUtils()
     private lateinit var uiUtils: UIUtils
     private lateinit var gestureUtils: GestureUtils
 
@@ -489,9 +491,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 }
 
                 "contactsEnabled" -> {
-                    if (sharedPreferenceManager.areContactsEnabled()) {
-                        checkContactsPermission()
-                    }
                     uiUtils.setContactsVisibility(searchSwitcher, binding.searchLayout, binding.searchReplacement)
                 }
 
@@ -692,9 +691,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             setupAppRecycler(newApps)
 
             setupSearch()
-            if (sharedPreferenceManager.areContactsEnabled()) {
-                setupContactRecycler()
-            }
+            setupContactRecycler()
+
         }
 
     }
@@ -737,10 +735,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     private fun getContacts(filterString: String): MutableList<Pair<String, Int>> {
-        if (!checkContactsPermission()) {
-            return mutableListOf()
-        }
-
         val contacts = mutableListOf<Pair<String, Int>>()
 
         val contentResolver: ContentResolver = contentResolver
@@ -775,26 +769,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         return contacts
     }
 
-    private fun checkContactsPermission(): Boolean {
-        try {
-            if (ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.READ_CONTACTS
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.READ_CONTACTS),
-                    1
-                )
-                return false
-            }
 
-            return true
-        } catch(_: Exception) {
-            return false
-        }
-    }
 
     private suspend fun updateContacts(filterString: String) {
         val contacts = getContacts(filterString)
@@ -923,6 +898,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     @SuppressLint("NotifyDataSetChanged")
     override fun onResume() {
         super.onResume()
+        if (!permissionUtils.hasContactsPermission(this@MainActivity, Manifest.permission.READ_CONTACTS)) {
+            sharedPreferenceManager.setContactsEnabled(false)
+        }
         if (returnAllowed) {
             backToHome(0)
         }

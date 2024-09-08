@@ -208,6 +208,12 @@ class SharedPreferenceManager (private val context: Context) {
         return preferences.getBoolean("contactsEnabled", false)
     }
 
+    fun setContactsEnabled(isEnabled: Boolean) {
+        val editor = preferences.edit()
+        editor.putBoolean("contactsEnabled", isEnabled)
+        editor.apply()
+    }
+
     // Hidden Apps
     fun setAppHidden(packageName: String, profile: Int, hidden: Boolean) {
         val editor = preferences.edit()
