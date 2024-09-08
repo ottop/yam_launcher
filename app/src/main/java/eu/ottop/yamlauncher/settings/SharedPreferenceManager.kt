@@ -204,6 +204,10 @@ class SharedPreferenceManager (private val context: Context) {
         return preferences.getBoolean("autoKeyboard", false)
     }
 
+    fun isAutoLaunchEnabled(): Boolean {
+        return preferences.getBoolean("autoLaunch", false)
+    }
+
     fun areContactsEnabled(): Boolean {
         return preferences.getBoolean("contactsEnabled", false)
     }

@@ -77,6 +77,14 @@
             android:title="Automatically Open Keyboard"
             app:dependency="searchEnabled"
             app:key="autoKeyboard" />
+        <SwitchPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="false"
+            android:title="Automatic App Opening"
+            app:dependency="searchEnabled"
+            app:key="autoLaunch"
+            app:summary="Automatically launch an app when it's the last search result" />
 
     </PreferenceCategory>
 
