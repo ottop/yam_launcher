@@ -8,7 +8,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
-import android.content.pm.PackageManager
 import android.database.Cursor
 import android.graphics.BlendMode
 import android.graphics.BlendModeColorFilter
@@ -35,8 +34,6 @@ import android.widget.ViewSwitcher
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.database.getStringOrNull
 import androidx.core.view.ViewCompat
@@ -61,7 +58,6 @@ import eu.ottop.yamlauncher.utils.PermissionUtils
 import eu.ottop.yamlauncher.utils.StringUtils
 import eu.ottop.yamlauncher.utils.UIUtils
 import eu.ottop.yamlauncher.utils.WeatherSystem
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -183,11 +179,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         dateElements = mutableListOf(dateText.format12Hour.toString(), dateText.format24Hour.toString(), "", "")
 
+        searchView = binding.searchView
+
         menuView = binding.menuView
 
         searchSwitcher = binding.searchSwitcher
-
-        searchView = binding.searchView
 
         preferences = PreferenceManager.getDefaultSharedPreferences(this)
     }
@@ -271,9 +267,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         try {
             // The menu opens from the top
             appRecycler.scrollToPosition(0)
-            contactRecycler.scrollToPosition(0)
-            menuView.displayedChild = 0
-            searchSwitcher.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.contacts_24px, null))
+            if (sharedPreferenceManager.areContactsEnabled()) {
+                contactRecycler.scrollToPosition(0)
+                searchSwitcher.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.contacts_24px, null))
+                menuView.displayedChild = 0
+            }
         }
         catch (_: UninitializedPropertyAccessException) {}
         animations.showApps(binding.homeView, binding.appView)
@@ -325,8 +323,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         uiUtils.setTextColors(binding.homeView)
 
         uiUtils.setMenuItemColors(binding.menuTitle, "A9")
-
-        uiUtils.setImageColor(searchSwitcher)
 
         uiUtils.setClockVisibility(clock)
         uiUtils.setDateVisibility(dateText)
@@ -491,7 +487,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 }
 
                 "contactsEnabled" -> {
-                    uiUtils.setContactsVisibility(searchSwitcher, binding.searchLayout, binding.searchReplacement)
+                    try{
+                        contactRecycler
+                    } catch(_: UninitializedPropertyAccessException) {
+                        setupContactRecycler()
+                    }
                 }
 
                 "clockAlignment" -> {
@@ -691,8 +691,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             setupAppRecycler(newApps)
 
             setupSearch()
-            setupContactRecycler()
-
+            if (sharedPreferenceManager.areContactsEnabled()) {
+                setupContactRecycler()
+            }
         }
 
     }
@@ -723,15 +724,28 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         })
     }
 
-    private suspend fun setupContactRecycler() {
+    private fun setupContactRecycler() {
+        uiUtils.setImageColor(searchSwitcher)
+
         contactAdapter = ContactsAdapter(this, mutableListOf(), this)
+        contactMenuLinearLayoutManager.stackFromEnd = true
         contactRecycler = binding.contactRecycler
-        withContext(Dispatchers.Main) {
-            contactRecycler.layoutManager = contactMenuLinearLayoutManager
-            contactRecycler.edgeEffectFactory = appMenuEdgeFactory
-            contactRecycler.adapter = contactAdapter
-        }
+        contactRecycler.layoutManager = contactMenuLinearLayoutManager
+        contactRecycler.edgeEffectFactory = appMenuEdgeFactory
+        contactRecycler.adapter = contactAdapter
         setupRecyclerListener(contactRecycler, contactMenuLinearLayoutManager)
+
+        searchSwitcher.setOnClickListener {
+            menuView.showNext()
+            when (menuView.displayedChild) {
+                0 -> searchSwitcher.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.contacts_24px, null))
+                1 -> {
+                    lifecycleScope.launch(Dispatchers.Default) {
+                        filterItems(searchView.text.toString())
+                    }
+                    searchSwitcher.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.apps_24px, null))}
+            }
+        }
     }
 
     private fun getContacts(filterString: String): MutableList<Pair<String, Int>> {
@@ -803,19 +817,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 }
             }
         })
-
-        searchSwitcher.setOnClickListener {
-            menuView.showNext()
-            when (menuView.displayedChild) {
-                0 -> searchSwitcher.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.contacts_24px, null))
-                1 -> {
-                    lifecycleScope.launch(Dispatchers.Default) {
-                        updateContacts("")
-                    }
-                    searchSwitcher.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.apps_24px, null))}
-            }
-        }
-
     }
 
     private suspend fun filterItems(query: String?) {

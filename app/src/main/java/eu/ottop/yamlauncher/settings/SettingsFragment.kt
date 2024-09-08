@@ -6,7 +6,6 @@ import android.provider.Settings
 import android.widget.Toast
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.SwitchPreference
 import eu.ottop.yamlauncher.R
 import eu.ottop.yamlauncher.utils.UIUtils
 

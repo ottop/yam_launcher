@@ -1,9 +1,9 @@
 package eu.ottop.yamlauncher.settings
 
-import android.content.Intent
-import android.net.Uri
+import android.content.ComponentName
+import android.content.Context
+import android.content.pm.LauncherApps
 import android.os.Bundle
-import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,6 +26,8 @@ class AboutFragment : Fragment(), TitleProvider {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val launcherApps = requireActivity().getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
+
         // Set up about page links
         stringUtils.setLink(requireActivity().findViewById(R.id.creditText), getString(R.string.my_website_link))
         stringUtils.setLink(requireActivity().findViewById(R.id.codebergLink), getString(R.string.codeberg_link))
@@ -35,10 +37,12 @@ class AboutFragment : Fragment(), TitleProvider {
         stringUtils.setLink(requireActivity().findViewById(R.id.weatherLink), getString(R.string.weather_link))
 
         requireActivity().findViewById<ImageView>(R.id.iconView).setOnClickListener {
-            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                data = Uri.parse("package:${requireContext().packageName}")
-            }
-            startActivity(intent)
+            launcherApps.startAppDetailsActivity(
+                ComponentName(requireContext(), this::class.java),
+                launcherApps.profiles[0],
+                null,
+                null
+            )
         }
     }
 

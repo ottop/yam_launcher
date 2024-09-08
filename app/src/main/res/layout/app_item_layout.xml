@@ -90,7 +90,7 @@
             android:text="@string/info"
             android:textAlignment="center"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault"
-            android:textColor="#F3F3F3FF"
+            android:textColor="#E3F3F3F3"
             app:drawableTopCompat="@drawable/info_24px" />
 
         <TextView
@@ -104,7 +104,7 @@
             android:text="@string/uninstall"
             android:textAlignment="center"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault"
-            android:textColor="#F3F3F3FF"
+            android:textColor="#E3F3F3F3"
             app:drawableTopCompat="@drawable/delete_24px" />
 
         <TextView
@@ -118,7 +118,7 @@
             android:text="@string/rename"
             android:textAlignment="center"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault"
-            android:textColor="#F3F3F3FF"
+            android:textColor="#E3F3F3F3"
             app:drawableTopCompat="@drawable/edit_24px" />
 
         <TextView
@@ -132,7 +132,7 @@
             android:text="@string/hide"
             android:textAlignment="center"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault"
-            android:textColor="#F3F3F3FF"
+            android:textColor="#E3F3F3F3"
             app:drawableTopCompat="@drawable/visibility_off_24px" />
 
         <TextView
@@ -146,7 +146,7 @@
             android:text="@string/close"
             android:textAlignment="center"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault"
-            android:textColor="#F3F3F3FF"
+            android:textColor="#E3F3F3F3"
             app:drawableTopCompat="@drawable/close_24px" />
 
     </LinearLayout>

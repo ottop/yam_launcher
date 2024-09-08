@@ -12,14 +12,17 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import eu.ottop.yamlauncher.R
 import eu.ottop.yamlauncher.databinding.ActivitySettingsBinding
+import eu.ottop.yamlauncher.utils.PermissionUtils
 import org.json.JSONObject
 
 class SettingsActivity : AppCompatActivity() {
 
+    private val permissionUtils = PermissionUtils()
+
+    private lateinit var sharedPreferenceManager: SharedPreferenceManager
     private lateinit var preferences: SharedPreferences
     private lateinit var binding: ActivitySettingsBinding
     private lateinit var performBackup: ActivityResultLauncher<Intent>
@@ -27,6 +30,8 @@ class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        sharedPreferenceManager = SharedPreferenceManager(this@SettingsActivity)
 
         preferences = PreferenceManager.getDefaultSharedPreferences(this@SettingsActivity)
 
@@ -37,10 +42,12 @@ class SettingsActivity : AppCompatActivity() {
         supportActionBar?.title = "Launcher Settings"
         supportActionBar?.setDisplayShowTitleEnabled(true)
 
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.settingsLayout, SettingsFragment())
-            .commit()
+        if (supportFragmentManager.backStackEntryCount == 0) {
+            supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.settingsLayout, SettingsFragment())
+                .commit()
+        }
 
         supportFragmentManager.addOnBackStackChangedListener {
             updateActionBarTitle()
@@ -206,6 +213,13 @@ class SettingsActivity : AppCompatActivity() {
                 Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
                 fragment.setContactPreference(false)
             }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!permissionUtils.hasContactsPermission(this@SettingsActivity, Manifest.permission.READ_CONTACTS)) {
+            sharedPreferenceManager.setContactsEnabled(false)
         }
     }
 
