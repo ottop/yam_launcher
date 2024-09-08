@@ -96,8 +96,7 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun saveSharedPreferencesToFile(uri: Uri) {
-        val sharedPreferences = preferences
-        val allEntries = sharedPreferences.all
+        val allEntries = preferences.all
 
         val backupData = JSONObject().apply {
             put("app_id", application.packageName)
@@ -165,6 +164,7 @@ class SettingsActivity : AppCompatActivity() {
                         "Float" -> editor.putFloat(key, entry.getDouble("value").toFloat())
                     }
                 }
+                editor.putBoolean("isRestored", true)
 
                 editor.apply()
 

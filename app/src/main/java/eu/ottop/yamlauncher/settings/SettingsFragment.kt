@@ -79,7 +79,7 @@ class SettingsFragment : PreferenceFragmentCompat(), TitleProvider {
 
         resetPref?.onPreferenceClickListener =
             Preference.OnPreferenceClickListener {
-                sharedPreferenceManager.resetAllPreferences(requireActivity())
+                sharedPreferenceManager.resetAllPreferences()
                 true }
     }
 

@@ -217,11 +217,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 else {
                     unsetShortcutSetup(textView)
                 }
-
-                uiUtils.setShortcutsAlignment(binding.homeView)
-                uiUtils.setShortcutsVAlignment(binding.topSpace, binding.bottomSpace)
             }
         }
+        uiUtils.setShortcutsAlignment(binding.homeView)
+        uiUtils.setShortcutsVAlignment(binding.topSpace, binding.bottomSpace)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -576,6 +575,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 }
 
                 "shortcutNo" -> {
+                    setShortcuts()
+                }
+
+                "isRestored" -> {
+                    preferences.edit().remove("isRestored").apply()
+                    setPreferences()
                     setShortcuts()
                 }
             }

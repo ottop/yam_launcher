@@ -3,13 +3,9 @@ package eu.ottop.yamlauncher.settings
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
-import android.os.Handler
-import android.os.Looper
 import android.util.TypedValue
 import android.widget.TextView
-import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
-import eu.ottop.yamlauncher.R
 
 class SharedPreferenceManager (private val context: Context) {
 
@@ -100,7 +96,7 @@ class SharedPreferenceManager (private val context: Context) {
     }
 
     fun getShortcutVAlignment(): String? {
-        return preferences.getString("shortcutVAlignment", "left")
+        return preferences.getString("shortcutVAlignment", "center")
     }
 
     fun getShortcutSize(): String? {
@@ -252,12 +248,12 @@ class SharedPreferenceManager (private val context: Context) {
         editor.apply()
     }
 
-    fun resetAllPreferences(activity: FragmentActivity) {
+    fun resetAllPreferences() {
         AlertDialog.Builder(context).apply {
             setTitle("Confirmation")
             setMessage("You will lose ALL changes that you have made to the launcher settings, shortcuts, hidden apps, etc.\n\nAre you sure?")
             setPositiveButton("Yes") { _, _ ->
-                performReset(activity)
+                performReset()
             }
 
             setNegativeButton("Cancel") { _, _ ->
@@ -265,31 +261,10 @@ class SharedPreferenceManager (private val context: Context) {
         }.create().show()
     }
 
-    private fun performReset(activity: FragmentActivity) {
+    private fun performReset() {
         val editor = preferences.edit()
         editor.clear()
+        editor.putBoolean("isRestored", true)
         editor.apply()
-
-        // We need to navigate through the fragments to apply all settings properly
-        activity.supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.settingsLayout, UISettingsFragment())
-            .commit()
-        // The swapping after ui settings needs to be delayed or font changes don't work in app menu
-        val handler = Handler(Looper.getMainLooper())
-        handler.postDelayed({
-            activity.supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.settingsLayout, HomeSettingsFragment())
-                .commit()
-            activity.supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.settingsLayout, AppMenuSettingsFragment())
-                .commit()
-            activity.supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.settingsLayout, SettingsFragment())
-                .commit()
-        }, 50)
     }
 }
