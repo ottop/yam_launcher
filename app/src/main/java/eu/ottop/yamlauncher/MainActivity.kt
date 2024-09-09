@@ -266,10 +266,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         try {
             // The menu opens from the top
             appRecycler.scrollToPosition(0)
-            if (sharedPreferenceManager.areContactsEnabled()) {
+            if (searchSwitcher.visibility == View.VISIBLE) {
                 contactRecycler.scrollToPosition(0)
                 searchSwitcher.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.contacts_24px, null))
                 menuView.displayedChild = 0
+                searchSwitcher.contentDescription = getString(R.string.switch_to_contacts)
             }
         }
         catch (_: UninitializedPropertyAccessException) {}
@@ -284,7 +285,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     private fun unsetShortcutSetup(textView: TextView) {
-        textView.text = getText(R.string.shortcut_default)
+        textView.text = getString(R.string.shortcut_default)
         unsetShortcutListeners(textView)
     }
 
@@ -743,12 +744,23 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         searchSwitcher.setOnClickListener {
             menuView.showNext()
             when (menuView.displayedChild) {
-                0 -> searchSwitcher.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.contacts_24px, null))
+                0 -> {
+                    searchSwitcher.setImageDrawable(
+                        ResourcesCompat.getDrawable(
+                            resources,
+                            R.drawable.contacts_24px,
+                            null
+                        )
+                    )
+                    searchSwitcher.contentDescription = getString(R.string.switch_to_contacts)
+                }
                 1 -> {
                     lifecycleScope.launch(Dispatchers.Default) {
                         filterItems(searchView.text.toString())
                     }
-                    searchSwitcher.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.apps_24px, null))}
+                    searchSwitcher.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.apps_24px, null))
+                    searchSwitcher.contentDescription = getString(R.string.switch_to_apps)
+                }
             }
         }
     }

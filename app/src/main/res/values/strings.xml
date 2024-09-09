@@ -44,4 +44,6 @@
     <string name="region_text">%1$s%2$s</string>
 
     <string name="accessibility_service_description">The permission is required for double tap to work for locking the screen.\n\nIt is only needed if you want to use the double tap to lock screen feature in YAM Launcher.</string>
+    <string name="switch_to_contacts">Switch to Contacts</string>
+    <string name="switch_to_apps">Switch to Apps</string>
 </resources>
