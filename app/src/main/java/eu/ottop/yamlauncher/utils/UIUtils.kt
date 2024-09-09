@@ -420,6 +420,10 @@ class UIUtils(private val context: Context) {
         setTextSize(searchView, sharedPreferenceManager.getSearchSize(), 18F, 21F, 25F, 27F, 30F, 33F)
     }
 
+    fun setMenuTitleSize(menuTitle: TextView) {
+        setTextSize(menuTitle, sharedPreferenceManager.getAppSize(), 27F, 30F, 33F, 36F, 39F, 42F)
+    }
+
     private fun setTextSize(view: TextView, size: String?, t: Float, s: Float, m: Float, l: Float, x: Float, h: Float) {
         try {
             view.textSize = when (size) {

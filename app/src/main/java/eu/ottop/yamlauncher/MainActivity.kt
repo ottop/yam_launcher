@@ -233,6 +233,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         ViewCompat.addAccessibilityAction(textView, "Set Shortcut App") { _, _ ->
             uiUtils.setMenuTitleAlignment(binding.menuTitle)
+            uiUtils.setMenuTitleSize(binding.menuTitle)
             binding.menuTitle.visibility = View.VISIBLE
 
             appAdapter?.shortcutTextView = textView
@@ -252,11 +253,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         textView.setOnLongClickListener {
             uiUtils.setMenuTitleAlignment(binding.menuTitle)
+            uiUtils.setMenuTitleSize(binding.menuTitle)
             binding.menuTitle.visibility = View.VISIBLE
 
             appAdapter?.shortcutTextView = textView
-            searchSwitcher.visibility = View.GONE
             toAppMenu()
+            searchSwitcher.visibility = View.GONE
 
             return@setOnLongClickListener true
         }
@@ -268,9 +270,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             appRecycler.scrollToPosition(0)
             if (searchSwitcher.visibility == View.VISIBLE) {
                 contactRecycler.scrollToPosition(0)
-                searchSwitcher.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.contacts_24px, null))
                 menuView.displayedChild = 0
-                searchSwitcher.contentDescription = getString(R.string.switch_to_contacts)
+                setAppViewDetails()
             }
         }
         catch (_: UninitializedPropertyAccessException) {}
@@ -883,7 +884,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     private suspend fun applySearchFilter(newFilteredApps: MutableList<Triple<LauncherActivityInfo, UserHandle, Int>>) {
-        if (sharedPreferenceManager.isAutoLaunchEnabled() && newFilteredApps.size == 1) {
+        if (searchSwitcher.visibility == View.VISIBLE && menuView.displayedChild == 0 && newFilteredApps.size == 1) {
             appUtils.launchApp(newFilteredApps[0].first.applicationInfo.packageName, newFilteredApps[0].second)
         } else if (!listsEqual(installedApps, newFilteredApps)) {
             updateMenu(newFilteredApps)
