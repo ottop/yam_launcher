@@ -12,7 +12,8 @@ Key features:
 - Weather integration with [Open-Meteo](https://open-meteo.com/). (optional)
 - Work profile support.
 - Search on the bottom of the screen.
-- System fonts for an uniform look with your Android.
+- Contacts searching functionality. (optional)
+- Customizable fonts and font styles, defaults to your system font.
 - Material You support.
 - Simple by default, customizable under the hood. 
 - Accessibility Actions support.
@@ -92,6 +93,7 @@ Enabling weather integration will send the coordinates that are set for the weat
 - `EXPAND_STATUS_BAR` - Allows pulling down the status bar from the app.
 - `INTERNET` - Required for API calls to Open-Meteo. Only used if weather integration is enabled.
 - `ACCESS_COARSE_LOCATION` - Requested when enabling GPS location. Needs to be allowed to use GPS location.
+- `READ_CONTACTS` - Used to find contacts. Only necessary if the contacts menu is enabled. 
 - `SET_ALARM` - Used for the clock opening gesture on clicking the time. 
 - `QUERY_ALL_PACKAGES` - Used to ensure that the app properly detects all installed apps. 
 
