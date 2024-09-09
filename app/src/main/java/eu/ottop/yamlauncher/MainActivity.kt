@@ -742,27 +742,39 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         setupRecyclerListener(contactRecycler, contactMenuLinearLayoutManager)
 
         searchSwitcher.setOnClickListener {
-            menuView.showNext()
-            when (menuView.displayedChild) {
-                0 -> {
-                    searchSwitcher.setImageDrawable(
-                        ResourcesCompat.getDrawable(
-                            resources,
-                            R.drawable.contacts_24px,
-                            null
-                        )
-                    )
-                    searchSwitcher.contentDescription = getString(R.string.switch_to_contacts)
-                }
-                1 -> {
-                    lifecycleScope.launch(Dispatchers.Default) {
-                        filterItems(searchView.text.toString())
-                    }
-                    searchSwitcher.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.apps_24px, null))
-                    searchSwitcher.contentDescription = getString(R.string.switch_to_apps)
-                }
+            switchMenus()
+        }
+    }
+
+    fun switchMenus() {
+        menuView.showNext()
+        when (menuView.displayedChild) {
+            0 -> {
+                setAppViewDetails()
+            }
+            1 -> {
+                setContactViewDetails()
             }
         }
+    }
+
+    private fun setAppViewDetails() {
+        searchSwitcher.setImageDrawable(
+            ResourcesCompat.getDrawable(
+                resources,
+                R.drawable.contacts_24px,
+                null
+            )
+        )
+        searchSwitcher.contentDescription = getString(R.string.switch_to_contacts)
+    }
+
+    private fun setContactViewDetails() {
+        lifecycleScope.launch(Dispatchers.Default) {
+            filterItems(searchView.text.toString())
+        }
+        searchSwitcher.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.apps_24px, null))
+        searchSwitcher.contentDescription = getString(R.string.switch_to_apps)
     }
 
     private fun getContacts(filterString: String): MutableList<Pair<String, Int>> {

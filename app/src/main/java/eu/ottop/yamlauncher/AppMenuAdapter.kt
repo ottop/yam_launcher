@@ -188,6 +188,13 @@ class AppMenuAdapter(
             activity.backToHome()
             true
         }
+
+        if (sharedPreferenceManager.areContactsEnabled()) {
+            ViewCompat.addAccessibilityAction(holder.textView, activity.getString(R.string.switch_to_contacts)) { _, _ ->
+                activity.switchMenus()
+                true
+            }
+        }
     }
 
     override fun getItemCount(): Int {

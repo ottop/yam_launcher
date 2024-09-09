@@ -1,26 +1,26 @@
 package eu.ottop.yamlauncher
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import eu.ottop.yamlauncher.settings.SharedPreferenceManager
 import eu.ottop.yamlauncher.utils.UIUtils
 
 class ContactsAdapter(
-    private val context: Context,
+    private val activity: MainActivity,
     private var contacts: MutableList<Pair<String, Int>>,
     private val contactClickListener: OnContactClickListener
 ) :
     RecyclerView.Adapter<ContactsAdapter.AppViewHolder>() {
 
-        private val uiUtils = UIUtils(context)
-        private val sharedPreferenceManager = SharedPreferenceManager(context)
+        private val uiUtils = UIUtils(activity)
+        private val sharedPreferenceManager = SharedPreferenceManager(activity)
 
     interface OnContactClickListener {
         fun onContactClick(contactId: Int)
@@ -49,7 +49,7 @@ class ContactsAdapter(
     override fun onBindViewHolder(holder: AppViewHolder, position: Int) {
         val contact = contacts[position]
         holder.textView.setCompoundDrawablesWithIntrinsicBounds(
-            ResourcesCompat.getDrawable(context.resources, R.drawable.ic_empty, null),null, ResourcesCompat.getDrawable(context.resources, R.drawable.ic_empty, null),null)
+            ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null),null, ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null),null)
 
         uiUtils.setAppAlignment(holder.textView)
 
@@ -63,6 +63,18 @@ class ContactsAdapter(
         holder.textView.text = contact.first
 
         holder.textView.visibility = View.VISIBLE
+
+        ViewCompat.addAccessibilityAction(holder.textView, "Close App Menu") { _, _ ->
+            activity.backToHome()
+            true
+        }
+
+        if (sharedPreferenceManager.areContactsEnabled()) {
+            ViewCompat.addAccessibilityAction(holder.textView, activity.getString(R.string.switch_to_apps)) { _, _ ->
+                activity.switchMenus()
+                true
+            }
+        }
     }
 
     override fun getItemCount(): Int {
