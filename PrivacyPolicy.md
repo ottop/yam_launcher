@@ -13,6 +13,18 @@ By default, no more data is collected, but certain options may result in further
 ### Weather
 If you enable weather, the application stores the coordinates that you set for the location. If you have set a location manually, those are the coordinates of that location. If you use GPS location, your GPS coordinates are stored.
 
+### Permissions
+
+The application uses the following permissions:
+
+- `REQUEST_DELETE_PACKAGES` - Allows uninstallation of apps through the launcher's activity menu.
+- `EXPAND_STATUS_BAR` - Allows pulling down the status bar from the app.
+- `INTERNET` - Required for API calls to Open-Meteo. Only used if weather integration is enabled.
+- `ACCESS_COARSE_LOCATION` - Requested when enabling GPS location. Needs to be allowed to use GPS location.
+- `READ_CONTACTS` - Used to find contacts. Only necessary if the contacts menu is enabled. 
+- `SET_ALARM` - Used for the clock opening gesture on clicking the time. 
+- `QUERY_ALL_PACKAGES` - Used to ensure that the app properly detects all installed apps. 
+
 ### Accessibility service
 If you enable the Double Tap to Lock Screen preference, the application needs its accessibility service to be enabled. This means giving it "full control of your device" as described by the notification by Android. This permission is exclusively used to lock your phone's screen. The application does not collect any data using the service. 
 
