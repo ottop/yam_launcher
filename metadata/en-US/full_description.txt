@@ -4,11 +4,12 @@ Key features:
 
 - No flashy effects, icons or other distractions. Perfect for digital minimalism.
 - Customizable shortcuts for your most used apps.
-- Weather integration with Open-Meteo. (optional)
+- Weather integration with [Open-Meteo](https://open-meteo.com/). (optional)
 - Work profile support.
 - Search on the bottom of the screen.
-- System fonts for an uniform look with your Android.
+- Contacts searching functionality. (optional)
+- Customizable fonts and font styles, defaults to your system font.
 - Material You support.
-- Simple by default, customizable under the hood.
+- Simple by default, customizable under the hood. 
 - Accessibility Actions support.
 - Open-source under the MIT License.
