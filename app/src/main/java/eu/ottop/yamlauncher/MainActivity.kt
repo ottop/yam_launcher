@@ -884,7 +884,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     private suspend fun applySearchFilter(newFilteredApps: MutableList<Triple<LauncherActivityInfo, UserHandle, Int>>) {
-        if (menuView.displayedChild == 0 && appAdapter?.shortcutTextView == null && newFilteredApps.size == 1) {
+        if (sharedPreferenceManager.isAutoLaunchEnabled() && menuView.displayedChild == 0 && appAdapter?.shortcutTextView == null && newFilteredApps.size == 1) {
             appUtils.launchApp(newFilteredApps[0].first.applicationInfo.packageName, newFilteredApps[0].second)
         } else if (!listsEqual(installedApps, newFilteredApps)) {
             updateMenu(newFilteredApps)
