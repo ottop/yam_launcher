@@ -124,7 +124,6 @@ class SettingsActivity : AppCompatActivity() {
             }
             Toast.makeText(this, "Backup successful :)", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
-            e.printStackTrace()
             Toast.makeText(this, "Backup failed :(", Toast.LENGTH_SHORT).show()
         }
     }
