@@ -1,0 +1,10 @@
+Major feature release
+
+- You can now choose from a variety of fonts and font styles.
+- The vertical alignment of shortcuts can now be customized.
+- Added an option to enable a searchable contacts menu.
+- Added an option to automatically launch an app when it's the final search result.
+- Added options to backup and restore your launcher settings.
+- Changed the app context menu and search bar icons to material ones.
+- Added functional clicking effects to the app context menu.
+- Made the shortcut selection menu title scale according to app menu size.
