@@ -19,6 +19,7 @@ import android.widget.Space
 import android.widget.TextClock
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -104,18 +105,26 @@ class UIUtils(private val context: Context) {
             typedArray.recycle()
         }
 
+        val fontId = FontMap.fonts[font]
+
+        val newFont = if (fontId != null) {
+            ResourcesCompat.getFont(context, fontId)
+        } else {
+            Typeface.create(font, Typeface.NORMAL)
+        }
+
         when (style) {
             "normal" -> {
-                view.setTypeface(Typeface.create(font, Typeface.NORMAL))
+                view.setTypeface(Typeface.create(newFont, Typeface.NORMAL))
             }
             "bold" -> {
-                view.setTypeface(Typeface.create(font, Typeface.BOLD))
+                view.setTypeface(Typeface.create(newFont, Typeface.BOLD))
             }
             "italic" -> {
-                view.setTypeface(Typeface.create(font, Typeface.ITALIC))
+                view.setTypeface(Typeface.create(newFont, Typeface.ITALIC))
             }
             "bold-italic" -> {
-                view.setTypeface(Typeface.create(font, Typeface.BOLD_ITALIC))
+                view.setTypeface(Typeface.create(newFont, Typeface.BOLD_ITALIC))
             }
         }
     }
