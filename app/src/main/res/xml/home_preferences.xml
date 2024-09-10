@@ -116,13 +116,6 @@
             android:title="Weather"
             app:dependency="dateEnabled"
             app:key="weatherEnabled" />
-        <SwitchPreference
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:defaultValue="false"
-            android:title="GPS Location"
-            app:dependency="weatherEnabled"
-            app:key="gpsLocation" />
         <Preference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
