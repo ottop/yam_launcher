@@ -16,6 +16,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.ResultReceiver
 import android.os.UserHandle
 import android.provider.AlarmClock
 import android.provider.ContactsContract
@@ -278,10 +279,17 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         animations.showApps(binding.homeView, binding.appView)
         animations.backgroundIn(this@MainActivity)
         if (sharedPreferenceManager.isAutoKeyboardEnabled()) {
+            val keyboardReceiver = object : ResultReceiver(null) {
+                override fun onReceiveResult(resultCode: Int, resultData: Bundle?) {
+                super.onReceiveResult(resultCode, resultData)
+                    appRecycler.scrollToPosition(0)
+            }
+
+            }
             val imm =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             searchView.requestFocus()
-            imm.showSoftInput(searchView, InputMethodManager.SHOW_IMPLICIT)
+            imm.showSoftInput(searchView, InputMethodManager.SHOW_IMPLICIT, keyboardReceiver)
         }
     }
 
