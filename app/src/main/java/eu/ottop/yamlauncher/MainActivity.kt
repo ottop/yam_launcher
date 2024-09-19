@@ -269,9 +269,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         try {
             // The menu opens from the top
             appRecycler.scrollToPosition(0)
+            menuView.displayedChild = 0
             if (searchSwitcher.visibility == View.VISIBLE) {
                 contactRecycler.scrollToPosition(0)
-                menuView.displayedChild = 0
                 setAppViewDetails()
             }
         }
