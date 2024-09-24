@@ -16,7 +16,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.os.ResultReceiver
 import android.os.UserHandle
 import android.provider.AlarmClock
 import android.provider.ContactsContract
@@ -120,6 +119,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private lateinit var shortcutGestureDetector: GestureDetector
 
     var returnAllowed = true
+
+    private var isInitialOpen = false
 
     private val handler = Handler(Looper.getMainLooper())
 
@@ -279,17 +280,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         animations.showApps(binding.homeView, binding.appView)
         animations.backgroundIn(this@MainActivity)
         if (sharedPreferenceManager.isAutoKeyboardEnabled()) {
-            val keyboardReceiver = object : ResultReceiver(null) {
-                override fun onReceiveResult(resultCode: Int, resultData: Bundle?) {
-                super.onReceiveResult(resultCode, resultData)
-                    appRecycler.scrollToPosition(0)
-            }
-
-            }
+            isInitialOpen = true
             val imm =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             searchView.requestFocus()
-            imm.showSoftInput(searchView, InputMethodManager.SHOW_IMPLICIT, keyboardReceiver)
+            imm.showSoftInput(searchView, InputMethodManager.SHOW_IMPLICIT)
         }
     }
 
@@ -836,6 +831,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             if (bottom - top > oldBottom - oldTop) {
                 // If keyboard is closed, remove cursor from the search bar
                 searchView.clearFocus()
+            } else if (bottom - top < oldBottom - oldTop && isInitialOpen) {
+                isInitialOpen = false
+                appRecycler.scrollToPosition(0)
             }
 
         }
