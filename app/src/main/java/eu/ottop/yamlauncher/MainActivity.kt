@@ -1039,8 +1039,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 }
 
                 // Swipe left
-                else if (deltaX < -swipeThreshold && abs(velocityX) > swipeVelocityThreshold && sharedPreferenceManager.isGestureEnabled("left")){
+                else if (deltaX < 0 && abs(deltaX) > swipeThreshold && abs(velocityX) > swipeVelocityThreshold && sharedPreferenceManager.isGestureEnabled("left")){
                     if (leftSwipeActivity.first != null && leftSwipeActivity.second != null) {
+                        canLaunchShortcut = false
                         launcherApps.startMainActivity(leftSwipeActivity.first!!.componentName,  launcherApps.profiles[leftSwipeActivity.second!!], null, null)
                     } else {
                         Toast.makeText(this@MainActivity, "Cannot launch app", Toast.LENGTH_SHORT).show()
@@ -1049,8 +1050,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
 
                 // Swipe right
-                else if (deltaX > -swipeThreshold && abs(velocityX) > swipeVelocityThreshold && sharedPreferenceManager.isGestureEnabled("right")) {
+                else if (deltaX > 0 && abs(deltaX) > swipeThreshold && abs(velocityX) > swipeVelocityThreshold && sharedPreferenceManager.isGestureEnabled("right")) {
                     if (rightSwipeActivity.first != null && rightSwipeActivity.second != null) {
+                        canLaunchShortcut = false
                         launcherApps.startMainActivity(rightSwipeActivity.first!!.componentName,  launcherApps.profiles[rightSwipeActivity.second!!], null, null)
                     } else {
                         Toast.makeText(this@MainActivity, "Cannot launch app", Toast.LENGTH_SHORT).show()
