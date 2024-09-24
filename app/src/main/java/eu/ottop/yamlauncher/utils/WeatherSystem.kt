@@ -46,6 +46,11 @@ class WeatherSystem(private val context: Context) {
                     sharedPreferenceManager.setWeatherLocation("latitude=${latitude}&longitude=${longitude}", "Latest GPS location")
                     activity.updateWeatherText()
                 }
+
+            } else {
+                CoroutineScope(Dispatchers.IO).launch {
+                    activity.updateWeatherText()
+                }
             }
         }
 
