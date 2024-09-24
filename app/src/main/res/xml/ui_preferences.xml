@@ -59,7 +59,7 @@
         <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:defaultValue="200"
+            android:defaultValue="100"
             android:entries="@array/animation_options"
             android:entryValues="@array/swipe_values"
             app:key="swipeThreshold"
@@ -68,7 +68,7 @@
         <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:defaultValue="200"
+            android:defaultValue="100"
             android:entries="@array/animation_options"
             android:entryValues="@array/swipe_values"
             app:key="swipeVelocity"
