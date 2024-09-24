@@ -1015,6 +1015,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             velocityX: Float,
             velocityY: Float
         ): Boolean {
+            if (animations.isInAnim) {
+                return false
+            }
             if (e1 != null) {
                 val deltaY = e2.y - e1.y
                 val deltaX = e2.x - e1.x

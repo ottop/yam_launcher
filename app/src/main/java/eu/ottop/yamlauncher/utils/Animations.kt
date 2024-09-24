@@ -13,6 +13,7 @@ import eu.ottop.yamlauncher.settings.SharedPreferenceManager
 class Animations (context: Context) {
 
     private val sharedPreferenceManager = SharedPreferenceManager(context)
+    var isInAnim = false
 
     // fadeViewIn and fadeViewOut are for smaller item transitions, such as the action menu
 
@@ -93,7 +94,7 @@ class Animations (context: Context) {
 
     private fun View.slideOutToBottom(duration: Long) {
         if (visibility == View.VISIBLE) {
-
+            isInAnim = true
             animate()
                 .translationY(height.toFloat() / 5)
                 .scaleY(1.2f)
@@ -101,7 +102,14 @@ class Animations (context: Context) {
                 .setDuration(duration/2)
                 .setListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator) {
+                        super.onAnimationEnd(animation)
                         visibility = View.INVISIBLE
+                        isInAnim = false
+                    }
+                    override fun onAnimationCancel(animation: Animator) {
+                        super.onAnimationCancel(animation)
+                        visibility = View.INVISIBLE
+                        isInAnim = false
                     }
                 })
         }
@@ -118,12 +126,12 @@ class Animations (context: Context) {
                 .translationY(0f)
                 .setDuration(duration)
                 .setListener(null)
-
         }
     }
 
     private fun View.fadeOut() {
         if (visibility == View.VISIBLE) {
+            isInAnim = true
             val duration = sharedPreferenceManager.getAnimationSpeed()
 
             animate()
@@ -132,7 +140,14 @@ class Animations (context: Context) {
                 .setDuration(duration/2)
                 .setListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator) {
+                        super.onAnimationEnd(animation)
                         visibility = View.INVISIBLE
+                        isInAnim = false
+                    }
+                    override fun onAnimationCancel(animation: Animator) {
+                        super.onAnimationCancel(animation)
+                        visibility = View.INVISIBLE
+                        isInAnim = false
                     }
                 })
 
