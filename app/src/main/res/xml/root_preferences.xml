@@ -89,6 +89,12 @@
         <Preference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:key="restartLauncher"
+            app:selectable="true"
+            app:title="Restart YAM Launcher" />
+        <Preference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:key="resetAll"
             app:selectable="true"
             app:title="Reset All Settings" />

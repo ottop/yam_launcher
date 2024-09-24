@@ -30,6 +30,7 @@ class SettingsFragment : PreferenceFragmentCompat(), TitleProvider {
         val backupPref = findPreference<Preference>("backup")
         val restorePref = findPreference<Preference>("restore")
         val aboutPref = findPreference<Preference>("aboutPage")
+        val restartPref = findPreference<Preference>("restartLauncher")
         val resetPref = findPreference<Preference>("resetAll")
 
         homePref?.onPreferenceClickListener =
@@ -75,6 +76,11 @@ class SettingsFragment : PreferenceFragmentCompat(), TitleProvider {
         aboutPref?.onPreferenceClickListener =
             Preference.OnPreferenceClickListener {
                 uiUtils.switchFragment(requireActivity(), AboutFragment())
+                true }
+
+        restartPref?.onPreferenceClickListener =
+            Preference.OnPreferenceClickListener {
+                (requireActivity() as SettingsActivity).restartApp()
                 true }
 
         resetPref?.onPreferenceClickListener =

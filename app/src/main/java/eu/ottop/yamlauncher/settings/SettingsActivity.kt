@@ -2,6 +2,7 @@ package eu.ottop.yamlauncher.settings
 
 import android.Manifest
 import android.app.Activity
+import android.app.PendingIntent
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -13,6 +14,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.preference.PreferenceManager
+import eu.ottop.yamlauncher.MainActivity
 import eu.ottop.yamlauncher.R
 import eu.ottop.yamlauncher.databinding.ActivitySettingsBinding
 import eu.ottop.yamlauncher.utils.PermissionUtils
@@ -30,7 +32,6 @@ class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         sharedPreferenceManager = SharedPreferenceManager(this@SettingsActivity)
 
         preferences = PreferenceManager.getDefaultSharedPreferences(this@SettingsActivity)
@@ -196,6 +197,17 @@ class SettingsActivity : AppCompatActivity() {
                 1
             )
         } catch(_: Exception) {}
+    }
+
+    fun restartApp() {
+        val restartIntent = Intent(applicationContext, MainActivity::class.java)
+        restartIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+
+        val pendingIntent = PendingIntent.getActivity(
+            applicationContext, 0, restartIntent, PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        pendingIntent.send()
     }
 
     override fun onRequestPermissionsResult(
