@@ -1,0 +1,8 @@
+Bug fix release
+
+- Fixed a bug with disabling the contacts menu while it was the last open menu.
+- Fixed a bug with the persistence of GPS location for weather.
+- Fixed a minor animation bug.
+- Improved gesture detection and made swipe thresholds customizable.
+- The app menu is now scrolled to the top initially even when automatic keyboard opening is enabled.
+- Added an option to restart the launcher in the settings.
