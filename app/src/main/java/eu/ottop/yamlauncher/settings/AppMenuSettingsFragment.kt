@@ -1,15 +1,11 @@
 package eu.ottop.yamlauncher.settings
 
 import android.Manifest
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import eu.ottop.yamlauncher.R
-import eu.ottop.yamlauncher.utils.AppUtils
 import eu.ottop.yamlauncher.utils.PermissionUtils
 
 class AppMenuSettingsFragment : PreferenceFragmentCompat(), TitleProvider {

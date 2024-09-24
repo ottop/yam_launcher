@@ -52,13 +52,8 @@ class AppMenuAdapter(
 
     interface OnItemLongClickListener {
         fun onItemLongClick(
-            appInfo: LauncherActivityInfo,
-            userHandle: UserHandle,
-            userProfile: Int,
             textView: TextView,
-            actionMenuLayout: LinearLayout,
-            editView: LinearLayout,
-            position: Int
+            actionMenuLayout: LinearLayout
         )
     }
 
@@ -95,13 +90,8 @@ class AppMenuAdapter(
                 } else {
 
                 itemLongClickListener.onItemLongClick(
-                    app,
-                    apps[position].second,
-                    apps[position].third,
                     textView,
-                    actionMenuLayout,
-                    editView,
-                    position
+                    actionMenuLayout
                 )
                 return@setOnLongClickListener true
             }}

@@ -998,13 +998,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
 
     override fun onItemLongClick(
-        appInfo: LauncherActivityInfo,
-        userHandle: UserHandle,
-        userProfile: Int,
         textView: TextView,
         actionMenuLayout: LinearLayout,
-        editView: LinearLayout,
-        position: Int
     ) {
         textView.visibility = View.INVISIBLE
         animations.fadeViewIn(actionMenuLayout)
