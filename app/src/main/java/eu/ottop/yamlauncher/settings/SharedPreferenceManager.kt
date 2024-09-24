@@ -124,10 +124,6 @@ class SharedPreferenceManager (private val context: Context) {
         return preferences.getBoolean("weatherEnabled", false)
     }
 
-    fun isWeatherGPS(): Boolean {
-        return preferences.getBoolean("gpsLocation", false)
-    }
-
     fun setWeatherLocation(location: String, region: String?) {
         val editor = preferences.edit()
         editor.putString("location", location)

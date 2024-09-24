@@ -686,11 +686,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private suspend fun updateWeather() {
         withContext(Dispatchers.IO) {
             if (sharedPreferenceManager.isWeatherEnabled()) {
-                if (sharedPreferenceManager.isWeatherGPS()) {
-                    weatherSystem.setGpsLocation(this@MainActivity)
-                } else {
                     updateWeatherText()
-                }
             }
             else {
                 withContext(Dispatchers.Main) {

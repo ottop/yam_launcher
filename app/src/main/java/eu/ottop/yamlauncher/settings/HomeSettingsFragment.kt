@@ -3,7 +3,6 @@ package eu.ottop.yamlauncher.settings
 import android.os.Bundle
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.SwitchPreference
 import eu.ottop.yamlauncher.R
 import eu.ottop.yamlauncher.utils.UIUtils
 
@@ -26,28 +25,15 @@ class HomeSettingsFragment : PreferenceFragmentCompat(), TitleProvider {
             clockApp = findPreference("clockSwipeApp")
             dateApp = findPreference("dateSwipeApp")
 
-            val gpsLocationPref = findPreference<SwitchPreference?>("gpsLocation")
             manualLocationPref = findPreference("manualLocation")
             leftSwipePref = findPreference("leftSwipeApp")
             rightSwipePref = findPreference("rightSwipeApp")
 
-            // Only enable manual location when gps location is disabled
-            if (gpsLocationPref != null && manualLocationPref != null) {
-                manualLocationPref?.isEnabled = !gpsLocationPref.isChecked
-
-                gpsLocationPref.onPreferenceChangeListener =
-                    Preference.OnPreferenceChangeListener { _, newValue ->
-                        val isGpsEnabled = newValue as Boolean
-                        manualLocationPref?.isEnabled = !isGpsEnabled
-                        true
-                    }
-
-                manualLocationPref?.onPreferenceClickListener =
-                    Preference.OnPreferenceClickListener {
-                        uiUtils.switchFragment(requireActivity(), LocationFragment())
-                        true
-                    }
-            }
+            manualLocationPref?.onPreferenceClickListener =
+                Preference.OnPreferenceClickListener {
+                    uiUtils.switchFragment(requireActivity(), LocationFragment())
+                    true
+                }
 
             leftSwipePref?.onPreferenceClickListener =
                 Preference.OnPreferenceClickListener {

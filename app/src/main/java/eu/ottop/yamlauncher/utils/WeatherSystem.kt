@@ -1,17 +1,7 @@
 package eu.ottop.yamlauncher.utils
 
-import android.Manifest
 import android.content.Context
-import android.content.pm.PackageManager
-import android.location.Location
-import android.location.LocationManager
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import eu.ottop.yamlauncher.MainActivity
 import eu.ottop.yamlauncher.settings.SharedPreferenceManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
@@ -20,41 +10,6 @@ class WeatherSystem(private val context: Context) {
 
     private val sharedPreferenceManager = SharedPreferenceManager(context)
     private val stringUtils = StringUtils()
-
-    suspend fun setGpsLocation(activity: MainActivity) {
-        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(
-                activity,
-                arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
-                1
-            )
-            return
-        }
-
-        locationManager.getCurrentLocation(
-            LocationManager.GPS_PROVIDER, // Only GPS provider functions on my phone with CalyxOS, so that's what you get.
-            null,
-            ContextCompat.getMainExecutor(context)
-        )
-        { location: Location? ->
-            if (location != null) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    val latitude = location.latitude
-                    val longitude = location.longitude
-                    sharedPreferenceManager.setWeatherLocation("latitude=${latitude}&longitude=${longitude}", "Latest GPS location")
-                    activity.updateWeatherText()
-                }
-
-            } else {
-                CoroutineScope(Dispatchers.IO).launch {
-                    activity.updateWeatherText()
-                }
-            }
-        }
-
-    }
 
     // Run within Dispatchers.IO from the outside (doesn't seem to refresh properly otherwise)
     fun getSearchedLocations(searchTerm: String?) : MutableList<Map<String, String>> {
