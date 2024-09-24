@@ -7,7 +7,6 @@ import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Context
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.view.View
 import eu.ottop.yamlauncher.settings.SharedPreferenceManager
 
@@ -41,12 +40,10 @@ class Animations (context: Context) {
         // Only animate darkness onto the transparent background
         if (originalColor == Color.parseColor("#00000000")) {
             val newColor = Color.parseColor("#3F000000")
-            val colorDrawable = ColorDrawable(originalColor)
-            activity.window.setBackgroundDrawable(colorDrawable)
 
             val backgroundColorAnimator = ValueAnimator.ofObject(ArgbEvaluator(), originalColor, newColor)
             backgroundColorAnimator.addUpdateListener { animator ->
-                colorDrawable.color = animator.animatedValue as Int
+                activity.window.decorView.setBackgroundColor(animator.animatedValue as Int)
             }
 
             val duration = sharedPreferenceManager.getAnimationSpeed()
@@ -64,12 +61,10 @@ class Animations (context: Context) {
         // Only animate darkness onto the transparent background
         if (newColor == Color.parseColor("#00000000")) {
             val originalColor = Color.parseColor("#3F000000")
-            val colorDrawable = ColorDrawable(originalColor)
-            activity.window.setBackgroundDrawable(colorDrawable)
 
             val backgroundColorAnimator = ValueAnimator.ofObject(ArgbEvaluator(), originalColor, newColor)
             backgroundColorAnimator.addUpdateListener { animator ->
-                colorDrawable.color = animator.animatedValue as Int
+                activity.window.decorView.setBackgroundColor(animator.animatedValue as Int)
             }
 
             backgroundColorAnimator.duration = duration
