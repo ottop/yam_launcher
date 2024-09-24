@@ -105,9 +105,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private var isBatteryReceiverRegistered = false
     private var isJobActive = true
+    private var isInitialOpen = false
+    private var canLaunchShortcut = true
 
-    private val swipeThreshold = 100
-    private val swipeVelocityThreshold = 100
+    private var swipeThreshold = 100
+    private var swipeVelocityThreshold = 100
 
     private lateinit var clockApp: Pair<LauncherActivityInfo?, Int?>
     private lateinit var dateApp: Pair<LauncherActivityInfo?, Int?>
@@ -119,8 +121,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private lateinit var shortcutGestureDetector: GestureDetector
 
     var returnAllowed = true
-
-    private var isInitialOpen = false
 
     private val handler = Handler(Looper.getMainLooper())
 
@@ -295,7 +295,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private fun unsetShortcutListeners(textView: TextView) {
         textView.setOnClickListener {
-            Toast.makeText(this, "Long click to select an app", Toast.LENGTH_SHORT).show()
+            if (canLaunchShortcut) {
+                Toast.makeText(this, "Long click to select an app", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -311,7 +313,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private fun setShortcutListeners(textView: TextView, savedView: List<String>?) {
         textView.setOnClickListener {
-            if (savedView != null) {
+            if (savedView != null && canLaunchShortcut) {
                 appUtils.launchApp(savedView[0], launcherApps.profiles[savedView[1].toInt()])
             }
         }
@@ -353,6 +355,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         leftSwipeActivity = gestureUtils.getSwipeInfo(launcherApps, "left")
         rightSwipeActivity = gestureUtils.getSwipeInfo(launcherApps, "right")
+
+        swipeThreshold = sharedPreferenceManager.getSwipeThreshold()
+        swipeVelocityThreshold = sharedPreferenceManager.getSwipeVelocity()
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -583,6 +588,14 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     setShortcuts()
                 }
 
+                "swipeThreshold" -> {
+                    swipeThreshold = sharedPreferenceManager.getSwipeThreshold()
+                }
+
+                "swipeVelocity" -> {
+                    swipeVelocityThreshold = sharedPreferenceManager.getSwipeVelocity()
+                }
+
                 "isRestored" -> {
                     preferences.edit().remove("isRestored").apply()
                     setPreferences()
@@ -604,6 +617,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     fun backToHome(animSpeed: Long = sharedPreferenceManager.getAnimationSpeed()) {
+        canLaunchShortcut = true
         closeKeyboard()
         animations.showHome(binding.homeView, binding.appView, animSpeed)
         animations.backgroundOut(this@MainActivity, animSpeed)
@@ -1012,6 +1026,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
                 // Swipe up
                 if (deltaY < -swipeThreshold && abs(velocityY) > swipeVelocityThreshold) {
+                    canLaunchShortcut = false
                     openAppMenu()
                 }
 

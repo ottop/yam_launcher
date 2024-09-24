@@ -55,6 +55,14 @@ class SharedPreferenceManager (private val context: Context) {
         return 200
     }
 
+    fun getSwipeThreshold(): Int {
+        return preferences.getString("swipeThreshold", "100")?.toInt() ?: 100
+    }
+
+    fun getSwipeVelocity(): Int {
+        return preferences.getString("swipeVelocity", "100")?.toInt() ?: 100
+    }
+
     // Home Screen
     fun isClockEnabled(): Boolean {
         return preferences.getBoolean("clockEnabled", true)

@@ -56,6 +56,24 @@
             app:key="animationSpeed"
             app:title="Animation Speed"
             app:useSimpleSummaryProvider="true" />
+        <eu.ottop.yamlauncher.settings.SpinnerPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="200"
+            android:entries="@array/animation_options"
+            android:entryValues="@array/swipe_values"
+            app:key="swipeThreshold"
+            app:title="Swipe Threshold"
+            app:useSimpleSummaryProvider="true" />
+        <eu.ottop.yamlauncher.settings.SpinnerPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="200"
+            android:entries="@array/animation_options"
+            android:entryValues="@array/swipe_values"
+            app:key="swipeVelocity"
+            app:title="Swipe Velocity Threshold"
+            app:useSimpleSummaryProvider="true" />
         <SwitchPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

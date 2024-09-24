@@ -99,6 +99,14 @@
         <item>50</item>
     </string-array>
 
+    <string-array name="swipe_values">
+        <item>25</item>
+        <item>50</item>
+        <item>100</item>
+        <item>200</item>
+        <item>400</item>
+    </string-array>
+
     <!--Home and App Menu-->
     <string-array name="shortcut_options">
         <item>0</item>
