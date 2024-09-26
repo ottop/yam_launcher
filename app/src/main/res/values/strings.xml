@@ -7,8 +7,6 @@
 
     <!--App Menu Titles-->
     <string name="select_an_app">Select an app</string>
-    <string name="unhide_an_app">Unhide an app</string>
-    <string name="find_your_city">Find your city</string>
 
     <string name="search">Search…</string>
 
