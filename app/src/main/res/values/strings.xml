@@ -6,7 +6,7 @@
     <string name="shortcut_default">App</string>
 
     <!--App Menu Titles-->
-    <string name="select_an_app">Select an app</string>
+    <string name="select_an_app">Select a shortcut</string>
 
     <string name="search">Search…</string>
 
