@@ -7,97 +7,97 @@
         android:layout_height="wrap_content"
         app:key="defaultHome"
         app:selectable="true"
-        app:title="Set Default Home" />
+        app:title="@string/default_home" />
 
     <PreferenceCategory
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:allowDividerAbove="false"
-        app:title="Customization" >
+        app:title="@string/customization" >
         <Preference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:key="uiSettings"
             app:selectable="true"
-            app:summary="Configure the overall look"
-            app:title="General UI" />
+            app:summary="@string/ui_settings_summary"
+            app:title="@string/ui_settings_text" />
         <Preference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:key="homeSettings"
             app:selectable="true"
-            app:summary="Configure the home screen"
-            app:title="Home Screen" />
+            app:summary="@string/home_settings_summary"
+            app:title="@string/home_settings_text" />
         <Preference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:key="appMenuSettings"
             app:selectable="true"
-            app:summary="Configure the application menu"
-            app:title="App Menu" />
+            app:summary="@string/app_settings_summary"
+            app:title="@string/app_settings_text" />
     </PreferenceCategory>
     <PreferenceCategory
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:allowDividerAbove="false"
-        app:title="Hidden Apps">
+        app:title="@string/hidden_apps_title">
         <Preference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:key="hiddenApps"
             app:selectable="true"
-            app:summary="Unhide Apps"
-            app:title="Manage Hidden Apps" />
+            app:summary="@string/hidden_apps_summary"
+            app:title="@string/hidden_apps_text" />
     </PreferenceCategory>
     <PreferenceCategory
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:allowDividerAbove="false"
-        app:title="Backup and Restore">
+        app:title="@string/backup_restore">
         <Preference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:key="backup"
             app:selectable="true"
-            app:summary="Backup your settings"
-            app:title="Backup" />
+            app:summary="@string/backup_summary"
+            app:title="@string/backup" />
         <Preference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:key="restore"
             app:selectable="true"
-            app:summary="Restore a backup"
-            app:title="Restore" />
+            app:summary="@string/restore_summary"
+            app:title="@string/restore" />
     </PreferenceCategory>
     <PreferenceCategory
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:allowDividerAbove="false"
-        app:title="About">
+        app:title="@string/about">
         <Preference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:key="aboutPage"
             app:selectable="true"
-            app:title="About YAM Launcher" />
+            app:title="@string/about_title" />
     </PreferenceCategory>
     <PreferenceCategory
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:allowDividerAbove="false"
-        app:title="Reset">
+        app:title="@string/reset">
         <Preference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:key="restartLauncher"
             app:selectable="true"
-            app:title="Restart YAM Launcher" />
+            app:title="@string/restart_text" />
         <Preference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:key="resetAll"
             app:selectable="true"
-            app:title="Reset All Settings" />
+            app:title="@string/reset_text" />
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -6,6 +6,7 @@ import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
 import android.os.UserHandle
 import android.widget.Toast
+import eu.ottop.yamlauncher.R
 import eu.ottop.yamlauncher.settings.SharedPreferenceManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -84,7 +85,7 @@ class AppUtils(private val context: Context, private val launcherApps: LauncherA
         if (mainActivity != null) {
             launcherApps.startMainActivity(mainActivity.componentName,  userHandle, null, null)
         } else {
-            Toast.makeText(context, "Cannot launch app", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.launch_error), Toast.LENGTH_SHORT).show()
         }
     }
 }

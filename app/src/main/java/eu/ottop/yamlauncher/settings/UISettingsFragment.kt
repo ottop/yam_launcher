@@ -11,6 +11,6 @@ class UISettingsFragment : PreferenceFragmentCompat(), TitleProvider {
     }
 
     override fun getTitle(): String {
-        return "General UI Settings"
+        return getString(R.string.ui_settings_title)
     }
 }

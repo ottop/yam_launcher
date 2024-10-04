@@ -4,7 +4,7 @@
     <PreferenceCategory
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:title="Appearance"
+        android:title="@string/appearance"
         app:allowDividerAbove="false">
         <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
@@ -13,7 +13,7 @@
             android:entries="@array/bg_options"
             android:entryValues="@array/bg_values"
             app:key="bgColor"
-            app:title="Background Color"
+            app:title="@string/background_color"
             app:useSimpleSummaryProvider="true" />
         <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
@@ -22,7 +22,7 @@
             android:entries="@array/color_options"
             android:entryValues="@array/color_values"
             app:key="textColor"
-            app:title="Text Color"
+            app:title="@string/text_color"
             app:useSimpleSummaryProvider="true" />
         <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
@@ -31,7 +31,7 @@
             android:entries="@array/font_options"
             android:entryValues="@array/font_values"
             app:key="textFont"
-            app:title="Text Font"
+            app:title="@string/text_font"
             app:useSimpleSummaryProvider="true" />
 
         <eu.ottop.yamlauncher.settings.SpinnerPreference
@@ -41,11 +41,11 @@
             android:entries="@array/style_options"
             android:entryValues="@array/style_values"
             app:key="textStyle"
-            app:title="Text Style"
+            app:title="@string/text_style"
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
     <PreferenceCategory
-        android:title="Operation"
+        android:title="@string/operation"
         app:allowDividerAbove="false">
         <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
@@ -54,7 +54,7 @@
             android:entries="@array/animation_options"
             android:entryValues="@array/animation_values"
             app:key="animationSpeed"
-            app:title="Animation Speed"
+            app:title="@string/animation_speed"
             app:useSimpleSummaryProvider="true" />
         <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
@@ -63,7 +63,7 @@
             android:entries="@array/animation_options"
             android:entryValues="@array/swipe_values"
             app:key="swipeThreshold"
-            app:title="Swipe Threshold"
+            app:title="@string/swipe_threshold"
             app:useSimpleSummaryProvider="true" />
         <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
@@ -72,13 +72,13 @@
             android:entries="@array/animation_options"
             android:entryValues="@array/swipe_values"
             app:key="swipeVelocity"
-            app:title="Swipe Velocity Threshold"
+            app:title="@string/swipe_velocity_threshold"
             app:useSimpleSummaryProvider="true" />
         <SwitchPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:defaultValue="false"
-            android:title="Show Status Bar"
+            android:title="@string/show_status_bar"
             app:key="barVisibility" />
     </PreferenceCategory>
 

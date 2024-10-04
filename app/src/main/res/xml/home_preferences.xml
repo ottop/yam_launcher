@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory
-        android:title="Clock"
+        android:title="@string/clock"
         app:allowDividerAbove="false"
         app:allowDividerBelow="false">
 
@@ -11,7 +11,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:defaultValue="true"
-            android:title="Show Clock"
+            android:title="@string/show_clock"
             app:key="clockEnabled" />
         <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:defaultValue="left"
@@ -19,7 +19,7 @@
             android:entries="@array/h_alignment_options"
             android:entryValues="@array/h_alignment_values"
             app:key="clockAlignment"
-            app:title="Clock Alignment"
+            app:title="@string/clock_alignment"
             app:useSimpleSummaryProvider="true" />
         <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
@@ -29,20 +29,20 @@
             android:entries="@array/size_options"
             android:entryValues="@array/size_values"
             app:key="clockSize"
-            app:title="Clock Size"
+            app:title="@string/clock_size"
             app:useSimpleSummaryProvider="true" />
         <SwitchPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:defaultValue="true"
-            android:title="Clicking Time Opens Clock"
+            android:title="@string/clicking_time_opens_clock"
             app:dependency="clockEnabled"
             app:key="clockClick" />
         <SwitchPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:defaultValue="false"
-            android:title="Custom Clock"
+            android:title="@string/custom_clock_gesture"
             app:dependency="clockClick"
             app:key="clockSwipe" />
         <Preference
@@ -51,10 +51,10 @@
             app:dependency="clockSwipe"
             app:key="clockSwipeApp"
             app:selectable="true"
-            app:title="Set Clock App" />
+            app:title="@string/set_clock_app" />
     </PreferenceCategory>
     <PreferenceCategory
-        android:title="Date"
+        android:title="@string/date"
         app:allowDividerAbove="false"
         app:allowDividerBelow="false">
 
@@ -62,7 +62,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:defaultValue="true"
-            android:title="Show Date"
+            android:title="@string/show_date"
             app:key="dateEnabled" />
         <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
@@ -72,27 +72,27 @@
             android:entries="@array/size_options"
             android:entryValues="@array/size_values"
             app:key="dateSize"
-            app:title="Date Size"
+            app:title="@string/date_size"
             app:useSimpleSummaryProvider="true" />
         <SwitchPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:defaultValue="false"
-            android:title="Battery Indicator"
+            android:title="@string/battery_indicator"
             app:dependency="dateEnabled"
             app:key="batteryEnabled" />
         <SwitchPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:defaultValue="true"
-            android:title="Clicking Date Opens Calendar"
+            android:title="@string/clicking_date_opens_calendar"
             app:dependency="dateEnabled"
             app:key="dateClick" />
         <SwitchPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:defaultValue="false"
-            android:title="Custom Calendar"
+            android:title="@string/custom_date_gesture"
             app:dependency="dateClick"
             app:key="dateSwipe" />
         <Preference
@@ -101,26 +101,26 @@
             app:dependency="dateSwipe"
             app:key="dateSwipeApp"
             app:selectable="true"
-            app:title="Set Calendar App" />
+            app:title="@string/set_calendar_app" />
     </PreferenceCategory>
     <PreferenceCategory
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:allowDividerAbove="false"
         app:allowDividerBelow="false"
-        app:title="Weather">
+        app:title="@string/weather">
         <SwitchPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:defaultValue="false"
-            android:title="Weather"
+            android:title="@string/weather"
             app:dependency="dateEnabled"
             app:key="weatherEnabled" />
         <SwitchPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:defaultValue="false"
-            android:title="GPS Location"
+            android:title="@string/gps_location"
             app:dependency="weatherEnabled"
             app:key="gpsLocation" />
         <Preference
@@ -129,7 +129,7 @@
             app:dependency="weatherEnabled"
             app:key="manualLocation"
             app:selectable="true"
-            app:title="Set Manual Location" />
+            app:title="@string/set_manual_location" />
         <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -138,7 +138,7 @@
             android:entries="@array/temp_units"
             android:entryValues="@array/unit_values"
             app:key="tempUnits"
-            app:title="Units"
+            app:title="@string/units"
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
     <PreferenceCategory
@@ -146,7 +146,7 @@
         android:layout_height="wrap_content"
         app:allowDividerAbove="false"
         app:allowDividerBelow="false"
-        app:title="Shortcuts">
+        app:title="@string/shortcuts">
         <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -154,7 +154,7 @@
             android:entries="@array/shortcut_options"
             android:entryValues="@array/shortcut_options"
             app:key="shortcutNo"
-            app:title="Number of Shortcuts"
+            app:title="@string/number_of_shortcuts"
             app:useSimpleSummaryProvider="true" />
         <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
@@ -163,7 +163,7 @@
             android:entries="@array/h_alignment_options"
             android:entryValues="@array/h_alignment_values"
             app:key="shortcutAlignment"
-            app:title="Horizontal Alignment"
+            app:title="@string/horizontal_alignment"
             app:useSimpleSummaryProvider="true" />
         <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
@@ -172,7 +172,7 @@
             android:entries="@array/v_alignment_options"
             android:entryValues="@array/v_alignment_values"
             app:key="shortcutVAlignment"
-            app:title="Vertical Alignment"
+            app:title="@string/vertical_alignment"
             app:useSimpleSummaryProvider="true" />
         <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
@@ -181,7 +181,7 @@
             android:entries="@array/size_options"
             android:entryValues="@array/size_values"
             app:key="shortcutSize"
-            app:title="Shortcut Size"
+            app:title="@string/shortcut_size"
             app:useSimpleSummaryProvider="true" />
         <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
@@ -190,7 +190,7 @@
             android:entries="@array/shortcut_spacing_options"
             android:entryValues="@array/shortcut_spacing_values"
             app:key="shortcutWeight"
-            app:title="Shortcut Spacing"
+            app:title="@string/shortcut_spacing"
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
     <PreferenceCategory
@@ -198,12 +198,12 @@
         android:layout_height="wrap_content"
         app:allowDividerAbove="false"
         app:allowDividerBelow="false"
-        app:title="Gestures">
+        app:title="@string/gestures">
         <SwitchPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:defaultValue="false"
-            android:title="Swipe Left"
+            android:title="@string/swipe_left"
             app:key="leftSwipe" />
         <Preference
             android:layout_width="wrap_content"
@@ -211,12 +211,12 @@
             app:dependency="leftSwipe"
             app:key="leftSwipeApp"
             app:selectable="true"
-            app:title="Left Swipe App" />
+            app:title="@string/left_swipe_app" />
         <SwitchPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:defaultValue="false"
-            android:title="Swipe Right"
+            android:title="@string/swipe_right"
             app:key="rightSwipe" />
         <Preference
             android:layout_width="wrap_content"
@@ -224,12 +224,12 @@
             app:dependency="rightSwipe"
             app:key="rightSwipeApp"
             app:selectable="true"
-            app:title="Right Swipe App" />
+            app:title="@string/right_swipe_app" />
         <SwitchPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:defaultValue="false"
-            android:title="Double Tap to Lock Screen"
+            android:title="@string/double_tap_to_lock_screen"
             app:key="doubleTap" />
     </PreferenceCategory>
 

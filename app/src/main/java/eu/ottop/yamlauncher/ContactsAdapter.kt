@@ -64,7 +64,7 @@ class ContactsAdapter(
 
         holder.textView.visibility = View.VISIBLE
 
-        ViewCompat.addAccessibilityAction(holder.textView, "Close App Menu") { _, _ ->
+        ViewCompat.addAccessibilityAction(holder.textView, activity.getString(R.string.close_app_menu)) { _, _ ->
             activity.backToHome()
             true
         }

@@ -135,14 +135,14 @@ class GestureAppsFragment(private val direction: String) : Fragment(),
 
     private fun showConfirmationDialog(appInfo: LauncherActivityInfo, appName: String, profile: Int) {
         AlertDialog.Builder(requireContext()).apply {
-            setTitle("Confirmation")
-            setMessage("Are you sure you want to choose $appName?")
+            setTitle(getString(R.string.confirm_title))
+            setMessage("${getString(R.string.app_confirm_text)} $appName?")
 
-            setPositiveButton("Yes") { _, _ ->
+            setPositiveButton(getString(R.string.confirm_yes)) { _, _ ->
                 performConfirmedAction(appInfo, appName, profile)
             }
 
-            setNegativeButton("Cancel") { _, _ ->
+            setNegativeButton(getString(R.string.confirm_no)) { _, _ ->
             }
 
         }.create().show()
@@ -165,7 +165,7 @@ class GestureAppsFragment(private val direction: String) : Fragment(),
     }
 
     override fun getTitle(): String {
-        return "Select an App"
+        return getString(R.string.select_an_app)
     }
 
 }

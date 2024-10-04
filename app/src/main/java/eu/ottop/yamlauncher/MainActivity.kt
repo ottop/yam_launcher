@@ -233,7 +233,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             super.onTouchEvent(event)
         }
 
-        ViewCompat.addAccessibilityAction(textView, "Set Shortcut App") { _, _ ->
+        ViewCompat.addAccessibilityAction(textView, getString(R.string.accessibility_set_shortcut)) { _, _ ->
             uiUtils.setMenuTitleAlignment(binding.menuTitle)
             uiUtils.setMenuTitleSize(binding.menuTitle)
             binding.menuTitle.visibility = View.VISIBLE
@@ -243,12 +243,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             true
         }
 
-        ViewCompat.addAccessibilityAction(textView, "Launcher Settings") { _, _ ->
+        ViewCompat.addAccessibilityAction(textView, getString(R.string.settings_title)) { _, _ ->
             startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
             true
         }
 
-        ViewCompat.addAccessibilityAction(textView, "Open App Menu") { _, _ ->
+        ViewCompat.addAccessibilityAction(textView, getString(R.string.open_app_menu)) { _, _ ->
             openAppMenu()
             true
         }
@@ -296,7 +296,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private fun unsetShortcutListeners(textView: TextView) {
         textView.setOnClickListener {
             if (canLaunchShortcut) {
-                Toast.makeText(this, "Long click to select an app", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.shortcut_default_click), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -417,12 +417,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             true
         }
 
-        ViewCompat.addAccessibilityAction(binding.homeView, "Launcher Settings") { _, _ ->
+        ViewCompat.addAccessibilityAction(binding.homeView, getString(R.string.settings_title)) { _, _ ->
             startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
             true
         }
 
-        ViewCompat.addAccessibilityAction(binding.homeView, "Open App Menu") { _, _ ->
+        ViewCompat.addAccessibilityAction(binding.homeView, getString(R.string.open_app_menu)) { _, _ ->
             openAppMenu()
             true
         }
@@ -1042,7 +1042,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                         canLaunchShortcut = false
                         launcherApps.startMainActivity(leftSwipeActivity.first!!.componentName,  launcherApps.profiles[leftSwipeActivity.second!!], null, null)
                     } else {
-                        Toast.makeText(this@MainActivity, "Cannot launch app", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@MainActivity, getString(R.string.launch_error), Toast.LENGTH_SHORT).show()
                     }
                 }
 
@@ -1053,7 +1053,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                         canLaunchShortcut = false
                         launcherApps.startMainActivity(rightSwipeActivity.first!!.componentName,  launcherApps.profiles[rightSwipeActivity.second!!], null, null)
                     } else {
-                        Toast.makeText(this@MainActivity, "Cannot launch app", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@MainActivity, getString(R.string.launch_error), Toast.LENGTH_SHORT).show()
                     }
                 }
             }

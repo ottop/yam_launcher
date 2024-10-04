@@ -27,7 +27,7 @@ class AppMenuSettingsFragment : PreferenceFragmentCompat(), TitleProvider {
     }
 
     override fun getTitle(): String {
-        return "App Menu Settings"
+        return getString(R.string.app_settings_title)
     }
 
     fun setContactPreference(isEnabled: Boolean) {

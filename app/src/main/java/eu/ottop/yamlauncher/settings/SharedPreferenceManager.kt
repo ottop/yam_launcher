@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.util.TypedValue
 import android.widget.TextView
 import androidx.preference.PreferenceManager
+import eu.ottop.yamlauncher.R
 
 class SharedPreferenceManager (private val context: Context) {
 
@@ -258,8 +259,8 @@ class SharedPreferenceManager (private val context: Context) {
 
     fun resetAllPreferences() {
         AlertDialog.Builder(context).apply {
-            setTitle("Confirmation")
-            setMessage("You will lose ALL changes that you have made to the launcher settings, shortcuts, hidden apps, etc.\n\nAre you sure?")
+            setTitle(context.getString(R.string.confirm_title))
+            setMessage(context.getString(R.string.reset_confirm_text))
             setPositiveButton("Yes") { _, _ ->
                 performReset()
             }

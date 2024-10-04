@@ -47,6 +47,6 @@ class AboutFragment : Fragment(), TitleProvider {
     }
 
     override fun getTitle(): String {
-        return "About YAM Launcher"
+        return getString(R.string.about_title)
     }
 }

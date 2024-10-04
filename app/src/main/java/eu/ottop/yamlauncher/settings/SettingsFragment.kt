@@ -90,7 +90,7 @@ class SettingsFragment : PreferenceFragmentCompat(), TitleProvider {
     }
 
     override fun getTitle(): String {
-        return "Launcher Settings"
+        return getString(R.string.settings_title)
     }
 
 

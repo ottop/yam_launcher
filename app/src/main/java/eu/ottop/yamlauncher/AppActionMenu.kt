@@ -39,7 +39,7 @@ class AppActionMenu(private val activity: MainActivity, private val binding: Act
     ){
 
 
-        ViewCompat.addAccessibilityAction(textView, "App info") { _, _ ->
+        ViewCompat.addAccessibilityAction(textView, activity.getString(R.string.accessibility_info)) { _, _ ->
             appInfo(appActivity, userHandle)
             true
         }
@@ -50,7 +50,7 @@ class AppActionMenu(private val activity: MainActivity, private val binding: Act
             textView.visibility = View.VISIBLE
         }
 
-        ViewCompat.addAccessibilityAction(textView, "Uninstall app") { _, _ ->
+        ViewCompat.addAccessibilityAction(textView, activity.getString(R.string.accessibility_uninstall)) { _, _ ->
             uninstallApp(appInfo, userHandle)
             true
         }
@@ -61,7 +61,7 @@ class AppActionMenu(private val activity: MainActivity, private val binding: Act
             textView.visibility = View.VISIBLE
         }
 
-        ViewCompat.addAccessibilityAction(textView, "Rename app") { _, _ ->
+        ViewCompat.addAccessibilityAction(textView, activity.getString(R.string.accessibility_rename)) { _, _ ->
             renameApp(textView, editLayout, actionMenu, appActivity, appInfo, userHandle, workProfile)
             true
         }
@@ -70,7 +70,7 @@ class AppActionMenu(private val activity: MainActivity, private val binding: Act
             renameApp(textView, editLayout, actionMenu, appActivity, appInfo, userHandle, workProfile)
         }
 
-        ViewCompat.addAccessibilityAction(textView, "Hide app") { _, _ ->
+        ViewCompat.addAccessibilityAction(textView, activity.getString(R.string.accessibility_hide)) { _, _ ->
             hideApp(editLayout, textView, actionMenu, appInfo, workProfile)
             true
         }

@@ -84,6 +84,6 @@ class HomeSettingsFragment : PreferenceFragmentCompat(), TitleProvider {
     }
 
     override fun getTitle(): String {
-        return "Home Screen Settings"
+        return getString(R.string.home_settings_title)
     }
 }

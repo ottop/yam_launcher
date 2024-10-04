@@ -4,7 +4,7 @@
 
     <PreferenceCategory
         app:allowDividerAbove="false"
-        app:title="Apps">
+        app:title="@string/apps">
         <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -12,7 +12,7 @@
             android:entries="@array/h_alignment_options"
             android:entryValues="@array/h_alignment_values"
             app:key="appMenuAlignment"
-            app:title="App Alignment"
+            app:title="@string/app_alignment"
             app:useSimpleSummaryProvider="true" />
         <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
@@ -21,7 +21,7 @@
             android:entries="@array/size_options"
             android:entryValues="@array/size_values"
             app:key="appMenuSize"
-            app:title="App Size"
+            app:title="@string/app_size"
             app:useSimpleSummaryProvider="true" />
         <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
@@ -30,25 +30,25 @@
             android:entries="@array/app_spacing_options"
             android:entryValues="@array/app_spacing_values"
             app:key="appSpacing"
-            app:title="App Spacing"
+            app:title="@string/app_spacing"
             app:useSimpleSummaryProvider="true" />
         <SwitchPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:defaultValue="false"
-            android:title="Contacts Menu"
+            android:title="@string/contacts_menu"
             app:key="contactsEnabled" />
 
     </PreferenceCategory>
     <PreferenceCategory
         app:allowDividerAbove="false"
-        app:title="Search">
+        app:title="@string/search_text">
 
         <SwitchPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:defaultValue="true"
-            android:title="Enable Search"
+            android:title="@string/enable_search"
             app:key="searchEnabled" />
         <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
@@ -58,7 +58,7 @@
             android:entries="@array/h_alignment_options"
             android:entryValues="@array/h_alignment_values"
             app:key="searchAlignment"
-            app:title="Search Alignment"
+            app:title="@string/search_alignment"
             app:useSimpleSummaryProvider="true" />
         <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
@@ -68,23 +68,23 @@
             android:entries="@array/size_options"
             android:entryValues="@array/size_values"
             app:key="searchSize"
-            app:title="Search Size"
+            app:title="@string/search_size"
             app:useSimpleSummaryProvider="true" />
         <SwitchPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:defaultValue="false"
-            android:title="Automatically Open Keyboard"
+            android:title="@string/automatically_open_keyboard"
             app:dependency="searchEnabled"
             app:key="autoKeyboard" />
         <SwitchPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:defaultValue="false"
-            android:title="Automatic App Opening"
+            android:title="@string/automatic_app_opening"
             app:dependency="searchEnabled"
             app:key="autoLaunch"
-            app:summary="Automatically launch an app when it's the last search result" />
+            app:summary="@string/auto_launch_summary" />
 
     </PreferenceCategory>
 

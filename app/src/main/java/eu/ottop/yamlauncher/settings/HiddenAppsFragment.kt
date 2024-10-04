@@ -135,15 +135,15 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener, Ti
 
     private fun showConfirmationDialog(appInfo: LauncherActivityInfo, appName: String, profile: Int) {
         AlertDialog.Builder(requireContext()).apply {
-            setTitle("Confirmation")
-            setMessage("Are you sure you want to unhide $appName?")
-            setPositiveButton("Yes") { _, _ ->
+            setTitle(getString(R.string.confirm_title))
+            setMessage("${getString(R.string.hidden_confirm_text)} $appName?")
+            setPositiveButton(getString(R.string.confirm_yes)) { _, _ ->
                 lifecycleScope.launch {
                     performConfirmedAction(appInfo, profile)
                 }
             }
 
-            setNegativeButton("Cancel") { _, _ ->
+            setNegativeButton(getString(R.string.confirm_no)) { _, _ ->
             }
         }.create().show()
     }
@@ -162,7 +162,7 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener, Ti
     }
 
     override fun getTitle(): String {
-        return "Hidden Apps"
+        return getString(R.string.hidden_apps_title)
     }
 
 }

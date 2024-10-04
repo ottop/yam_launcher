@@ -8,6 +8,7 @@ import android.location.LocationManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import eu.ottop.yamlauncher.MainActivity
+import eu.ottop.yamlauncher.R
 import eu.ottop.yamlauncher.settings.SharedPreferenceManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -43,7 +44,7 @@ class WeatherSystem(private val context: Context) {
                 CoroutineScope(Dispatchers.IO).launch {
                     val latitude = location.latitude
                     val longitude = location.longitude
-                    sharedPreferenceManager.setWeatherLocation("latitude=${latitude}&longitude=${longitude}", "Latest GPS location")
+                    sharedPreferenceManager.setWeatherLocation("latitude=${latitude}&longitude=${longitude}", context.getString(R.string.latest_location))
                     activity.updateWeatherText()
                 }
 

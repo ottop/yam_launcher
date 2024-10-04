@@ -11,6 +11,7 @@ import android.content.pm.ServiceInfo
 import android.provider.Settings
 import android.view.accessibility.AccessibilityManager
 import androidx.appcompat.app.AppCompatActivity.ACCESSIBILITY_SERVICE
+import eu.ottop.yamlauncher.R
 import eu.ottop.yamlauncher.settings.SharedPreferenceManager
 
 class GestureUtils(private val context: Context) {
@@ -50,15 +51,15 @@ class GestureUtils(private val context: Context) {
 
     fun promptEnableAccessibility() {
         AlertDialog.Builder(context).apply {
-            setTitle("Confirmation")
-            setMessage("To lock with double tap, enable YAM Launcher in accessibility settings.")
-            setPositiveButton("Yes") { _, _ ->
+            setTitle(context.getString(R.string.confirm_title))
+            setMessage(context.getString(R.string.screenlock_confirmation))
+            setPositiveButton(context.getString(R.string.confirm_yes)) { _, _ ->
                 // Perform action on confirmation
                 val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 context.startActivity(intent)
             }
-            setNegativeButton("Cancel") { _, _ ->
+            setNegativeButton(context.getString(R.string.confirm_no)) { _, _ ->
 
             }
 

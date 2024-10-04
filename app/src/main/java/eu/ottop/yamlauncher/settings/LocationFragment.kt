@@ -105,22 +105,22 @@ class LocationFragment : Fragment(), LocationListAdapter.OnItemClickListener, Ti
         }
     }
 
-    private fun showConfirmationDialog(appName: String?, latitude: String?, longitude: String?) {
+    private fun showConfirmationDialog(locationName: String?, latitude: String?, longitude: String?) {
         AlertDialog.Builder(requireContext()).apply {
-            setTitle("Confirmation")
-            setMessage("Are you sure you want to select $appName?")
-            setPositiveButton("Yes") { _, _ ->
-                performConfirmedAction(appName, latitude, longitude)
+            setTitle(getString(R.string.confirm_title))
+            setMessage("${getString(R.string.app_confirm_text)} $locationName?")
+            setPositiveButton(getString(R.string.confirm_yes)) { _, _ ->
+                performConfirmedAction(locationName, latitude, longitude)
             }
-            setNegativeButton("Cancel") { _, _ ->
+            setNegativeButton(R.string.confirm_no) { _, _ ->
 
             }
 
         }.create().show()
     }
 
-    private fun performConfirmedAction(appName: String?, latitude: String?, longitude: String?) {
-        sharedPreferenceManager.setWeatherLocation("latitude=${latitude}&longitude=${longitude}", appName)
+    private fun performConfirmedAction(locationName: String?, latitude: String?, longitude: String?) {
+        sharedPreferenceManager.setWeatherLocation("latitude=${latitude}&longitude=${longitude}", locationName)
         requireActivity().supportFragmentManager.popBackStack()
     }
 
@@ -130,7 +130,7 @@ class LocationFragment : Fragment(), LocationListAdapter.OnItemClickListener, Ti
     }
 
     override fun getTitle(): String {
-        return "Search for Your City"
+        return getString(R.string.find_your_city)
     }
 
 }

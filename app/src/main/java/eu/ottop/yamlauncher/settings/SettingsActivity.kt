@@ -40,7 +40,7 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = "Launcher Settings"
+        supportActionBar?.title = getString(R.string.settings_title)
         supportActionBar?.setDisplayShowTitleEnabled(true)
 
         if (supportFragmentManager.backStackEntryCount == 0) {
@@ -123,9 +123,9 @@ class SettingsActivity : AppCompatActivity() {
             contentResolver.openOutputStream(uri)?.use { outputStream ->
                 outputStream.write(sharedPreferencesText.toByteArray())
             }
-            Toast.makeText(this, "Backup successful :)", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.backup_success), Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
-            Toast.makeText(this, "Backup failed :(", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.backup_fail), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -143,7 +143,7 @@ class SettingsActivity : AppCompatActivity() {
             try {
                 val backupData = JSONObject(jsonData)
                 if (backupData.getString("app_id") != application.packageName) {
-                    throw IllegalArgumentException("Not a YAM Launcher backup")
+                    throw IllegalArgumentException(getString(R.string.restore_wrong_app))
                 }
                 val data = backupData.getJSONObject("data")
 
@@ -168,14 +168,14 @@ class SettingsActivity : AppCompatActivity() {
 
                 editor.apply()
 
-                Toast.makeText(this, "Restore successful :)", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.restore_success), Toast.LENGTH_SHORT).show()
             } catch(e: IllegalArgumentException) {
                 Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
-                Toast.makeText(this, "Restore failed :( (corrupt file?)", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.restore_fail), Toast.LENGTH_SHORT).show()
             }
         } else {
-            Toast.makeText(this, "Failed to read file", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.restore_error), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -221,7 +221,7 @@ class SettingsActivity : AppCompatActivity() {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 fragment.setContactPreference(true)
             } else {
-                Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.permission_denied), Toast.LENGTH_SHORT).show()
                 fragment.setContactPreference(false)
             }
         }
