@@ -261,11 +261,11 @@ class SharedPreferenceManager (private val context: Context) {
         AlertDialog.Builder(context).apply {
             setTitle(context.getString(R.string.confirm_title))
             setMessage(context.getString(R.string.reset_confirm_text))
-            setPositiveButton("Yes") { _, _ ->
+            setPositiveButton(context.getString(R.string.confirm_yes)) { _, _ ->
                 performReset()
             }
 
-            setNegativeButton("Cancel") { _, _ ->
+            setNegativeButton(context.getString(R.string.confirm_no)) { _, _ ->
             }
         }.create().show()
     }

@@ -39,7 +39,8 @@ class SettingsFragment : PreferenceFragmentCompat(), TitleProvider {
                 if (intent.resolveActivity(requireContext().packageManager) != null) {
                     startActivity(intent)
                 } else {
-                    Toast.makeText(requireContext(), "Unable to launch settings", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(),
+                        getString(R.string.unable_to_launch_settings), Toast.LENGTH_SHORT).show()
                 }
                 true }
 

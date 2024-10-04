@@ -46,6 +46,7 @@
     <string name="settings_title">Launcher Settings</string>
 
     <string name="default_home">Set Default Home</string>
+    <string name="unable_to_launch_settings">Unable to launch settings</string>
 
     <string name="customization">Customization</string>
 
