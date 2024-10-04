@@ -25,7 +25,7 @@
     <string name="confirm_yes">Yes</string>
     <string name="confirm_no">Cancel</string>
 
-    <string name="removing">Removing...</string>
+    <string name="removing">Removing…</string>
 
     <string name="close_app_menu">Close App Menu</string>
 
@@ -144,7 +144,7 @@
     <string name="liberapay">Liberapay</string>
     <string name="weather_data_credit">Weather data by Open-Meteo.com\n(CC BY 4.0)</string>
     <!--About page links-->
-    <string name="my_website_link"><![CDATA[by <a href="https://ottop.eu">Otto Petäjä</a>]]></string>
+    <string name="my_website_link"><![CDATA[by <a href="https://ottop.rip">Otto Petäjä</a>]]></string>
     <string name="codeberg_link"><![CDATA[<a href="https://codeberg.org/ottoptj/yamlauncher">Codeberg</a>]]></string>
     <string name="github_link"><![CDATA[<a href="https://github.com/ottop/yam_launcher">GitHub</a>]]></string>
     <string name="libera_link"><![CDATA[<a href="https://liberapay.com/ottoptj/donate">Liberapay</a><br>(recurring)]]></string>
