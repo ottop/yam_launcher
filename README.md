@@ -32,8 +32,10 @@ alt="Get it on IzzyOnDroid"
 height="55">](https://apt.izzysoft.de/fdroid/index/apk/eu.ottop.yamlauncher)
 
 ### Google Play
-
-Coming soon...
+[<img src="https://github.com/user-attachments/assets/18e22711-eadc-4757-8b47-7588cfa9ab8d"
+    alt="Get it on Google Play"
+    height="55">](https://play.google.com/store/apps/details?id=eu.ottop.yamlauncher&pcampaignid=web_share)
+#### Note: The Google Play version is currently lacking the GPS location feature and uses slightly different text in the shortcut selection menu. 
 
 ### APK
 
