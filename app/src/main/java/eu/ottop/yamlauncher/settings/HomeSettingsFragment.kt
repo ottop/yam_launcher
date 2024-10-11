@@ -1,16 +1,20 @@
 package eu.ottop.yamlauncher.settings
 
+import android.Manifest
 import android.os.Bundle
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import eu.ottop.yamlauncher.R
+import eu.ottop.yamlauncher.utils.PermissionUtils
 import eu.ottop.yamlauncher.utils.UIUtils
 
 class HomeSettingsFragment : PreferenceFragmentCompat(), TitleProvider {
 
     private lateinit var sharedPreferenceManager: SharedPreferenceManager
+    private val permissionUtils = PermissionUtils()
 
+    private var gpsLocationPref: SwitchPreference? = null
     private var manualLocationPref: Preference? = null
     private var leftSwipePref: Preference? = null
     private var rightSwipePref: Preference? = null
@@ -26,20 +30,24 @@ class HomeSettingsFragment : PreferenceFragmentCompat(), TitleProvider {
             clockApp = findPreference("clockSwipeApp")
             dateApp = findPreference("dateSwipeApp")
 
-            val gpsLocationPref = findPreference<SwitchPreference?>("gpsLocation")
+            gpsLocationPref = findPreference("gpsLocation")
             manualLocationPref = findPreference("manualLocation")
             leftSwipePref = findPreference("leftSwipeApp")
             rightSwipePref = findPreference("rightSwipeApp")
 
             // Only enable manual location when gps location is disabled
             if (gpsLocationPref != null && manualLocationPref != null) {
-                manualLocationPref?.isEnabled = !gpsLocationPref.isChecked
+                manualLocationPref?.isEnabled = (gpsLocationPref?.isChecked == false)
 
-                gpsLocationPref.onPreferenceChangeListener =
+                gpsLocationPref?.onPreferenceChangeListener =
                     Preference.OnPreferenceChangeListener { _, newValue ->
-                        val isGpsEnabled = newValue as Boolean
-                        manualLocationPref?.isEnabled = !isGpsEnabled
-                        true
+                        if (newValue as Boolean && !permissionUtils.hasPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                            (requireActivity() as SettingsActivity).requestLocationPermission()
+                            return@OnPreferenceChangeListener false
+                        } else {
+                            manualLocationPref?.isEnabled = !newValue
+                            return@OnPreferenceChangeListener true
+                        }
                     }
 
                 manualLocationPref?.onPreferenceClickListener =
@@ -85,5 +93,10 @@ class HomeSettingsFragment : PreferenceFragmentCompat(), TitleProvider {
 
     override fun getTitle(): String {
         return getString(R.string.home_settings_title)
+    }
+
+    fun setLocationPreference(isEnabled: Boolean) {
+        manualLocationPref?.isEnabled = !isEnabled
+        gpsLocationPref?.isChecked = isEnabled
     }
 }

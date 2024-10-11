@@ -951,8 +951,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     @SuppressLint("NotifyDataSetChanged")
     override fun onResume() {
         super.onResume()
-        if (!permissionUtils.hasContactsPermission(this@MainActivity, Manifest.permission.READ_CONTACTS)) {
+        if (!permissionUtils.hasPermission(this@MainActivity, Manifest.permission.READ_CONTACTS)) {
             sharedPreferenceManager.setContactsEnabled(false)
+        }
+        if (!permissionUtils.hasPermission(this@MainActivity, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+            sharedPreferenceManager.setWeatherGPS(false)
         }
         if (returnAllowed) {
             backToHome(0)

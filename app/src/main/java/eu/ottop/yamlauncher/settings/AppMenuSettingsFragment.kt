@@ -17,7 +17,7 @@ class AppMenuSettingsFragment : PreferenceFragmentCompat(), TitleProvider {
         contactPref = findPreference("contactsEnabled")
         contactPref?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
 
-            if (newValue as Boolean && !permissionUtils.hasContactsPermission(requireContext(), Manifest.permission.READ_CONTACTS)) {
+            if (newValue as Boolean && !permissionUtils.hasPermission(requireContext(), Manifest.permission.READ_CONTACTS)) {
                     (requireActivity() as SettingsActivity).requestContactsPermission()
                     return@OnPreferenceChangeListener false
                 } else {

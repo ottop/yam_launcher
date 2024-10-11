@@ -6,7 +6,7 @@ import androidx.core.content.ContextCompat
 
 class PermissionUtils {
 
-    fun hasContactsPermission(context: Context, permission: String): Boolean {
+    fun hasPermission(context: Context, permission: String): Boolean {
         return ContextCompat.checkSelfPermission(
             context,
             permission

@@ -189,10 +189,20 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
+    fun requestLocationPermission() {
+        try {
+            ActivityCompat.requestPermissions(
+                this@SettingsActivity,
+                arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
+                0
+            )
+        } catch(_: Exception) {}
+    }
+
     fun requestContactsPermission() {
         try {
             ActivityCompat.requestPermissions(
-                this,
+                this@SettingsActivity,
                 arrayOf(Manifest.permission.READ_CONTACTS),
                 1
             )
@@ -216,8 +226,20 @@ class SettingsActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        val fragment = supportFragmentManager.findFragmentById(R.id.settingsLayout) as AppMenuSettingsFragment
+
+
+        if (requestCode == 0) {
+            val fragment = supportFragmentManager.findFragmentById(R.id.settingsLayout) as HomeSettingsFragment
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                fragment.setLocationPreference(true)
+            } else {
+                Toast.makeText(this, getString(R.string.permission_denied), Toast.LENGTH_SHORT).show()
+                fragment.setLocationPreference(false)
+            }
+        }
+
         if (requestCode == 1) {
+            val fragment = supportFragmentManager.findFragmentById(R.id.settingsLayout) as AppMenuSettingsFragment
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 fragment.setContactPreference(true)
             } else {
@@ -229,8 +251,11 @@ class SettingsActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (!permissionUtils.hasContactsPermission(this@SettingsActivity, Manifest.permission.READ_CONTACTS)) {
+        if (!permissionUtils.hasPermission(this@SettingsActivity, Manifest.permission.READ_CONTACTS)) {
             sharedPreferenceManager.setContactsEnabled(false)
+        }
+        if (!permissionUtils.hasPermission(this@SettingsActivity, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+            sharedPreferenceManager.setWeatherGPS(false)
         }
     }
 
