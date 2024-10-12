@@ -1,5 +1,5 @@
 <p align="center">
-  <img src=https://codeberg.org/ottoptj/yamlauncher/raw/branch/main/app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp />
+<img src="https://codeberg.org/ottoptj/yamlauncher/raw/branch/main/metadata/en-US/images/featureGraphic.png" width=100%/>
 </p>
 
 # YAM Launcher
@@ -56,7 +56,21 @@ To fix (only if you want to enable the double tap to lock feature):
 ## Screenshots
 
 <p align="center">
-<img src=https://github.com/user-attachments/assets/4435e05e-3f8e-4b65-b5c1-e7e718db14f5 />
+<img src="https://codeberg.org/ottoptj/yamlauncher/raw/branch/main/metadata/en-US/images/phoneScreenshots/1.png"
+    alt="Weather At Your Fingertips"
+    width="19%">
+<img src="https://codeberg.org/ottoptj/yamlauncher/raw/branch/main/metadata/en-US/images/phoneScreenshots/2.png"
+    alt="Absolute Minimalism"
+    width="19%">
+<img src="https://codeberg.org/ottoptj/yamlauncher/raw/branch/main/metadata/en-US/images/phoneScreenshots/3.png"
+    alt="Function Over Form"
+    width="19%">
+<img src="https://codeberg.org/ottoptj/yamlauncher/raw/branch/main/metadata/en-US/images/phoneScreenshots/4.png"
+    alt="Material You"
+    width="19%">
+<img src="https://codeberg.org/ottoptj/yamlauncher/raw/branch/main/metadata/en-US/images/phoneScreenshots/5.png"
+    alt="Make It Yours"
+    width="19%">
 </p>
 
 ## Bugs, feature requests, etc
