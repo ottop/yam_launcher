@@ -1,17 +1,17 @@
 # Privacy Policy
 
 ## Summary
-No data leaves the device by default. Enabling the weather option sends coordinates to Open-Meteo and Open-Meteo may also store your IP address in this case.
+No data leaves the device by default. Enabling the weather option sends coordinates to Open-Meteo and Open-Meteo may also store your IP address in this case. Additionally, manually searching for locations uses Open-Meteo's geocoding api, which sends the search string to them. 
 
 ## Collected data
-The application stores data about the state of its preferences on your device's local storage. This is not sent outside of your device.
+The application stores data about the state of its preferences on your device's local storage. This is purely to store your launcher settings and is not sent outside of your device.
 
 For example, if you choose to align the clock to the center, this preference is saved so that the clock does not get reset to the left when the application is launched the next time.
 
 By default, no more data is collected, but certain options may result in further data being collected.
 
 ### Weather
-If you enable weather, the application stores the coordinates that you set for the location. If you have set a location manually, those are the coordinates of that location. If you use GPS location, your GPS coordinates are stored.
+If you enable weather, the application stores the coordinates that you set for the location. If you have set a location manually, those are the coordinates of that location. If you use GPS location, your GPS coordinates are stored. 
 
 ### Permissions
 
@@ -37,5 +37,7 @@ By default, the application does not connect to the internet or send any data an
 However, enabling the weather option requires certain data to be sent to Open-Meteo for purposes of retrieving locations and weather. This data includes the URL used for the request. Open-Meteo may also store your IP address.
 
 The URL includes the coordinates of your weather location. If the location is manually set, the coordinates are of the selected location. If GPS location is used, the coordinates are the set GPS coordinates.
+
+Additionally, searching for a location for the weather manually sends the search query to Open-Meteo as it uses their geocoding api to obtain matching locations.
 
 For information on how this data is handled, refer to [Open-Meteo](https://open-meteo.com/en/terms).
