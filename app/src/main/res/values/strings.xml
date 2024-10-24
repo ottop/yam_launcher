@@ -33,6 +33,8 @@
 
     <string name="launch_error">Cannot launch app</string>
 
+    <string name="empty_rename">Cannot set empty app name</string>
+
     <!--Action Menu Items-->
     <string name="info">Info</string>
     <string name="uninstall">Uninstall</string>
