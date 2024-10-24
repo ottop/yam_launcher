@@ -12,6 +12,8 @@
 
     <string name="open_app_menu">Open App Menu</string>
 
+    <string name="no_calendar_app">No Calendar app found</string>
+
     <!--App Menu-->
     <string name="select_an_app">Select an app</string>
 
