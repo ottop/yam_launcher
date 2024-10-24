@@ -13,6 +13,7 @@
     <string name="open_app_menu">Avaa sovellusvalikko</string>
 
     <!--App Menu-->
+    <string name="no_calendar_app">Kalenteri-sovellusta ei löytynyt</string>
     <string name="select_an_app">Valitse sovellus</string>
 
     <string name="search">Haku…</string>

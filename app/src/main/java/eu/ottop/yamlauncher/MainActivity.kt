@@ -2,6 +2,7 @@ package eu.ottop.yamlauncher
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.ActivityNotFoundException
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
@@ -395,14 +396,19 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 if (sharedPreferenceManager.isGestureEnabled("date") && dateApp.first != null && dateApp.second != null) {
                     launcherApps.startMainActivity(dateApp.first!!.componentName,  launcherApps.profiles[dateApp.second!!], null, null)
                 } else {
-                    startActivity(
-                        Intent(
-                            Intent.makeMainSelectorActivity(
-                                Intent.ACTION_MAIN,
-                                Intent.CATEGORY_APP_CALENDAR
+                    try {
+                        startActivity(
+                            Intent(
+                                Intent.makeMainSelectorActivity(
+                                    Intent.ACTION_MAIN,
+                                    Intent.CATEGORY_APP_CALENDAR
+                                )
                             )
                         )
-                    )
+                    }
+                    catch(_: ActivityNotFoundException) {
+                        Toast.makeText(this, getString(R.string.no_calendar_app), Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
