@@ -33,6 +33,7 @@
     <string name="launch_error">Sovelluksen avaaminen epäonnistui</string>
 
     <!--Action Menu Items-->
+    <string name="empty_rename">Tyhjää sovelluksen nimeä ei voi määrittää</string>
     <string name="info">Tiedot</string>
     <string name="uninstall">Poista</string>
     <string name="rename">Nimeä</string>
