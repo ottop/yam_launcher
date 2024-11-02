@@ -85,6 +85,8 @@ You can check what I'm already working on here: [Taiga board](https://tree.taiga
 
 ### Development
 
+A big thank you to all contributors. You can find a list of contributions in [CREDITS.md](https://codeberg.org/ottoptj/yamlauncher/src/branch/main/CREDITS.md). 
+
 Feel free to contribute code improvements and bug fixes. For big changes, I would recommend creating an issue first so that I can figure out whether I want the change to be implemented. Generally I am open to optional features that can be enabled or disabled in the preferences as long as they are not too convoluted, but no guarantees.
 
 ### Donations
