@@ -328,6 +328,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         uiUtils.setFont(binding.menuTitle)
 
         uiUtils.setTextColors(binding.homeView)
+        uiUtils.setStatusBarColor(window)
 
         uiUtils.setMenuItemColors(binding.menuTitle, "A9")
 
@@ -472,6 +473,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
                 "textColor" -> {
                     uiUtils.setTextColors(binding.homeView)
+                    uiUtils.setStatusBarColor(window)
                     uiUtils.setMenuItemColors(searchView)
                     uiUtils.setMenuItemColors(binding.menuTitle, "A9")
                     uiUtils.setImageColor(searchSwitcher)

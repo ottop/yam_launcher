@@ -22,11 +22,15 @@ class SharedPreferenceManager (private val context: Context) {
     }
 
     fun getTextColor(): Int {
-        val textColor = preferences.getString("textColor",  "#FFF3F3F3")
+        val textColor = getTextString()
         if(textColor == "material") {
             return getThemeColor(com.google.android.material.R.attr.colorPrimary)
         }
         return Color.parseColor(textColor)
+    }
+
+    fun getTextString(): String? {
+        return preferences.getString("textColor",  "#FFF3F3F3")
     }
 
     private fun getThemeColor(attr: Int): Int {
