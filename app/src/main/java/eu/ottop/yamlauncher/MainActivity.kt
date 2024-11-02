@@ -91,6 +91,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private var dateElements = mutableListOf<String>()
 
     private lateinit var menuView: ViewSwitcher
+    private lateinit var menuTitle: TextInputEditText
     private lateinit var appRecycler: RecyclerView
     private lateinit var contactRecycler: RecyclerView
     private lateinit var searchSwitcher: ImageView
@@ -183,6 +184,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         dateElements = mutableListOf(dateText.format12Hour.toString(), dateText.format24Hour.toString(), "", "")
 
+        menuTitle = binding.menuTitle
+
         searchView = binding.searchView
 
         menuView = binding.menuView
@@ -236,11 +239,14 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
 
         ViewCompat.addAccessibilityAction(textView, getString(R.string.accessibility_set_shortcut)) { _, _ ->
-            uiUtils.setMenuTitleAlignment(binding.menuTitle)
-            uiUtils.setMenuTitleSize(binding.menuTitle)
-            binding.menuTitle.hint = textView.text
-            binding.menuTitle.setText(textView.text)
-            binding.menuTitle.visibility = View.VISIBLE
+            uiUtils.setMenuTitleAlignment(menuTitle)
+            uiUtils.setMenuTitleSize(menuTitle)
+            menuTitle.hint = textView.text
+            menuTitle.setText(textView.text)
+            menuTitle.visibility = View.VISIBLE
+            if (savedView != null) {
+                setRenameShortcutListener(textView, savedView)
+            }
 
             appAdapter?.shortcutTextView = textView
             toAppMenu()
@@ -258,11 +264,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
 
         textView.setOnLongClickListener {
-            uiUtils.setMenuTitleAlignment(binding.menuTitle)
-            uiUtils.setMenuTitleSize(binding.menuTitle)
-            binding.menuTitle.hint = textView.text
-            binding.menuTitle.setText(textView.text)
-            binding.menuTitle.visibility = View.VISIBLE
+            uiUtils.setMenuTitleAlignment(menuTitle)
+            uiUtils.setMenuTitleSize(menuTitle)
+            menuTitle.hint = textView.text
+            menuTitle.setText(textView.text)
+            menuTitle.visibility = View.VISIBLE
             if (savedView != null) {
                 setRenameShortcutListener(textView, savedView)
             }
@@ -275,17 +281,17 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     private fun setRenameShortcutListener(textView: TextView, savedView: List<String>) {
-        binding.menuTitle.setOnEditorActionListener { _, actionId, _ ->
+        menuTitle.setOnEditorActionListener { _, actionId, _ ->
 
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                if (binding.menuTitle.text.isNullOrBlank()) {
+                if (menuTitle.text.isNullOrBlank()) {
                     Toast.makeText(this@MainActivity, getString(R.string.empty_rename), Toast.LENGTH_SHORT).show()
                     return@setOnEditorActionListener true
                 }
                 val imm =
                     getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.hideSoftInputFromWindow(binding.menuTitle.windowToken, 0)
-                textView.text = binding.menuTitle.text
+                imm.hideSoftInputFromWindow(menuTitle.windowToken, 0)
+                textView.text = menuTitle.text
                 try {
                     sharedPreferenceManager.setShortcut(
                         textView,
@@ -364,12 +370,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         uiUtils.setTextFont(binding.homeView)
         uiUtils.setFont(searchView)
-        uiUtils.setFont(binding.menuTitle)
+        uiUtils.setFont(menuTitle)
 
         uiUtils.setTextColors(binding.homeView)
         uiUtils.setStatusBarColor(window)
-
-        uiUtils.setMenuItemColors(binding.menuTitle, "A9")
 
         uiUtils.setClockVisibility(clock)
         uiUtils.setDateVisibility(dateText)
@@ -389,6 +393,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         handler.postDelayed({
             uiUtils.setStatusBar(window)
             uiUtils.setMenuItemColors(searchView)
+            uiUtils.setMenuItemColors(menuTitle, "A9")
         }, 100)
 
         clockApp = gestureUtils.getSwipeInfo(launcherApps, "clock")
@@ -497,7 +502,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private fun openAppMenu() {
         appAdapter?.shortcutTextView = null
-        binding.menuTitle.visibility = View.GONE
+        menuTitle.visibility = View.GONE
         uiUtils.setContactsVisibility(searchSwitcher, binding.searchLayout, binding.searchReplacement)
         toAppMenu()
     }
@@ -514,20 +519,20 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     uiUtils.setTextColors(binding.homeView)
                     uiUtils.setStatusBarColor(window)
                     uiUtils.setMenuItemColors(searchView)
-                    uiUtils.setMenuItemColors(binding.menuTitle, "A9")
+                    uiUtils.setMenuItemColors(menuTitle, "A9")
                     uiUtils.setImageColor(searchSwitcher)
                 }
 
                 "textFont" -> {
                     uiUtils.setTextFont(binding.homeView)
                     uiUtils.setFont(searchView)
-                    uiUtils.setFont(binding.menuTitle)
+                    uiUtils.setFont(menuTitle)
                 }
 
                 "textStyle" -> {
                     uiUtils.setTextFont(binding.homeView)
                     uiUtils.setFont(searchView)
-                    uiUtils.setFont(binding.menuTitle)
+                    uiUtils.setFont(menuTitle)
                 }
 
                 "clockEnabled" -> {
@@ -892,7 +897,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             if (bottom - top > oldBottom - oldTop) {
                 // If keyboard is closed, remove cursor from the search bar
                 searchView.clearFocus()
-                binding.menuTitle.clearFocus()
+                menuTitle.clearFocus()
             } else if (bottom - top < oldBottom - oldTop && isInitialOpen) {
                 isInitialOpen = false
                 appRecycler.scrollToPosition(0)
