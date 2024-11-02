@@ -37,7 +37,7 @@
         <eu.ottop.yamlauncher.settings.SpinnerPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:defaultValue="system"
+            android:defaultValue="normal"
             android:entries="@array/style_options"
             android:entryValues="@array/style_values"
             app:key="textStyle"
