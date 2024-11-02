@@ -25,6 +25,7 @@ import android.text.TextWatcher
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -212,7 +213,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 // Set the non-work profile drawable by default
                 textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_empty, null),null,null,null)
 
-                shortcutListeners(textView)
+                shortcutListeners(textView, savedView)
 
                 if (savedView?.get(1) != "e") {
                     setShortcutSetup(textView, savedView)
@@ -227,7 +228,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun shortcutListeners(textView: TextView) {
+    private fun shortcutListeners(textView: TextView, savedView: List<String>?) {
         // Don't go to settings on long click, but keep other gestures functional
         textView.setOnTouchListener {_, event ->
             shortcutGestureDetector.onTouchEvent(event)
@@ -237,6 +238,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         ViewCompat.addAccessibilityAction(textView, getString(R.string.accessibility_set_shortcut)) { _, _ ->
             uiUtils.setMenuTitleAlignment(binding.menuTitle)
             uiUtils.setMenuTitleSize(binding.menuTitle)
+            binding.menuTitle.hint = textView.text
+            binding.menuTitle.setText(textView.text)
             binding.menuTitle.visibility = View.VISIBLE
 
             appAdapter?.shortcutTextView = textView
@@ -257,13 +260,49 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         textView.setOnLongClickListener {
             uiUtils.setMenuTitleAlignment(binding.menuTitle)
             uiUtils.setMenuTitleSize(binding.menuTitle)
+            binding.menuTitle.hint = textView.text
+            binding.menuTitle.setText(textView.text)
             binding.menuTitle.visibility = View.VISIBLE
-
+            if (savedView != null) {
+                setRenameShortcutListener(textView, savedView)
+            }
             appAdapter?.shortcutTextView = textView
             toAppMenu()
             searchSwitcher.visibility = View.GONE
 
             return@setOnLongClickListener true
+        }
+    }
+
+    private fun setRenameShortcutListener(textView: TextView, savedView: List<String>) {
+        binding.menuTitle.setOnEditorActionListener { _, actionId, _ ->
+
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                if (binding.menuTitle.text.isNullOrBlank()) {
+                    Toast.makeText(this@MainActivity, getString(R.string.empty_rename), Toast.LENGTH_SHORT).show()
+                    return@setOnEditorActionListener true
+                }
+                val imm =
+                    getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(binding.menuTitle.windowToken, 0)
+                textView.text = binding.menuTitle.text
+                try {
+                    sharedPreferenceManager.setShortcut(
+                        textView,
+                        savedView[0],
+                        savedView[1].toInt()
+                    )
+                } catch (_: NumberFormatException) {
+                    sharedPreferenceManager.setShortcut(
+                        textView,
+                        savedView[0],
+                        0
+                    )
+                }
+                backToHome()
+                return@setOnEditorActionListener true
+            }
+            false
         }
     }
 
@@ -853,6 +892,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             if (bottom - top > oldBottom - oldTop) {
                 // If keyboard is closed, remove cursor from the search bar
                 searchView.clearFocus()
+                binding.menuTitle.clearFocus()
             } else if (bottom - top < oldBottom - oldTop && isInitialOpen) {
                 isInitialOpen = false
                 appRecycler.scrollToPosition(0)

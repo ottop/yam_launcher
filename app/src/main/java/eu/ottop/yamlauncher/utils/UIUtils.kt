@@ -247,32 +247,32 @@ class UIUtils(private val context: Context) {
         bottomSpace.layoutParams = bottomLayoutParams
     }
 
-    fun setDrawables(shortcut: TextView, alignment: String?) {
+    fun setDrawables(textView: TextView, alignment: String?, alignments: Array<String> = arrayOf("left","center","right")) {
         try {
             when (alignment) {
-                "left" -> {
-                    shortcut.setCompoundDrawablesWithIntrinsicBounds(
-                        shortcut.compoundDrawables.filterNotNull().first(),
+                alignments[0] -> {
+                    textView.setCompoundDrawablesWithIntrinsicBounds(
+                        textView.compoundDrawables.filterNotNull().first(),
                         null,
                         null,
                         null
                     )
                 }
 
-                "center" -> {
-                    shortcut.setCompoundDrawablesWithIntrinsicBounds(
-                        shortcut.compoundDrawables.filterNotNull().first(),
+                alignments[1] -> {
+                    textView.setCompoundDrawablesWithIntrinsicBounds(
+                        textView.compoundDrawables.filterNotNull().first(),
                         null,
-                        shortcut.compoundDrawables.filterNotNull().first(),
+                        textView.compoundDrawables.filterNotNull().first(),
                         null
                     )
                 }
 
-                "right" -> {
-                    shortcut.setCompoundDrawablesWithIntrinsicBounds(
+                alignments[2] -> {
+                    textView.setCompoundDrawablesWithIntrinsicBounds(
                         null,
                         null,
-                        shortcut.compoundDrawables.filterNotNull().first(),
+                        textView.compoundDrawables.filterNotNull().first(),
                         null
                     )
                 }
@@ -283,7 +283,7 @@ class UIUtils(private val context: Context) {
     fun setAppAlignment(
         textView: TextView,
         editText: TextView? = null,
-        regionText: TextView? = null
+        regionText: TextView? = null,
     ) {
         val alignment = sharedPreferenceManager.getAppAlignment()
         setTextGravity(textView, alignment)
@@ -305,8 +305,9 @@ class UIUtils(private val context: Context) {
     }
 
     fun setMenuTitleAlignment(menuTitle: TextView) {
-        setTextGravity(menuTitle, sharedPreferenceManager.getAppAlignment())
-
+        val alignment = sharedPreferenceManager.getAppAlignment()
+        setTextGravity(menuTitle, alignment)
+        setDrawables(menuTitle, alignment, arrayOf("right","center","left"))
     }
 
     private fun setTextAlignment(view: TextView, alignment: String?) {
