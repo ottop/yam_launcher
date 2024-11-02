@@ -15,6 +15,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.lifecycleScope
@@ -157,6 +158,10 @@ class AppActionMenu(private val activity: MainActivity, private val binding: Act
 
             // Once the new name is confirmed, close the keyboard, save the new app name and update the apps on screen
             if (actionId == EditorInfo.IME_ACTION_DONE) {
+                if (editText.text.isNullOrBlank()) {
+                    Toast.makeText(activity, activity.getString(R.string.empty_rename), Toast.LENGTH_SHORT).show()
+                    return@setOnEditorActionListener true
+                }
                 val imm =
                     activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(editText.windowToken, 0)
