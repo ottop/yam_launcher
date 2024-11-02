@@ -7,28 +7,12 @@
         <item>Harmaa</item>
         <item>Valkoinen</item>
         <item>Material</item>
-
-    </string-array>
-
-    <string-array name="bg_values">
-        <item>#00000000</item>
-        <item>#FF000000</item>
-        <item>#FF1B1B1B</item>
-        <item>#FFD6D6D6</item>
-        <item>material</item>
-
     </string-array>
 
     <string-array name="color_options">
         <item>Vaalea</item>
         <item>Tumma</item>
         <item>Material</item>
-    </string-array>
-
-    <string-array name="color_values">
-        <item>#FFF3F3F3</item>
-        <item>#FF0C0C0C</item>
-        <item>material</item>
     </string-array>
 
     <string-array name="font_options">
@@ -50,25 +34,6 @@
         <item>Workbench</item>
     </string-array>
 
-    <string-array name="font_values">
-        <item>system</item>
-        <item>arbutus</item>
-        <item>casual</item>
-        <item>cursive</item>
-        <item>monospace</item>
-        <item>sans-serif</item>
-        <item>sans-serif-light</item>
-        <item>sans-serif-thin</item>
-        <item>sans-serif-condensed</item>
-        <item>sans-serif-condensed-light</item>
-        <item>sans-serif-smallcaps</item>
-        <item>serif</item>
-        <item>ubuntu</item>
-        <item>ubuntu_light</item>
-        <item>ubuntu_condensed_regular</item>
-        <item>workbench</item>
-    </string-array>
-
     <string-array name="style_options">
         <item>Normaali</item>
         <item>Lihavoitu</item>
@@ -76,79 +41,17 @@
         <item>Lihavoitu &amp; Kursivoitu</item>
     </string-array>
 
-    <string-array name="style_values">
-        <item>normal</item>
-        <item>bold</item>
-        <item>italic</item>
-        <item>bold-italic</item>
-    </string-array>
-
-    <string-array name="animation_options">
-        <item>0.25x</item>
-        <item>0.5x</item>
-        <item>1x</item>
-        <item>2x</item>
-        <item>4x</item>
-    </string-array>
-
-    <string-array name="animation_values">
-        <item>800</item>
-        <item>400</item>
-        <item>200</item>
-        <item>100</item>
-        <item>50</item>
-    </string-array>
-
-    <string-array name="swipe_values">
-        <item>25</item>
-        <item>50</item>
-        <item>100</item>
-        <item>200</item>
-        <item>400</item>
-    </string-array>
-
     <!--Home and App Menu-->
-    <string-array name="shortcut_options">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
-        <item>8</item>
-        <item>9</item>
-        <item>10</item>
-        <item>11</item>
-        <item>12</item>
-        <item>13</item>
-        <item>14</item>
-        <item>15</item>
-    </string-array>
-
     <string-array name="h_alignment_options">
         <item>Vasemmalla</item>
         <item>Keskellä</item>
         <item>Oikealla</item>
     </string-array>
 
-    <string-array name="h_alignment_values">
-        <item>left</item>
-        <item>center</item>
-        <item>right</item>
-    </string-array>
-
     <string-array name="v_alignment_options">
         <item>Ylhäällä</item>
         <item>Keskellä</item>
         <item>Alhaalla</item>
-    </string-array>
-
-    <string-array name="v_alignment_values">
-        <item>top</item>
-        <item>center</item>
-        <item>bottom</item>
     </string-array>
 
     <string-array name="size_options">
@@ -158,15 +61,6 @@
         <item>Iso</item>
         <item>Valtava</item>
         <item>Isoin</item>
-    </string-array>
-
-    <string-array name="size_values">
-        <item>tiny</item>
-        <item>small</item>
-        <item>medium</item>
-        <item>large</item>
-        <item>extra</item>
-        <item>huge</item>
     </string-array>
 
     <string-array name="shortcut_spacing_options">
@@ -179,16 +73,6 @@
         <item>Isoin</item>
     </string-array>
 
-    <string-array name="shortcut_spacing_values">
-        <item>0.06</item>
-        <item>0.09</item>
-        <item>0.11</item>
-        <item>0.14</item>
-        <item>0.18</item>
-        <item>0.21</item>
-        <item>0.56</item>
-    </string-array>
-
     <string-array name="app_spacing_options">
         <item>Pienin</item>
         <item>Pieni</item>
@@ -196,25 +80,5 @@
         <item>Iso</item>
         <item>Valtava</item>
         <item>Isoin</item>
-    </string-array>
-
-    <string-array name="app_spacing_values">
-        <item>0</item>
-        <item>15</item>
-        <item>20</item>
-        <item>25</item>
-        <item>30</item>
-        <item>35</item>
-    </string-array>
-
-    <!--Weather-->
-    <string-array name="temp_units">
-        <item>°C</item>
-        <item>°F</item>
-    </string-array>
-
-    <string-array name="unit_values">
-        <item>celsius</item>
-        <item>fahrenheit</item>
     </string-array>
 </resources>
