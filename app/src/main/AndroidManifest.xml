@@ -8,7 +8,8 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
-    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+    <uses-permission
+        android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
 
     <queries>
@@ -29,11 +30,14 @@
         android:theme="@style/Theme.YamLauncher"
         tools:targetApi="34">
         <activity
+            android:name=".widgets.WidgetsActivity"
+            android:exported="false" />
+        <activity
             android:name=".settings.SettingsActivity"
-            android:theme="@style/SettingsTheme"
             android:exported="false"
             android:screenOrientation="portrait"
-            tools:ignore="DiscouragedApi,LockedOrientationActivity"/>
+            android:theme="@style/SettingsTheme"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity" />
         <activity
             android:name=".MainActivity"
             android:excludeFromRecents="true"
@@ -51,6 +55,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <service
             android:name=".tasks.ScreenLockService"
             android:exported="false"

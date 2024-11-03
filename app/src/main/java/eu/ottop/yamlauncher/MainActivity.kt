@@ -60,6 +60,7 @@ import eu.ottop.yamlauncher.utils.PermissionUtils
 import eu.ottop.yamlauncher.utils.StringUtils
 import eu.ottop.yamlauncher.utils.UIUtils
 import eu.ottop.yamlauncher.utils.WeatherSystem
+import eu.ottop.yamlauncher.widgets.WidgetsActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -161,6 +162,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             }
         }
         setupApps()
+
+        binding.widgets.setOnClickListener {
+            startActivity(Intent(this@MainActivity, WidgetsActivity::class.java))
+        }
     }
 
     private fun setMainVariables() {

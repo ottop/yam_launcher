@@ -191,6 +191,22 @@
             android:layout_weight="0.22" />
 
         <TextView
+            android:id="@+id/widgets"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.09"
+            android:autoSizeTextType="uniform"
+            android:clickable="false"
+            android:drawablePadding="3dp"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="20dp"
+            android:shadowColor="#00FFFFFF"
+            android:shadowRadius="10"
+            android:text="Widgets"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+            android:textColor="#F3F3F3"
+            android:visibility="visible" />
+        <TextView
             android:id="@+id/app1"
             android:layout_width="match_parent"
             android:layout_height="0dp"
