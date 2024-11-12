@@ -213,7 +213,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
                 val savedView = sharedPreferenceManager.getShortcut(textView)?.toMutableList()
 
-                if (savedView != null && savedView.size < 4) {
+                if (savedView != null && savedView.size > 2 && savedView.size < 4) {
                     savedView.add(3, "false")
                 }
 
