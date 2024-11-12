@@ -1,0 +1,12 @@
+Feature release
+
+- Shortcuts can now be renamed
+- Contacts can now be added to the home screen
+- The GPS location now uses network location when available
+- Status bar text now follows the launcher's text color
+- A Finnish translation has been added
+- A crash upon calendar launch has been fixed (by @alrajdev)
+- Empty app names are now blocked (by @alrajdev)
+- The text style default value has now been fixed (by @alrajdev)
+- A common array file has been made (by @alrajdev)
+- A .gitgnore file has been made in the repository (by @alrajdev)
