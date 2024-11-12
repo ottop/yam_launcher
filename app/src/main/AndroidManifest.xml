@@ -30,9 +30,6 @@
         android:theme="@style/Theme.YamLauncher"
         tools:targetApi="34">
         <activity
-            android:name=".widgets.WidgetsActivity"
-            android:exported="false" />
-        <activity
             android:name=".settings.SettingsActivity"
             android:exported="false"
             android:screenOrientation="portrait"
