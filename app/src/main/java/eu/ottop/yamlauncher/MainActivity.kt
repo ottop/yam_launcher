@@ -211,11 +211,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             else {
                 textView.visibility = View.VISIBLE
 
-                val savedView = sharedPreferenceManager.getShortcut(textView)?.toMutableList()
-
-                if (savedView != null && savedView.size > 2 && savedView.size < 4) {
-                    savedView.add(3, "false")
-                }
+                val savedView = sharedPreferenceManager.getShortcut(textView)
 
                 // Set the non-work profile drawable by default
                 textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_empty, null),null,null,null)
@@ -249,7 +245,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             menuTitle.setText(textView.text)
             menuTitle.visibility = View.VISIBLE
             if (savedView != null) {
-                setRenameShortcutListener(textView, savedView)
+                setRenameShortcutListener(textView)
             }
 
             appAdapter?.shortcutTextView = textView
@@ -275,7 +271,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             menuTitle.setText(textView.text)
             menuTitle.visibility = View.VISIBLE
             if (savedView != null) {
-                setRenameShortcutListener(textView, savedView)
+                setRenameShortcutListener(textView)
             }
             appAdapter?.shortcutTextView = textView
             contactAdapter?.shortcutTextView = textView
@@ -285,7 +281,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
     }
 
-    private fun setRenameShortcutListener(textView: TextView, savedView: List<String>) {
+    private fun setRenameShortcutListener(textView: TextView) {
         menuTitle.setOnEditorActionListener { _, actionId, _ ->
 
             if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -296,20 +292,21 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 val imm =
                     getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(menuTitle.windowToken, 0)
+                val savedView = sharedPreferenceManager.getShortcut(textView)!!
                 textView.text = menuTitle.text
                 try {
                     sharedPreferenceManager.setShortcut(
                         textView,
                         savedView[0],
                         savedView[1].toInt(),
-                        savedView[3].toBoolean()
+                        savedView.getOrNull(3)?.toBoolean() ?: false
                     )
                 } catch (_: NumberFormatException) {
                     sharedPreferenceManager.setShortcut(
                         textView,
                         savedView[0],
                         0,
-                        savedView[3].toBoolean()
+                        savedView.getOrNull(3)?.toBoolean() ?: false
                     )
                 }
                 backToHome()
@@ -358,7 +355,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private fun setShortcutSetup(textView: TextView, savedView: List<String>?) {
         // Set the work profile drawable for work profile apps
         textView.text = savedView?.get(2)
-        if (savedView != null && savedView[3].toBoolean()) {
+        if (savedView != null && (savedView.getOrNull(3)?.toBoolean() == true)) {
             setShortcutContactListeners(textView, savedView[1].toInt())
             return
         }
@@ -1186,6 +1183,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             contactId,
             true
         )
+        shortcutView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_empty, null),null,null,null)
         uiUtils.setDrawables(shortcutView, sharedPreferenceManager.getShortcutAlignment())
         backToHome()
     }

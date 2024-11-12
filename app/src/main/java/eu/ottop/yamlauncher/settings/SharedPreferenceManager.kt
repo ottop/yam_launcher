@@ -96,7 +96,7 @@ class SharedPreferenceManager (private val context: Context) {
     }
 
     fun getShortcut(textView: TextView): List<String>? {
-        val value = preferences.getString("shortcut${textView.id}", "e§splitter§e")
+        val value = preferences.getString("shortcut${textView.id}", "e§splitter§e§splitter§e§splitter§e")
         return value?.split("§splitter§")
     }
 
