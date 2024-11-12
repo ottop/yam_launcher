@@ -68,7 +68,7 @@ import java.lang.reflect.Method
 import kotlin.math.abs
 
 
-class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener, AppMenuAdapter.OnItemClickListener, AppMenuAdapter.OnShortcutListener, AppMenuAdapter.OnItemLongClickListener, ContactsAdapter.OnContactClickListener {
+class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener, AppMenuAdapter.OnItemClickListener, AppMenuAdapter.OnShortcutListener, AppMenuAdapter.OnItemLongClickListener, ContactsAdapter.OnContactClickListener, ContactsAdapter.OnContactShortcutListener {
 
     private lateinit var weatherSystem: WeatherSystem
     private lateinit var appUtils: AppUtils
@@ -211,7 +211,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             else {
                 textView.visibility = View.VISIBLE
 
-                val savedView = sharedPreferenceManager.getShortcut(textView)
+                val savedView = sharedPreferenceManager.getShortcut(textView)?.toMutableList()
+
+                if (savedView != null && savedView.size < 4) {
+                    savedView.add(3, "false")
+                }
 
                 // Set the non-work profile drawable by default
                 textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_empty, null),null,null,null)
@@ -249,6 +253,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             }
 
             appAdapter?.shortcutTextView = textView
+            contactAdapter?.shortcutTextView = textView
             toAppMenu()
             true
         }
@@ -273,8 +278,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 setRenameShortcutListener(textView, savedView)
             }
             appAdapter?.shortcutTextView = textView
+            contactAdapter?.shortcutTextView = textView
             toAppMenu()
-            searchSwitcher.visibility = View.GONE
 
             return@setOnLongClickListener true
         }
@@ -296,13 +301,15 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     sharedPreferenceManager.setShortcut(
                         textView,
                         savedView[0],
-                        savedView[1].toInt()
+                        savedView[1].toInt(),
+                        savedView[3].toBoolean()
                     )
                 } catch (_: NumberFormatException) {
                     sharedPreferenceManager.setShortcut(
                         textView,
                         savedView[0],
-                        0
+                        0,
+                        savedView[3].toBoolean()
                     )
                 }
                 backToHome()
@@ -313,6 +320,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     private fun toAppMenu() {
+        uiUtils.setContactsVisibility(searchSwitcher, binding.searchLayout, binding.searchReplacement)
         try {
             // The menu opens from the top
             appRecycler.scrollToPosition(0)
@@ -349,11 +357,15 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private fun setShortcutSetup(textView: TextView, savedView: List<String>?) {
         // Set the work profile drawable for work profile apps
+        textView.text = savedView?.get(2)
+        if (savedView != null && savedView[3].toBoolean()) {
+            setShortcutContactListeners(textView, savedView[1].toInt())
+            return
+        }
         if (savedView?.get(1) != "0") {
             textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_work_app, null),null,null,null)
         }
 
-        textView.text = savedView?.get(2)
         setShortcutListeners(textView, savedView)
     }
 
@@ -362,6 +374,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             if (savedView != null && canLaunchShortcut) {
                 appUtils.launchApp(savedView[0], launcherApps.profiles[savedView[1].toInt()])
             }
+        }
+    }
+
+    private fun setShortcutContactListeners(textView: TextView, contactId: Int) {
+        textView.setOnClickListener {
+            onContactClick(contactId)
         }
     }
 
@@ -502,8 +520,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private fun openAppMenu() {
         appAdapter?.shortcutTextView = null
+        contactAdapter?.shortcutTextView = null
         menuTitle.visibility = View.GONE
-        uiUtils.setContactsVisibility(searchSwitcher, binding.searchLayout, binding.searchReplacement)
         toAppMenu()
     }
 
@@ -803,7 +821,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private fun setupContactRecycler() {
         uiUtils.setImageColor(searchSwitcher)
 
-        contactAdapter = ContactsAdapter(this, mutableListOf(), this)
+        contactAdapter = ContactsAdapter(this, mutableListOf(), this@MainActivity, this@MainActivity)
         contactMenuLinearLayoutManager.stackFromEnd = true
         contactRecycler = binding.contactRecycler
         contactRecycler.layoutManager = contactMenuLinearLayoutManager
@@ -1052,7 +1070,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         backToHome()
     }
 
-
     override fun onItemLongClick(
         textView: TextView,
         actionMenuLayout: LinearLayout,
@@ -1156,5 +1173,20 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         val intent = Intent(Intent.ACTION_VIEW, contactUri)
         startActivity(intent)
         returnAllowed = false
+    }
+
+    override fun onContactShortcut(contactId: Int, contactName: String, shortcutView: TextView) {
+        shortcutView.text = contactName
+        shortcutView.setOnClickListener {
+            onContactClick(contactId)
+        }
+        sharedPreferenceManager.setShortcut(
+            shortcutView,
+            contactName,
+            contactId,
+            true
+        )
+        uiUtils.setDrawables(shortcutView, sharedPreferenceManager.getShortcutAlignment())
+        backToHome()
     }
 }

@@ -15,9 +15,12 @@ import eu.ottop.yamlauncher.utils.UIUtils
 class ContactsAdapter(
     private val activity: MainActivity,
     private var contacts: MutableList<Pair<String, Int>>,
-    private val contactClickListener: OnContactClickListener
+    private val contactClickListener: OnContactClickListener,
+    private val contactShortcutListener: OnContactShortcutListener,
 ) :
     RecyclerView.Adapter<ContactsAdapter.AppViewHolder>() {
+
+        var shortcutTextView: TextView? = null
 
         private val uiUtils = UIUtils(activity)
         private val sharedPreferenceManager = SharedPreferenceManager(activity)
@@ -26,16 +29,25 @@ class ContactsAdapter(
         fun onContactClick(contactId: Int)
     }
 
+    interface OnContactShortcutListener {
+        fun onContactShortcut(contactId: Int, contactName: String, shortcutView: TextView)
+    }
+
     inner class AppViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val listItem: FrameLayout = itemView.findViewById(R.id.listItem)
         val textView: TextView = listItem.findViewById(R.id.appName)
 
         init {
             textView.setOnClickListener {
-                val position = bindingAdapterPosition
-                val contact = contacts[position]
-                contactClickListener.onContactClick(contact.second)
-
+                if (shortcutTextView != null) {
+                    val position = bindingAdapterPosition
+                    val contact = contacts[position]
+                    contactShortcutListener.onContactShortcut(contact.second, contact.first, shortcutTextView!!)
+                } else {
+                    val position = bindingAdapterPosition
+                    val contact = contacts[position]
+                    contactClickListener.onContactClick(contact.second)
+                }
             }
         }
     }

@@ -89,9 +89,9 @@ class SharedPreferenceManager (private val context: Context) {
         return preferences.getString("dateSize", "medium")
     }
 
-    fun setShortcut(textView: TextView, packageName: String, profile: Int) {
+    fun setShortcut(textView: TextView, packageName: String, profile: Int, isContact: Boolean = false) {
         val editor = preferences.edit()
-        editor.putString("shortcut${textView.id}", "$packageName§splitter§$profile§splitter§${textView.text}")
+        editor.putString("shortcut${textView.id}", "$packageName§splitter§$profile§splitter§${textView.text}§splitter§${isContact}")
         editor.apply()
     }
 
