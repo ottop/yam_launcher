@@ -211,6 +211,10 @@ class SharedPreferenceManager (private val context: Context) {
         return preferences.getString("searchSize", "medium")
     }
 
+    fun isFuzzySearchEnabled(): Boolean {
+        return preferences.getBoolean("fuzzySearchEnabled", false)
+    }
+
     fun getAppSpacing(): Int? {
         return preferences.getString("appSpacing", "20")?.toInt()
     }

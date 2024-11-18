@@ -955,6 +955,14 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             updateMenu(updatedApps)
         } else {
             isJobActive = false
+
+            val fuzzyPattern = if(sharedPreferenceManager.isFuzzySearchEnabled()) {
+                stringUtils.getFuzzyPattern(cleanQuery)
+            }
+            else {
+                null
+            }
+
             updatedApps.forEach {
                 val cleanItemText = stringUtils.cleanString(sharedPreferenceManager.getAppName(
                     it.first.applicationInfo.packageName,
@@ -962,7 +970,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     packageManager.getApplicationLabel(it.first.applicationInfo)
                 ).toString())
                 if (cleanItemText != null) {
-                    if (cleanItemText.contains(cleanQuery, ignoreCase = true)) {
+                    if (
+                        (fuzzyPattern != null && cleanItemText.contains(fuzzyPattern)) ||
+                        (cleanItemText.contains(cleanQuery, ignoreCase = true))
+                    ) {
                         newFilteredApps.add(it)
                     }
                 }

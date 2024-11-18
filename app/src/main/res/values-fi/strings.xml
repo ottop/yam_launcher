@@ -124,6 +124,7 @@
     <string name="enable_search">Näytä Hakupalkki</string>
     <string name="search_alignment">Hakupalkin Sijainti</string>
     <string name="search_size">Hakupalkin Koko</string>
+    <string name="enable_fuzzy_search">Ota sumea haku käyttöön</string>
     <string name="automatically_open_keyboard">Avaa Näppäimistö Automaattisesti</string>
     <string name="automatic_app_opening">Avaa Hakutulos Automaattisesti</string>
     <string name="auto_launch_summary">Avaa sovellus automaattisesti kun se on viimeinen hakutulos</string>

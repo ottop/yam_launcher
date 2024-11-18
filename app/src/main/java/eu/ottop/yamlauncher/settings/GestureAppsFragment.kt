@@ -114,6 +114,12 @@ class GestureAppsFragment(private val direction: String) : Fragment(),
         if (cleanQuery.isNullOrEmpty()) {
             newFilteredApps.addAll(updatedApps)
         } else {
+            val fuzzyPattern = if(sharedPreferenceManager.isFuzzySearchEnabled()) {
+                stringUtils.getFuzzyPattern(cleanQuery)
+            }
+            else {
+                null
+            }
             updatedApps.forEach {
                 val cleanItemText = stringUtils.cleanString(sharedPreferenceManager.getAppName(
                     it.first.applicationInfo.packageName,
@@ -121,7 +127,10 @@ class GestureAppsFragment(private val direction: String) : Fragment(),
                     requireContext().packageManager.getApplicationLabel(it.first.applicationInfo)
                 ).toString())
                 if (cleanItemText != null) {
-                    if (cleanItemText.contains(cleanQuery, ignoreCase = true)) {
+                    if (
+                        (fuzzyPattern != null && cleanItemText.contains(fuzzyPattern)) ||
+                        (cleanItemText.contains(cleanQuery, ignoreCase = true))
+                    ) {
                         newFilteredApps.add(it)
                     }
                 }
