@@ -73,6 +73,13 @@
         <SwitchPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:dependency="searchEnabled"
+            android:defaultValue="false"
+            android:title="@string/enable_fuzzy_search"
+            app:key="fuzzySearchEnabled" />
+        <SwitchPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:defaultValue="false"
             android:title="@string/automatically_open_keyboard"
             app:dependency="searchEnabled"
