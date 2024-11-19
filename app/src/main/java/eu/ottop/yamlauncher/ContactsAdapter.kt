@@ -20,6 +20,7 @@ class ContactsAdapter(
 ) :
     RecyclerView.Adapter<ContactsAdapter.AppViewHolder>() {
 
+        var shortcutIndex: Int = 0
         var shortcutTextView: TextView? = null
 
         private val uiUtils = UIUtils(activity)
@@ -30,7 +31,7 @@ class ContactsAdapter(
     }
 
     interface OnContactShortcutListener {
-        fun onContactShortcut(contactId: Int, contactName: String, shortcutView: TextView)
+        fun onContactShortcut(contactId: Int, contactName: String, shortcutView: TextView, shortcutIndex: Int)
     }
 
     inner class AppViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -42,7 +43,7 @@ class ContactsAdapter(
                 if (shortcutTextView != null) {
                     val position = bindingAdapterPosition
                     val contact = contacts[position]
-                    contactShortcutListener.onContactShortcut(contact.second, contact.first, shortcutTextView!!)
+                    contactShortcutListener.onContactShortcut(contact.second, contact.first, shortcutTextView!!, shortcutIndex)
                 } else {
                     val position = bindingAdapterPosition
                     val contact = contacts[position]

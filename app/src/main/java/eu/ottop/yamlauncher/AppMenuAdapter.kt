@@ -35,6 +35,7 @@ class AppMenuAdapter(
     RecyclerView.Adapter<AppMenuAdapter.AppViewHolder>() {
 
         // If the menu is opened to select shortcuts, the below variable is set
+        var shortcutIndex: Int = 0
         var shortcutTextView: TextView? = null
 
         private val sharedPreferenceManager = SharedPreferenceManager(activity)
@@ -47,7 +48,7 @@ class AppMenuAdapter(
     }
 
     interface OnShortcutListener {
-        fun onShortcut(appInfo: LauncherActivityInfo, userHandle: UserHandle, textView: TextView, userProfile: Int, shortcutView: TextView)
+        fun onShortcut(appInfo: LauncherActivityInfo, userHandle: UserHandle, textView: TextView, userProfile: Int, shortcutView: TextView, shortcutIndex: Int)
     }
 
     interface OnItemLongClickListener {
@@ -71,7 +72,7 @@ class AppMenuAdapter(
 
                     // If opened to select a shortcut, set the shortcut instead of launching the app
                     if (shortcutTextView != null) {
-                        shortcutListener.onShortcut(app, apps[position].second, textView, apps[position].third, shortcutTextView!!)
+                        shortcutListener.onShortcut(app, apps[position].second, textView, apps[position].third, shortcutTextView!!, shortcutIndex)
                     }
                     else {
                         itemClickListener.onItemClick(app, apps[position].second)
@@ -85,7 +86,7 @@ class AppMenuAdapter(
 
                 // If opened to select a shortcut, set the shortcut instead of opening the action menu
                 if (shortcutTextView != null) {
-                    shortcutListener.onShortcut(app, apps[position].second, textView, apps[position].third, shortcutTextView!!)
+                    shortcutListener.onShortcut(app, apps[position].second, textView, apps[position].third, shortcutTextView!!, shortcutIndex)
                     return@setOnLongClickListener true
                 } else {
 

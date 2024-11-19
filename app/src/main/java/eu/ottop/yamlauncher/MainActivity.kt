@@ -211,12 +211,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             else {
                 textView.visibility = View.VISIBLE
 
-                val savedView = sharedPreferenceManager.getShortcut(textView)
+                val savedView = sharedPreferenceManager.getShortcut(i)
 
                 // Set the non-work profile drawable by default
                 textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_empty, null),null,null,null)
 
-                shortcutListeners(textView, savedView)
+                shortcutListeners(i, textView, savedView)
 
                 if (savedView?.get(1) != "e") {
                     setShortcutSetup(textView, savedView)
@@ -231,7 +231,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun shortcutListeners(textView: TextView, savedView: List<String>?) {
+    private fun shortcutListeners(index: Int, textView: TextView, savedView: List<String>?) {
         // Don't go to settings on long click, but keep other gestures functional
         textView.setOnTouchListener {_, event ->
             shortcutGestureDetector.onTouchEvent(event)
@@ -245,7 +245,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             menuTitle.setText(textView.text)
             menuTitle.visibility = View.VISIBLE
             if (savedView != null) {
-                setRenameShortcutListener(textView)
+                setRenameShortcutListener(index, textView)
             }
 
             appAdapter?.shortcutTextView = textView
@@ -271,9 +271,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             menuTitle.setText(textView.text)
             menuTitle.visibility = View.VISIBLE
             if (savedView != null) {
-                setRenameShortcutListener(textView)
+                setRenameShortcutListener(index, textView)
             }
+            appAdapter?.shortcutIndex = index
             appAdapter?.shortcutTextView = textView
+            contactAdapter?.shortcutIndex = index
             contactAdapter?.shortcutTextView = textView
             toAppMenu()
 
@@ -281,7 +283,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
     }
 
-    private fun setRenameShortcutListener(textView: TextView) {
+    private fun setRenameShortcutListener(index: Int, textView: TextView) {
         menuTitle.setOnEditorActionListener { _, actionId, _ ->
 
             if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -292,18 +294,20 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 val imm =
                     getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(menuTitle.windowToken, 0)
-                val savedView = sharedPreferenceManager.getShortcut(textView)!!
+                val savedView = sharedPreferenceManager.getShortcut(index)!!
                 textView.text = menuTitle.text
                 try {
                     sharedPreferenceManager.setShortcut(
-                        textView,
+                        index,
+                        textView.text,
                         savedView[0],
                         savedView[1].toInt(),
                         savedView.getOrNull(3)?.toBoolean() ?: false
                     )
                 } catch (_: NumberFormatException) {
                     sharedPreferenceManager.setShortcut(
-                        textView,
+                        index,
+                        textView.text,
                         savedView[0],
                         0,
                         savedView.getOrNull(3)?.toBoolean() ?: false
@@ -1052,7 +1056,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         userHandle: UserHandle,
         textView: TextView,
         userProfile: Int,
-        shortcutView: TextView
+        shortcutView: TextView,
+        shortcutIndex: Int
     ) {
         if (userProfile != 0) {
             shortcutView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_work_app, null),null,null,null)
@@ -1070,7 +1075,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             appUtils.launchApp(appInfo.applicationInfo.packageName, userHandle)
         }
         sharedPreferenceManager.setShortcut(
-            shortcutView,
+            shortcutIndex,
+            shortcutView.text,
             appInfo.applicationInfo.packageName,
             userProfile
         )
@@ -1183,13 +1189,14 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         returnAllowed = false
     }
 
-    override fun onContactShortcut(contactId: Int, contactName: String, shortcutView: TextView) {
+    override fun onContactShortcut(contactId: Int, contactName: String, shortcutView: TextView, shortcutIndex: Int) {
         shortcutView.text = contactName
         shortcutView.setOnClickListener {
             onContactClick(contactId)
         }
         sharedPreferenceManager.setShortcut(
-            shortcutView,
+            shortcutIndex,
+            shortcutView.text,
             contactName,
             contactId,
             true

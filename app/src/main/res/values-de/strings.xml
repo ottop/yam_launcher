@@ -126,6 +126,7 @@
     <string name="enable_search">Suche aktivieren</string>
     <string name="search_alignment">Ausrichtung der Suche</string>
     <string name="search_size">Größe der Suche</string>
+    <string name="enable_fuzzy_search">Fuzzy Search</string>
     <string name="automatically_open_keyboard">Tastatur automatisch öffnen</string>
     <string name="automatic_app_opening">Automatisches öffnen der Apps</string>
     <string name="auto_launch_summary">App automatisch öffnen, wenn sie das letzte Suchergebnis ist</string>
@@ -155,7 +156,7 @@
     <string name="stripe_link"><![CDATA[<a href="https://donate.stripe.com/14k6s2bMJdnDgtW288">Stripe</a><br>(one-time)]]></string>
     <string name="weather_link"><![CDATA[Weather data by <a href="https://open-meteo.com/">Open-Meteo.com</a><br>(<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>)]]></string>
 
-    <string name="reset">Zurücksetzen</string>
+    <string name="reset">Reset</string>
     <string name="restart_text">YAM Launcher neu starten</string>
     <string name="reset_text">Alle Einstellungen zurücksetzen</string>
     <string name="reset_confirm_text">Du wirst ALLE Änderungen verlieren, die du an den Launcher-Einstellungen, Verknüpfungen, versteckten Apps usw. vorgenommen hast.\n\nBist du sicher?</string>

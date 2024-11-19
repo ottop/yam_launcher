@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
 import android.util.TypedValue
-import android.widget.TextView
 import androidx.preference.PreferenceManager
 import eu.ottop.yamlauncher.R
 
@@ -89,14 +88,14 @@ class SharedPreferenceManager (private val context: Context) {
         return preferences.getString("dateSize", "medium")
     }
 
-    fun setShortcut(textView: TextView, packageName: String, profile: Int, isContact: Boolean = false) {
+    fun setShortcut(index: Int, text: CharSequence, packageName: String, profile: Int, isContact: Boolean = false) {
         val editor = preferences.edit()
-        editor.putString("shortcut${textView.id}", "$packageName§splitter§$profile§splitter§${textView.text}§splitter§${isContact}")
+        editor.putString("shortcut${index}", "$packageName§splitter§$profile§splitter§${text}§splitter§${isContact}")
         editor.apply()
     }
 
-    fun getShortcut(textView: TextView): List<String>? {
-        val value = preferences.getString("shortcut${textView.id}", "e§splitter§e§splitter§e§splitter§e")
+    fun getShortcut(index: Int): List<String>? {
+        val value = preferences.getString("shortcut${index}", "e§splitter§e§splitter§e§splitter§e")
         return value?.split("§splitter§")
     }
 
