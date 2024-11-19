@@ -5,3 +5,7 @@
 - Fixed a wrong text style default value. [Pull Request](https://github.com/ottop/yam_launcher/pull/13)
 - Moved unnecessary array translations to a common file. [Pull Request](https://github.com/ottop/yam_launcher/pull/14)
 - Added a .gitignore file to the base directory. [Pull Request](https://github.com/ottop/yam_launcher/pull/18)
+
+[schulle4u](https://codeberg.org/schulle4u):
+
+- German translation. [Pull Request](https://codeberg.org/ottoptj/yamlauncher/pulls/36)
