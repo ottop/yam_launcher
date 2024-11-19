@@ -103,6 +103,7 @@
     <string name="vertical_alignment">Vertical Alignment</string>
     <string name="shortcut_size">Shortcut Size</string>
     <string name="shortcut_spacing">Shortcut Spacing</string>
+    <string name="lock_shortcuts">Lock Shortcuts</string>
 
     <string name="gestures">Gestures</string>
     <string name="swipe_left">Swipe Left</string>

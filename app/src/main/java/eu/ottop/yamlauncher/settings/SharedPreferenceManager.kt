@@ -119,6 +119,10 @@ class SharedPreferenceManager (private val context: Context) {
         return preferences.getString("shortcutWeight", "0.09")?.toFloat()
     }
 
+    fun areShortcutsLocked(): Boolean {
+        return preferences.getBoolean("lockShortcuts", false)
+    }
+
     fun isBatteryEnabled(): Boolean {
         return preferences.getBoolean("batteryEnabled", false)
     }

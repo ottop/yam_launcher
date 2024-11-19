@@ -239,19 +239,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
 
         ViewCompat.addAccessibilityAction(textView, getString(R.string.accessibility_set_shortcut)) { _, _ ->
-            uiUtils.setMenuTitleAlignment(menuTitle)
-            uiUtils.setMenuTitleSize(menuTitle)
-            menuTitle.hint = textView.text
-            menuTitle.setText(textView.text)
-            menuTitle.visibility = View.VISIBLE
-            if (savedView != null) {
-                setRenameShortcutListener(index, textView)
-            }
-
-            appAdapter?.shortcutTextView = textView
-            contactAdapter?.shortcutTextView = textView
-            toAppMenu()
-            true
+            launchShortcutSelection(index, textView, savedView)
         }
 
         ViewCompat.addAccessibilityAction(textView, getString(R.string.settings_title)) { _, _ ->
@@ -265,6 +253,13 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
 
         textView.setOnLongClickListener {
+            launchShortcutSelection(index, textView, savedView)
+        }
+    }
+
+    private fun launchShortcutSelection(index: Int, textView: TextView, savedView: List<String>?) : Boolean {
+
+        if (!sharedPreferenceManager.areShortcutsLocked()) {
             uiUtils.setMenuTitleAlignment(menuTitle)
             uiUtils.setMenuTitleSize(menuTitle)
             menuTitle.hint = textView.text
@@ -279,8 +274,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             contactAdapter?.shortcutTextView = textView
             toAppMenu()
 
-            return@setOnLongClickListener true
+            return true
         }
+
+        return false
     }
 
     private fun setRenameShortcutListener(index: Int, textView: TextView) {
@@ -670,6 +667,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 "isRestored" -> {
                     preferences.edit().remove("isRestored").apply()
                     setPreferences()
+                    setShortcuts()
+                }
+
+                "lockShortcuts" -> {
                     setShortcuts()
                 }
             }

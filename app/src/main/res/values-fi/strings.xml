@@ -101,6 +101,7 @@
     <string name="vertical_alignment">Pikakuvakkeiden Pystysijainti</string>
     <string name="shortcut_size">Pikakuvakkeiden koko</string>
     <string name="shortcut_spacing">Pikakuvakkeiden väli</string>
+    <string name="lock_shortcuts">Lock Shortcuts</string>
 
     <string name="gestures">Eleet</string>
     <string name="swipe_left">Vasen Pyyhkäisy</string>

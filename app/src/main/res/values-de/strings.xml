@@ -103,6 +103,7 @@
     <string name="vertical_alignment">Vertikale Ausrichtung</string>
     <string name="shortcut_size">Verknüpfungsgröße</string>
     <string name="shortcut_spacing">Verknüpfungsabstand</string>
+    <string name="lock_shortcuts">Lock Shortcuts</string>
 
     <string name="gestures">Gesten</string>
     <string name="swipe_left">Linkswisch</string>

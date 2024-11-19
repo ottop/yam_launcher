@@ -192,6 +192,12 @@
             app:key="shortcutWeight"
             app:title="@string/shortcut_spacing"
             app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="false"
+            android:title="@string/lock_shortcuts"
+            app:key="lockShortcuts" />
     </PreferenceCategory>
     <PreferenceCategory
         android:layout_width="wrap_content"
