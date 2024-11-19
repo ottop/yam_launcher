@@ -1,0 +1,84 @@
+<resources>
+
+    <!--General UI-->
+    <string-array name="bg_options">
+        <item>Transparent</item>
+        <item>Schwarz</item>
+        <item>Grau</item>
+        <item>Weiß</item>
+        <item>Material</item>
+    </string-array>
+
+    <string-array name="color_options">
+        <item>Hell</item>
+        <item>Dunkel</item>
+        <item>Material</item>
+    </string-array>
+
+    <string-array name="font_options">
+        <item>System</item>
+        <item>Arbutus</item>
+        <item>Casual</item>
+        <item>Cursive</item>
+        <item>Monospace</item>
+        <item>Sans Serif</item>
+        <item>Sans Serif Light</item>
+        <item>Sans Serif Thin</item>
+        <item>Sans Serif Condensed</item>
+        <item>Sans Serif Condensed Light</item>
+        <item>Sans Serif Smallcaps</item>
+        <item>Serif</item>
+        <item>Ubuntu</item>
+        <item>Ubuntu Light</item>
+        <item>Ubuntu Condensed Regular</item>
+        <item>Workbench</item>
+    </string-array>
+
+    <string-array name="style_options">
+        <item>Normal</item>
+        <item>Fett</item>
+        <item>Kursiv</item>
+        <item>Fett-Kursiv</item>
+    </string-array>
+
+    <!--Home and App Menu-->
+    <string-array name="h_alignment_options">
+        <item>Links</item>
+        <item>Zentriert</item>
+        <item>Rechts</item>
+    </string-array>
+
+    <string-array name="v_alignment_options">
+        <item>Oben</item>
+        <item>Mittig</item>
+        <item>Unten</item>
+    </string-array>
+
+    <string-array name="size_options">
+        <item>Winzig</item>
+        <item>Klein</item>
+        <item>Mittel</item>
+        <item>Groß</item>
+        <item>Extra groß</item>
+        <item>Riesig</item>
+    </string-array>
+
+    <string-array name="shortcut_spacing_options">
+        <item>Winzig</item>
+        <item>Klein</item>
+        <item>Mittel</item>
+        <item>Groß</item>
+        <item>Extra groß</item>
+        <item>Riesig</item>
+        <item>Extra riesig</item>
+    </string-array>
+
+    <string-array name="app_spacing_options">
+        <item>Winzig</item>
+        <item>Klein</item>
+        <item>Mittel</item>
+        <item>Groß</item>
+        <item>Extra groß</item>
+        <item>Riesig</item>
+    </string-array>
+</resources>
