@@ -240,6 +240,10 @@ class SharedPreferenceManager (private val context: Context) {
         editor.apply()
     }
 
+    fun isWebSearchEnabled(): Boolean {
+        return preferences.getBoolean("webSearchEnabled", false) && isSearchEnabled()
+    }
+
     // Hidden Apps
     fun setAppHidden(packageName: String, profile: Int, hidden: Boolean) {
         val editor = preferences.edit()

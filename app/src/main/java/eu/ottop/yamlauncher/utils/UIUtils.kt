@@ -95,6 +95,8 @@ class UIUtils(private val context: Context) {
 
         view.compoundDrawables[0]?.mutate()?.colorFilter = BlendModeColorFilter(color, BlendMode.SRC_ATOP)
         view.compoundDrawables[0]?.alpha = "A9".toInt(16)
+        view.compoundDrawables[2]?.mutate()?.colorFilter = BlendModeColorFilter(color, BlendMode.SRC_ATOP)
+        view.compoundDrawables[2]?.alpha = "A9".toInt(16)
     }
 
     fun setTextFont(view: View) {
@@ -193,6 +195,14 @@ class UIUtils(private val context: Context) {
             contactsView.visibility = View.VISIBLE
         } else {
             contactsView.visibility = View.GONE
+        }
+    }
+
+    fun setWebSearchVisibility(webSearchButton: View) {
+        if (sharedPreferenceManager.isWebSearchEnabled()) {
+            webSearchButton.visibility = View.VISIBLE
+        } else {
+            webSearchButton.visibility = View.GONE
         }
     }
 

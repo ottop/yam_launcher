@@ -122,6 +122,7 @@
     <string name="app_spacing">App Spacing</string>
     <string name="contacts_menu">Contacts Menu</string>
     <string name="permission_denied">Permission Denied</string>
+    <string name="internet_search">Web Search Button</string>
 
     <string name="search_text">Search</string>
     <string name="enable_search">Enable Search</string>

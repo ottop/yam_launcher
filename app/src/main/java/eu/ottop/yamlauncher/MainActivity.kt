@@ -2,6 +2,7 @@ package eu.ottop.yamlauncher
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.SearchManager
 import android.content.ActivityNotFoundException
 import android.content.ContentResolver
 import android.content.Context
@@ -95,6 +96,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private lateinit var appRecycler: RecyclerView
     private lateinit var contactRecycler: RecyclerView
     private lateinit var searchSwitcher: ImageView
+    private lateinit var internetSearch: ImageView
     private lateinit var searchView: TextInputEditText
     private var appAdapter: AppMenuAdapter? = null
     private var contactAdapter: ContactsAdapter? = null
@@ -191,6 +193,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         menuView = binding.menuView
 
         searchSwitcher = binding.searchSwitcher
+        internetSearch = binding.internetSearch
 
         preferences = PreferenceManager.getDefaultSharedPreferences(this)
     }
@@ -272,6 +275,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             appAdapter?.shortcutTextView = textView
             contactAdapter?.shortcutIndex = index
             contactAdapter?.shortcutTextView = textView
+            internetSearch.visibility = View.GONE
             toAppMenu()
 
             return true
@@ -319,6 +323,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private fun toAppMenu() {
         uiUtils.setContactsVisibility(searchSwitcher, binding.searchLayout, binding.searchReplacement)
+
         try {
             // The menu opens from the top
             appRecycler.scrollToPosition(0)
@@ -520,6 +525,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         appAdapter?.shortcutTextView = null
         contactAdapter?.shortcutTextView = null
         menuTitle.visibility = View.GONE
+        uiUtils.setWebSearchVisibility(internetSearch)
         toAppMenu()
     }
 
@@ -537,6 +543,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     uiUtils.setMenuItemColors(searchView)
                     uiUtils.setMenuItemColors(menuTitle, "A9")
                     uiUtils.setImageColor(searchSwitcher)
+                    uiUtils.setImageColor(internetSearch)
                 }
 
                 "textFont" -> {
@@ -561,6 +568,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
                 "searchEnabled" -> {
                     uiUtils.setSearchVisibility(searchView, binding.searchLayout, binding.searchReplacement)
+                    uiUtils.setWebSearchVisibility(internetSearch)
                 }
 
                 "contactsEnabled" -> {
@@ -569,6 +577,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     } catch(_: UninitializedPropertyAccessException) {
                         setupContactRecycler()
                     }
+                }
+
+                "webSearchEnabled" -> {
+                    uiUtils.setWebSearchVisibility(internetSearch)
                 }
 
                 "clockAlignment" -> {
@@ -790,8 +802,24 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             if (sharedPreferenceManager.areContactsEnabled()) {
                 setupContactRecycler()
             }
-        }
 
+            setupInternetSearch()
+        }
+    }
+
+    private fun setupInternetSearch() {
+        uiUtils.setImageColor(internetSearch)
+        internetSearch.setOnClickListener {
+            val intent = Intent(Intent.ACTION_WEB_SEARCH).apply {
+                putExtra(SearchManager.QUERY, searchView.text.toString())
+            }
+
+            if (intent.resolveActivity(packageManager) != null) {
+                startActivity(intent)
+            } else {
+                Toast.makeText(this@MainActivity, "No browser app found.", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private suspend fun setupAppRecycler(newApps: MutableList<Triple<LauncherActivityInfo, UserHandle, Int>>) {

@@ -122,6 +122,7 @@
     <string name="app_spacing">Abstand zwischen Apps</string>
     <string name="contacts_menu">Kontaktmenü</string>
     <string name="permission_denied">Berechtigung verweigert</string>
+    <string name="internet_search">Web Search Button</string>
 
     <string name="search_text">Suche</string>
     <string name="enable_search">Suche aktivieren</string>

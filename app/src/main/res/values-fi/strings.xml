@@ -99,9 +99,9 @@
     <string name="number_of_shortcuts">Pikakuvakkeiden Määrä</string>
     <string name="horizontal_alignment">Pikakuvakkeiden Vaakasijainti</string>
     <string name="vertical_alignment">Pikakuvakkeiden Pystysijainti</string>
-    <string name="shortcut_size">Pikakuvakkeiden koko</string>
-    <string name="shortcut_spacing">Pikakuvakkeiden väli</string>
-    <string name="lock_shortcuts">Lock Shortcuts</string>
+    <string name="shortcut_size">Pikakuvakkeiden Koko</string>
+    <string name="shortcut_spacing">Pikakuvakkeiden Väli</string>
+    <string name="lock_shortcuts">Lukitse Pikakuvakkeet</string>
 
     <string name="gestures">Eleet</string>
     <string name="swipe_left">Vasen Pyyhkäisy</string>
@@ -120,6 +120,7 @@
     <string name="app_spacing">Sovelluksien Väli</string>
     <string name="contacts_menu">Yhteystiedot</string>
     <string name="permission_denied">Tarvittavat Luvat Kielletty</string>
+    <string name="internet_search">Verkkohaku Nappi</string>
 
     <string name="search_text">Hakupalkki</string>
     <string name="enable_search">Näytä Hakupalkki</string>
