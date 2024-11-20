@@ -568,7 +568,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
                 "searchEnabled" -> {
                     uiUtils.setSearchVisibility(searchView, binding.searchLayout, binding.searchReplacement)
-                    uiUtils.setWebSearchVisibility(internetSearch)
                 }
 
                 "contactsEnabled" -> {
@@ -577,10 +576,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     } catch(_: UninitializedPropertyAccessException) {
                         setupContactRecycler()
                     }
-                }
-
-                "webSearchEnabled" -> {
-                    uiUtils.setWebSearchVisibility(internetSearch)
                 }
 
                 "clockAlignment" -> {

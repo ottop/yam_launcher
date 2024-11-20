@@ -241,7 +241,7 @@ class SharedPreferenceManager (private val context: Context) {
     }
 
     fun isWebSearchEnabled(): Boolean {
-        return preferences.getBoolean("webSearchEnabled", false) && isSearchEnabled()
+        return preferences.getBoolean("webSearchEnabled", false) && isSearchEnabled() && !isAutoLaunchEnabled()
     }
 
     // Hidden Apps
