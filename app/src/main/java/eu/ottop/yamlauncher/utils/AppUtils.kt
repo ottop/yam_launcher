@@ -1,5 +1,6 @@
 package eu.ottop.yamlauncher.utils
 
+import android.content.ComponentName
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.LauncherActivityInfo
@@ -22,7 +23,7 @@ class AppUtils(private val context: Context, private val launcherApps: LauncherA
             for (i in launcherApps.profiles.indices) { // Check apps on both, normal and work profiles
                 launcherApps.getActivityList(null, launcherApps.profiles[i]).forEach { app ->
                     if (!sharedPreferenceManager.isAppHidden( // Only include the app if it isn't set as hidden
-                            app.applicationInfo.packageName,
+                            app.componentName.flattenToString(),
                             i
                         ) && app.applicationInfo.packageName != context.applicationInfo.packageName // Hide the launcher itself
                     ) {
@@ -34,9 +35,9 @@ class AppUtils(private val context: Context, private val launcherApps: LauncherA
             // Sort apps by name
             sortedApps = allApps.sortedBy {
                 sharedPreferenceManager.getAppName(
-                    it.first.applicationInfo.packageName,
+                    it.first.componentName.flattenToString(),
                     it.third,
-                    context.packageManager.getApplicationLabel(it.first.applicationInfo)
+                    it.first.label
                 ).toString().lowercase()
             }
         }
@@ -51,7 +52,7 @@ class AppUtils(private val context: Context, private val launcherApps: LauncherA
         withContext(Dispatchers.Default) {
         for (i in launcherApps.profiles.indices) {
             launcherApps.getActivityList(null, launcherApps.profiles[i]).forEach { app ->
-                if (sharedPreferenceManager.isAppHidden(app.applicationInfo.packageName, i)) {
+                if (sharedPreferenceManager.isAppHidden(app.componentName.flattenToString(), i)) {
                     allApps.add(Triple(app, launcherApps.profiles[i], i))
                 }
             }
@@ -60,9 +61,9 @@ class AppUtils(private val context: Context, private val launcherApps: LauncherA
         //Sort apps by name
         sortedApps = allApps.sortedBy {
         sharedPreferenceManager.getAppName(
-            it.first.applicationInfo.packageName,
+            it.first.componentName.flattenToString(),
             it.third,
-            context.packageManager.getApplicationLabel(it.first.applicationInfo)
+            it.first.label
         ).toString().lowercase()
         }
         }
@@ -80,12 +81,7 @@ class AppUtils(private val context: Context, private val launcherApps: LauncherA
         }
     }
 
-    fun launchApp(packageName: String, userHandle: UserHandle) {
-        val mainActivity = launcherApps.getActivityList(packageName, userHandle).firstOrNull()
-        if (mainActivity != null) {
-            launcherApps.startMainActivity(mainActivity.componentName,  userHandle, null, null)
-        } else {
-            Toast.makeText(context, context.getString(R.string.launch_error), Toast.LENGTH_SHORT).show()
-        }
+    fun launchApp(componentName: ComponentName, userHandle: UserHandle) {
+        launcherApps.startMainActivity(componentName,  userHandle, null, null)
     }
 }

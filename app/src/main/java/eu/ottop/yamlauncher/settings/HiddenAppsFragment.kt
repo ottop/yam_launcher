@@ -122,9 +122,9 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener, Ti
             }
             updatedApps.forEach {
                 val cleanItemText = stringUtils.cleanString(sharedPreferenceManager.getAppName(
-                    it.first.applicationInfo.packageName,
+                    it.first.componentName.flattenToString(),
                     it.third,
-                    requireContext().packageManager.getApplicationLabel(it.first.applicationInfo)
+                    it.first.label
                 ).toString())
                 if (cleanItemText != null) {
                     if (
@@ -158,15 +158,15 @@ class HiddenAppsFragment : Fragment(), HiddenAppsAdapter.OnItemClickListener, Ti
     }
 
     private suspend fun performConfirmedAction(appInfo: LauncherActivityInfo, profile: Int) {
-        sharedPreferenceManager.setAppVisible(appInfo.applicationInfo.packageName, profile)
+        sharedPreferenceManager.setAppVisible(appInfo.componentName.flattenToString(), profile)
         adapter?.updateApps(appUtils.getHiddenApps())
     }
 
     override fun onItemClick(appInfo: LauncherActivityInfo, profile: Int) {
         showConfirmationDialog(appInfo, sharedPreferenceManager.getAppName(
-            appInfo.applicationInfo.packageName,
+            appInfo.componentName.flattenToString(),
             profile,
-            requireContext().packageManager.getApplicationLabel(appInfo.applicationInfo)
+            appInfo.label
         ).toString(), profile)
     }
 
