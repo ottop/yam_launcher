@@ -131,25 +131,23 @@ class AppMenuAdapter(
         holder.textView.setTextColor(sharedPreferenceManager.getTextColor())
 
         // Update the application information (allows updating apps to work)
-        val appInfo = appUtils.getAppInfo(
+        val isAppInstalled = appUtils.getAppInfo(
             app.first.applicationInfo.packageName,
             app.third
-        )
+        ) != null
 
         // Set app name on the menu. If the app has been uninstalled, replace it with "Removing" until the app menu updates.
-        val appLabel: CharSequence = appInfo?.let { activity.packageManager.getApplicationLabel(it) } ?: activity.getString(R.string.removing)
-
-        if (appInfo != null) {
+        if (isAppInstalled) {
             holder.textView.text = sharedPreferenceManager.getAppName(
-                appInfo.packageName,
+                app.first.componentName.flattenToString(),
                 app.third,
-                appLabel
+                app.first.label
             )
 
             holder.editText.setText(holder.textView.text)
 
             // Remove the uninstall icon for system apps
-            if (appInfo.flags and ApplicationInfo.FLAG_SYSTEM != 0) {
+            if (app.first.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM != 0) {
                 holder.actionMenuLayout.findViewById<TextView>(R.id.uninstall).visibility =
                     View.GONE
             } else {
@@ -157,22 +155,20 @@ class AppMenuAdapter(
                     View.VISIBLE
             }
         }
-        else {holder.textView.text = appLabel}
+        else {
+            holder.textView.text = activity.getString(R.string.removing)
+        }
 
         holder.textView.visibility = View.VISIBLE
 
-        if (appInfo != null) {
-
-            val appActivity = launcherApps.getActivityList(appInfo.packageName, app.second).firstOrNull()
-
+        if (isAppInstalled) {
             appActionMenu.setActionListeners(
                 holder.textView,
                 holder.editView,
                 holder.actionMenuLayout,
-                appInfo,
+                app.first,
                 app.second,
                 app.third,
-                appActivity
             )
         }
         ViewCompat.addAccessibilityAction(holder.textView, activity.getString(R.string.close_app_menu)) { _, _ ->

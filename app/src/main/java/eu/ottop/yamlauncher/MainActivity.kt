@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.SearchManager
 import android.content.ActivityNotFoundException
+import android.content.ComponentName
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
@@ -375,7 +376,20 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private fun setShortcutListeners(textView: TextView, savedView: List<String>?) {
         textView.setOnClickListener {
             if (savedView != null && canLaunchShortcut) {
-                appUtils.launchApp(savedView[0], launcherApps.profiles[savedView[1].toInt()])
+                val componentName = if (savedView[0].contains("/")) {
+                    val (packageName, className) = savedView[0].split("/")
+                    ComponentName(packageName, className)
+                } else {
+                    val userHandle = launcherApps.profiles[savedView[1].toInt()]
+                    val mainActivity = launcherApps.getActivityList(savedView[0], userHandle).firstOrNull()
+                    if (mainActivity != null) {
+                        mainActivity.componentName
+                    } else {
+                        Toast.makeText(this, this.getString(R.string.launch_error), Toast.LENGTH_SHORT).show()
+                        return@setOnClickListener
+                    }
+                }
+                appUtils.launchApp(componentName, launcherApps.profiles[savedView[1].toInt()])
             }
         }
     }
@@ -993,9 +1007,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
             updatedApps.forEach {
                 val cleanItemText = stringUtils.cleanString(sharedPreferenceManager.getAppName(
-                    it.first.applicationInfo.packageName,
+                    it.first.componentName.flattenToString(),
                     it.third,
-                    packageManager.getApplicationLabel(it.first.applicationInfo)
+                    it.first.label
                 ).toString())
                 if (cleanItemText != null) {
                     if (
@@ -1012,7 +1026,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private suspend fun applySearchFilter(newFilteredApps: MutableList<Triple<LauncherActivityInfo, UserHandle, Int>>) {
         if (sharedPreferenceManager.isAutoLaunchEnabled() && menuView.displayedChild == 0 && appAdapter?.shortcutTextView == null && newFilteredApps.size == 1) {
-            appUtils.launchApp(newFilteredApps[0].first.applicationInfo.packageName, newFilteredApps[0].second)
+            appUtils.launchApp(newFilteredApps[0].first.componentName, newFilteredApps[0].second)
         } else if (!listsEqual(installedApps, newFilteredApps)) {
             updateMenu(newFilteredApps)
 
@@ -1072,7 +1086,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     override fun onItemClick(appInfo: LauncherActivityInfo, userHandle: UserHandle) {
-        appUtils.launchApp(appInfo.applicationInfo.packageName, userHandle)
+        appUtils.launchApp(appInfo.componentName, userHandle)
     }
 
     override fun onShortcut(
@@ -1096,12 +1110,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         shortcutView.text = textView.text.toString()
         shortcutView.setOnClickListener {
-            appUtils.launchApp(appInfo.applicationInfo.packageName, userHandle)
+            appUtils.launchApp(appInfo.componentName, userHandle)
         }
         sharedPreferenceManager.setShortcut(
             shortcutIndex,
             shortcutView.text,
-            appInfo.applicationInfo.packageName,
+            appInfo.componentName.flattenToString(),
             userProfile
         )
         uiUtils.setDrawables(shortcutView, sharedPreferenceManager.getShortcutAlignment())
