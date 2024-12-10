@@ -122,9 +122,9 @@ class GestureAppsFragment(private val direction: String) : Fragment(),
             }
             updatedApps.forEach {
                 val cleanItemText = stringUtils.cleanString(sharedPreferenceManager.getAppName(
-                    it.first.applicationInfo.packageName,
+                    it.first.componentName.flattenToString(),
                     it.third,
-                    requireContext().packageManager.getApplicationLabel(it.first.applicationInfo)
+                    it.first.label
                 ).toString())
                 if (cleanItemText != null) {
                     if (
@@ -159,7 +159,7 @@ class GestureAppsFragment(private val direction: String) : Fragment(),
 
     private fun performConfirmedAction(appInfo: LauncherActivityInfo, appName: String, profile: Int) {
         sharedPreferenceManager.setGestures(
-            direction, "$appName§splitter§${appInfo.applicationInfo.packageName}§splitter§$profile"
+            direction, "$appName§splitter§${appInfo.componentName.flattenToString()}§splitter§$profile"
         )
         requireActivity().supportFragmentManager.popBackStack()
     }
@@ -167,9 +167,9 @@ class GestureAppsFragment(private val direction: String) : Fragment(),
 
     override fun onItemClick(appInfo: LauncherActivityInfo, profile: Int) {
         showConfirmationDialog(appInfo, sharedPreferenceManager.getAppName(
-            appInfo.applicationInfo.packageName,
+            appInfo.componentName.flattenToString(),
             profile,
-            requireContext().packageManager.getApplicationLabel(appInfo.applicationInfo)
+            appInfo.label
         ).toString(), profile)
     }
 

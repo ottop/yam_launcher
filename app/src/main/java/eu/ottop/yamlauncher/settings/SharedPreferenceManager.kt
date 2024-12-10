@@ -88,9 +88,9 @@ class SharedPreferenceManager (private val context: Context) {
         return preferences.getString("dateSize", "medium")
     }
 
-    fun setShortcut(index: Int, text: CharSequence, packageName: String, profile: Int, isContact: Boolean = false) {
+    fun setShortcut(index: Int, text: CharSequence, componentName: String, profile: Int, isContact: Boolean = false) {
         val editor = preferences.edit()
-        editor.putString("shortcut${index}", "$packageName§splitter§$profile§splitter§${text}§splitter§${isContact}")
+        editor.putString("shortcut${index}", "$componentName§splitter§$profile§splitter§${text}§splitter§${isContact}")
         editor.apply()
     }
 
@@ -245,36 +245,36 @@ class SharedPreferenceManager (private val context: Context) {
     }
 
     // Hidden Apps
-    fun setAppHidden(packageName: String, profile: Int, hidden: Boolean) {
+    fun setAppHidden(componentName: String, profile: Int, hidden: Boolean) {
         val editor = preferences.edit()
-        editor.putBoolean("hidden$packageName-$profile", hidden)
+        editor.putBoolean("hidden$componentName-$profile", hidden)
         editor.apply()
     }
 
-    fun isAppHidden(packageName: String, profile: Int): Boolean {
-        return preferences.getBoolean("hidden$packageName-$profile", false) // Default to false (visible)
+    fun isAppHidden(componentName: String, profile: Int): Boolean {
+        return preferences.getBoolean("hidden$componentName-$profile", false) // Default to false (visible)
     }
 
-    fun setAppVisible(packageName: String, profile: Int) {
+    fun setAppVisible(componentName: String, profile: Int) {
         val editor = preferences.edit()
-        editor.remove("hidden$packageName-$profile")
+        editor.remove("hidden$componentName-$profile")
         editor.apply()
     }
 
     //Renaming apps
-    fun setAppName(packageName: String, profile: Int, newName: String) {
+    fun setAppName(componentName: String, profile: Int, newName: String) {
         val editor = preferences.edit()
-        editor.putString("name$packageName-$profile", newName)
+        editor.putString("name$componentName-$profile", newName)
         editor.apply()
     }
 
-    fun getAppName(packageName: String, profile: Int, appName: CharSequence): CharSequence? {
-        return preferences.getString("name$packageName-$profile", appName.toString())
+    fun getAppName(componentName: String, profile: Int, appName: CharSequence): CharSequence? {
+        return preferences.getString("name$componentName-$profile", appName.toString())
     }
 
-    fun resetAppName(packageName: String, profile: Int) {
+    fun resetAppName(componentName: String, profile: Int) {
         val editor = preferences.edit()
-        editor.remove("name$packageName-$profile")
+        editor.remove("name$componentName-$profile")
         editor.apply()
     }
 

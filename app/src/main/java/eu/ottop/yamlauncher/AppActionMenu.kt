@@ -33,10 +33,9 @@ class AppActionMenu(private val activity: MainActivity, private val binding: Act
         textView: TextView,
         editLayout: LinearLayout,
         actionMenu: View,
-        appInfo: ApplicationInfo,
+        appActivity: LauncherActivityInfo,
         userHandle: UserHandle,
-        workProfile: Int,
-        appActivity: LauncherActivityInfo?
+        workProfile: Int
     ){
 
 
@@ -52,32 +51,32 @@ class AppActionMenu(private val activity: MainActivity, private val binding: Act
         }
 
         ViewCompat.addAccessibilityAction(textView, activity.getString(R.string.accessibility_uninstall)) { _, _ ->
-            uninstallApp(appInfo, userHandle)
+            uninstallApp(appActivity.applicationInfo, userHandle)
             true
         }
 
         actionMenu.findViewById<TextView>(R.id.uninstall).setOnClickListener {
-            uninstallApp(appInfo, userHandle)
+            uninstallApp(appActivity.applicationInfo, userHandle)
             animations.fadeViewOut(actionMenu)
             textView.visibility = View.VISIBLE
         }
 
         ViewCompat.addAccessibilityAction(textView, activity.getString(R.string.accessibility_rename)) { _, _ ->
-            renameApp(textView, editLayout, actionMenu, appActivity, appInfo, userHandle, workProfile)
+            renameApp(textView, editLayout, actionMenu, appActivity, userHandle, workProfile)
             true
         }
 
         actionMenu.findViewById<TextView>(R.id.rename).setOnClickListener {
-            renameApp(textView, editLayout, actionMenu, appActivity, appInfo, userHandle, workProfile)
+            renameApp(textView, editLayout, actionMenu, appActivity, userHandle, workProfile)
         }
 
         ViewCompat.addAccessibilityAction(textView, activity.getString(R.string.accessibility_hide)) { _, _ ->
-            hideApp(editLayout, textView, actionMenu, appInfo, workProfile)
+            hideApp(editLayout, textView, actionMenu, appActivity, workProfile)
             true
         }
 
         actionMenu.findViewById<TextView>(R.id.hide).setOnClickListener {
-            hideApp(editLayout, textView, actionMenu, appInfo, workProfile)
+            hideApp(editLayout, textView, actionMenu, appActivity, workProfile)
         }
 
         actionMenu.findViewById<TextView>(R.id.close).setOnClickListener {
@@ -109,7 +108,7 @@ class AppActionMenu(private val activity: MainActivity, private val binding: Act
         activity.returnAllowed = false
     }
 
-    private fun renameApp(textView: TextView, editLayout: LinearLayout, actionMenu: View, appActivity: LauncherActivityInfo?, appInfo: ApplicationInfo, userHandle: UserHandle, workProfile: Int) {
+    private fun renameApp(textView: TextView, editLayout: LinearLayout, actionMenu: View, appActivity: LauncherActivityInfo, userHandle: UserHandle, workProfile: Int) {
         activity.disableAppMenuScroll()
         textView.visibility = View.INVISIBLE
         animations.fadeViewIn(editLayout)
@@ -117,7 +116,7 @@ class AppActionMenu(private val activity: MainActivity, private val binding: Act
         val editText = editLayout.findViewById<EditText>(R.id.appNameEdit)
         val resetButton = editLayout.findViewById<AppCompatButton>(R.id.reset)
 
-        val app = Triple(appActivity!!, userHandle, workProfile)
+        val app = Triple(appActivity, userHandle, workProfile)
 
         val searchEnabled = sharedPreferenceManager.isSearchEnabled()
 
@@ -166,7 +165,7 @@ class AppActionMenu(private val activity: MainActivity, private val binding: Act
                     activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(editText.windowToken, 0)
                 sharedPreferenceManager.setAppName(
-                    appInfo.packageName,
+                    app.first.componentName.flattenToString(),
                     workProfile,
                     editText.text.toString()
                 )
@@ -187,7 +186,7 @@ class AppActionMenu(private val activity: MainActivity, private val binding: Act
                 activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(editLayout.windowToken, 0)
             sharedPreferenceManager.resetAppName(
-                app.first.applicationInfo.packageName,
+                app.first.componentName.flattenToString(),
                 app.third
             )
 
@@ -197,12 +196,12 @@ class AppActionMenu(private val activity: MainActivity, private val binding: Act
         }
     }
 
-    private fun hideApp(editLayout: LinearLayout, textView: TextView, actionMenu: View, appInfo: ApplicationInfo, workProfile: Int) {
+    private fun hideApp(editLayout: LinearLayout, textView: TextView, actionMenu: View, appActivity: LauncherActivityInfo, workProfile: Int) {
         editLayout.visibility = View.GONE
         textView.visibility = View.GONE
         actionMenu.visibility = View.GONE
         activity.lifecycleScope.launch {
-            sharedPreferenceManager.setAppHidden(appInfo.packageName, workProfile, true)
+            sharedPreferenceManager.setAppHidden(appActivity.componentName.flattenToString(), workProfile, true)
             activity.refreshAppMenu()
         }
     }
