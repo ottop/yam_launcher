@@ -8,8 +8,7 @@ import androidx.preference.SwitchPreference
 import eu.ottop.yamlauncher.R
 import eu.ottop.yamlauncher.utils.PermissionUtils
 
-class AppMenuSettingsFragment : PreferenceFragmentCompat(), TitleProvider {
-    private val permissionUtils = PermissionUtils()
+class AppMenuSettingsFragment : PreferenceFragmentCompat(), TitleProvider { private val permissionUtils = PermissionUtils()
     private var contactPref: SwitchPreference? = null
     private var webSearchPref: SwitchPreference? = null
     private var autoLaunchPref: SwitchPreference? = null
