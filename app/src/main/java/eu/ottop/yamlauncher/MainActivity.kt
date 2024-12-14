@@ -886,6 +886,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     private fun setAppViewDetails() {
+        lifecycleScope.launch(Dispatchers.Default) {
+            filterItems(searchView.text.toString())
+        }
         searchSwitcher.setImageDrawable(
             ResourcesCompat.getDrawable(
                 resources,
@@ -980,21 +983,29 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     private suspend fun filterItems(query: String?) {
-
         val cleanQuery = stringUtils.cleanString(query)
-        val newFilteredApps = mutableListOf<Triple<LauncherActivityInfo, UserHandle, Int>>()
-        val updatedApps = appUtils.getInstalledApps()
-
-        getFilteredApps(cleanQuery, newFilteredApps, updatedApps)
-        if (sharedPreferenceManager.areContactsEnabled() && cleanQuery != null) {
-            updateContacts(cleanQuery)
+        when (menuView.displayedChild) {
+            0 -> {
+                val newFilteredApps = mutableListOf<Triple<LauncherActivityInfo, UserHandle, Int>>()
+                val updatedApps = appUtils.getInstalledApps()
+                val filteredApps = getFilteredApps(cleanQuery, newFilteredApps, updatedApps)
+                if (filteredApps != null) {
+                    applySearchFilter(filteredApps)
+                }
+            }
+            1 -> {
+                if (sharedPreferenceManager.areContactsEnabled() && cleanQuery != null) {
+                    updateContacts(cleanQuery)
+                }
+            }
         }
     }
 
-    private suspend fun getFilteredApps(cleanQuery: String?, newFilteredApps: MutableList<Triple<LauncherActivityInfo, UserHandle, Int>>, updatedApps: List<Triple<LauncherActivityInfo, UserHandle, Int>>) {
+    private suspend fun getFilteredApps(cleanQuery: String?, newFilteredApps: MutableList<Triple<LauncherActivityInfo, UserHandle, Int>>, updatedApps: List<Triple<LauncherActivityInfo, UserHandle, Int>>): List<Triple<LauncherActivityInfo, UserHandle, Int>>? {
         if (cleanQuery.isNullOrEmpty()) {
             isJobActive = true
             updateMenu(updatedApps)
+            return null
         } else {
             isJobActive = false
 
@@ -1020,16 +1031,15 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     }
                 }
             }
-            applySearchFilter(newFilteredApps)
+            return newFilteredApps
         }
     }
 
-    private suspend fun applySearchFilter(newFilteredApps: MutableList<Triple<LauncherActivityInfo, UserHandle, Int>>) {
+    private suspend fun applySearchFilter(newFilteredApps: List<Triple<LauncherActivityInfo, UserHandle, Int>>) {
         if (sharedPreferenceManager.isAutoLaunchEnabled() && menuView.displayedChild == 0 && appAdapter?.shortcutTextView == null && newFilteredApps.size == 1) {
             appUtils.launchApp(newFilteredApps[0].first.componentName, newFilteredApps[0].second)
-        } else if (!listsEqual(installedApps, newFilteredApps)) {
+        } else {
             updateMenu(newFilteredApps)
-
             installedApps = newFilteredApps
         }
     }
