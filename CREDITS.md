@@ -8,6 +8,9 @@
 - Added (optional) fuzzy search. [Pull Request](https://github.com/ottop/yam_launcher/pull/20)
 - Changed app names to activity labels so that aps with multiple icons work. [Pull Request](https://github.com/ottop/yam_launcher/pull/25)
 
+[KorigamiK](https://codeberg.org/KorigamiK):
+- Optimized the search. [Pull Request](https://codeberg.org/ottoptj/yamlauncher/pulls/40)
+
 [schulle4u](https://codeberg.org/schulle4u):
 
 - German translation. [Pull Request](https://codeberg.org/ottoptj/yamlauncher/pulls/36)
