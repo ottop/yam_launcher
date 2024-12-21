@@ -37,7 +37,16 @@ class AppActionMenu(private val activity: MainActivity, private val binding: Act
         userHandle: UserHandle,
         workProfile: Int
     ){
+        ViewCompat.addAccessibilityAction(textView, activity.getString(R.string.accessibility_info)) { _, _ ->
+            appInfo(appActivity, userHandle)
+            true
+        }
 
+        actionMenu.findViewById<TextView>(R.id.pin).setOnClickListener {
+            pinApp(appActivity, workProfile)
+            animations.fadeViewOut(actionMenu)
+            textView.visibility = View.VISIBLE
+        }
 
         ViewCompat.addAccessibilityAction(textView, activity.getString(R.string.accessibility_info)) { _, _ ->
             appInfo(appActivity, userHandle)
@@ -83,6 +92,10 @@ class AppActionMenu(private val activity: MainActivity, private val binding: Act
             animations.fadeViewOut(actionMenu)
             textView.visibility = View.VISIBLE
         }
+    }
+
+    private fun pinApp(appActivity: LauncherActivityInfo, workProfile: Int) {
+        sharedPreferenceManager.setPinnedApp(appActivity.componentName.flattenToString(), workProfile)
     }
 
     private fun appInfo(

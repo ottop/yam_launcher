@@ -33,13 +33,17 @@ class AppUtils(private val context: Context, private val launcherApps: LauncherA
             }
 
             // Sort apps by name
-            sortedApps = allApps.sortedBy {
+            sortedApps = allApps.sortedWith(
+                compareBy<Triple<LauncherActivityInfo, UserHandle, Int>> {
+                    !sharedPreferenceManager.isAppPinned(it.first.componentName.flattenToString(), it.third)
+                }.thenBy {
                 sharedPreferenceManager.getAppName(
                     it.first.componentName.flattenToString(),
                     it.third,
                     it.first.label
                 ).toString().lowercase()
-            }
+                }
+            )
         }
         return sortedApps
 

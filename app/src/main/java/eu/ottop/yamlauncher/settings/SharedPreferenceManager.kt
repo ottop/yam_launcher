@@ -123,6 +123,47 @@ class SharedPreferenceManager (private val context: Context) {
         return preferences.getBoolean("lockShortcuts", false)
     }
 
+    fun setPinnedApp(componentName: String, profile: Int) {
+        val editor = preferences.edit()
+        println(isAppPinned(componentName, profile))
+        val pinnedAppString = when (isAppPinned(componentName, profile)) {
+            true -> {
+                getPinnedAppString()?.replace("§section§$componentName§splitter§$profile", "")
+            }
+            false -> {
+                "${getPinnedAppString()}§section§$componentName§splitter§$profile"
+            }
+        }
+
+        editor.putString(
+            "pinnedApps",
+            pinnedAppString
+            )
+        editor.apply()
+    }
+
+    private fun getPinnedAppString(): String? {
+        return preferences.getString("pinnedApps", "")
+    }
+
+    private fun getPinnedApps(): List<Pair<String, Int?>> {
+        val pinnedApps = mutableListOf<Pair<String, Int?>>()
+        val pinnedAppsList = getPinnedAppString()?.split("§section§")
+
+        pinnedAppsList?.forEach {
+            val app = it.split("§splitter§")
+            if (app.size > 1) {
+                pinnedApps.add(Pair(app[0], app[1].toIntOrNull()))
+            }
+        }
+
+        return pinnedApps
+    }
+
+    fun isAppPinned(componentName: String, profile: Int): Boolean {
+        return getPinnedApps().contains(Pair(componentName, profile))
+    }
+
     fun isBatteryEnabled(): Boolean {
         return preferences.getBoolean("batteryEnabled", false)
     }

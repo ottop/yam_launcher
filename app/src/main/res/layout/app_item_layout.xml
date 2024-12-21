@@ -84,6 +84,20 @@
         android:visibility="invisible">
 
         <TextView
+            android:id="@+id/pin"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/app_action_background"
+            android:paddingVertical="5dp"
+            android:singleLine="true"
+            android:text="@string/info"
+            android:textAlignment="center"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+            android:textColor="#E3F3F3F3"
+            app:drawableTopCompat="@drawable/info_24px" />
+
+        <TextView
             android:id="@+id/info"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
