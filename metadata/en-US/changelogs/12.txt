@@ -1,0 +1,7 @@
+Feature release
+
+A bunch of stuff.
+
+Thanks a bunch to @alrajdev(GitHub), @schulle4u(Codeberg) and @KorigamiK(Codeberg) for contributions.
+
+Full changelog is in the repository release.
