@@ -951,7 +951,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
     }
 
-    private suspend fun setupSearch() {
+    private fun setupSearch() {
         binding.appView.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
 
             if (bottom - top > oldBottom - oldTop) {
@@ -1173,6 +1173,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
                 // Swipe left
                 else if (deltaX < 0 && abs(deltaX) > swipeThreshold && abs(velocityX) > swipeVelocityThreshold && sharedPreferenceManager.isGestureEnabled("left")){
+                    println(leftSwipeActivity)
                     if (leftSwipeActivity.first != null && leftSwipeActivity.second != null) {
                         canLaunchShortcut = false
                         launcherApps.startMainActivity(leftSwipeActivity.first!!.componentName,  launcherApps.profiles[leftSwipeActivity.second!!], null, null)

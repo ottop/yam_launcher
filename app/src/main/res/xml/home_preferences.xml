@@ -198,6 +198,12 @@
             android:defaultValue="false"
             android:title="@string/lock_shortcuts"
             app:key="lockShortcuts" />
+        <SwitchPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="true"
+            android:title="@string/lock_shortcuts"
+            app:key="showHiddenShortcuts" />
     </PreferenceCategory>
     <PreferenceCategory
         android:layout_width="wrap_content"

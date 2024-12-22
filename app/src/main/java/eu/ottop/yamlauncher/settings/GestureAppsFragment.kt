@@ -49,7 +49,7 @@ class GestureAppsFragment(private val direction: String) : Fragment(),
         lifecycleScope.launch {
             adapter = GestureAppsAdapter(
                 requireContext(),
-                appUtils.getInstalledApps().toMutableList(),
+                appUtils.getInstalledApps(true).toMutableList(),
                 this@GestureAppsFragment
             )
 
@@ -102,7 +102,7 @@ class GestureAppsFragment(private val direction: String) : Fragment(),
 
         val cleanQuery = stringUtils.cleanString(query)
         val newFilteredApps = mutableListOf<Triple<LauncherActivityInfo, UserHandle, Int>>()
-        val updatedApps = appUtils.getInstalledApps()
+        val updatedApps = appUtils.getInstalledApps(true)
 
         getFilteredApps(cleanQuery, newFilteredApps, updatedApps)
 

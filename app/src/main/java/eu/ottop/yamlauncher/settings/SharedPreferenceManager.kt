@@ -123,6 +123,11 @@ class SharedPreferenceManager (private val context: Context) {
         return preferences.getBoolean("lockShortcuts", false)
     }
 
+    // Show hidden apps in shortcut selection
+    fun showHiddenShortcuts(): Boolean {
+        return preferences.getBoolean("showHiddenShortcuts", true)
+    }
+
     fun setPinnedApp(componentName: String, profile: Int) {
         val editor = preferences.edit()
 
