@@ -33,14 +33,14 @@
     <string name="launch_error">Sovelluksen avaaminen epäonnistui</string>
 
     <!--Action Menu Items-->
-    <string name="pin">Pin</string>
+    <string name="pin">Kiinnitä</string>
     <string name="empty_rename">Nimi ei voi olla tyhjä</string>
     <string name="info">Tiedot</string>
     <string name="uninstall">Poista</string>
     <string name="rename">Nimeä</string>
     <string name="hide">Piilota</string>
     <string name="close">Sulje</string>
-    <string name="accessibility_pin">Pin app</string>
+    <string name="accessibility_pin">Kiinnitä sovellus</string>
     <string name="accessibility_info">Sovellustiedot</string>
     <string name="accessibility_uninstall">Poista sovellus</string>
     <string name="accessibility_rename">Uudelleen-nimeä sovellus</string>
@@ -124,16 +124,16 @@
     <string name="permission_denied">Tarvittavat Luvat Kielletty</string>
     <string name="internet_search">Verkkohaku Nappi</string>
 
-    <string name="context_menu_settings_title">Context Menu Settings</string>
-    <string name="context_menu_settings_text">Context Menu</string>
-    <string name="context_menu_settings_summary">Enable/disable context menu items</string>
+    <string name="context_menu_settings_title">Kontekstivalikon Asetukset</string>
+    <string name="context_menu_settings_text">Kontekstimenu</string>
+    <string name="context_menu_settings_summary">Näytä/piilota kontekstimenun vaihtoehtoja</string>
 
-    <string name="enable_pin">Pin App</string>
-    <string name="enable_info">App Info</string>
-    <string name="enable_uninstall">Uninstall App</string>
-    <string name="enable_rename">Rename App</string>
-    <string name="enable_hide">Hide App</string>
-    <string name="enable_close">Close Menu</string>
+    <string name="enable_pin">Sovellusten Kiinnitys</string>
+    <string name="enable_info">Sovellustiedot</string>
+    <string name="enable_uninstall">Sovelluksien Poistaminen</string>
+    <string name="enable_rename">Sovellusten Uudelleen-nimeäminen</string>
+    <string name="enable_hide">Sovellusten Piilottaminen</string>
+    <string name="enable_close">Valikon Sulkeminen</string>
 
     <string name="search_text">Hakupalkki</string>
     <string name="enable_search">Näytä Hakupalkki</string>

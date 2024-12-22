@@ -36,13 +36,13 @@
     <string name="empty_rename">Name darf nicht leer sein</string>
 
     <!--Action Menu Items-->
-    <string name="pin">Pin</string>
+    <string name="pin">Anheften</string>
     <string name="info">Info</string>
     <string name="uninstall">Deinstallieren</string>
     <string name="rename">Umbenennen</string>
     <string name="hide">Verstecken</string>
     <string name="close">Schließen</string>
-    <string name="accessibility_pin">Pin app</string>
+    <string name="accessibility_pin">App anheften</string>
     <string name="accessibility_info">App-Info</string>
     <string name="accessibility_uninstall">App deinstallieren</string>
     <string name="accessibility_rename">App umbenennen</string>
@@ -124,24 +124,24 @@
     <string name="app_spacing">Abstand zwischen Apps</string>
     <string name="contacts_menu">Kontaktmenü</string>
     <string name="permission_denied">Berechtigung verweigert</string>
-    <string name="internet_search">Web Search Button</string>
+    <string name="internet_search">Web-Suchfunktion</string>
 
-    <string name="context_menu_settings_title">Context Menu Settings</string>
-    <string name="context_menu_settings_text">Context Menu</string>
-    <string name="context_menu_settings_summary">Enable/disable context menu items</string>
+    <string name="context_menu_settings_title">Kontextmenü-Einstellungen</string>
+    <string name="context_menu_settings_text">Kontextmenü</string>
+    <string name="context_menu_settings_summary">Aktivieren/Deaktivieren von Kontextmenü Einträge</string>
 
-    <string name="enable_pin">Pin App</string>
-    <string name="enable_info">App Info</string>
-    <string name="enable_uninstall">Uninstall App</string>
-    <string name="enable_rename">Rename App</string>
-    <string name="enable_hide">Hide App</string>
-    <string name="enable_close">Close Menu</string>
+    <string name="enable_pin">Anheften</string>
+    <string name="enable_info">App-Info</string>
+    <string name="enable_uninstall">App deinstallieren</string>
+    <string name="enable_rename">App umbenennen</string>
+    <string name="enable_hide">App verstecken</string>
+    <string name="enable_close">Schließen</string>
 
     <string name="search_text">Suche</string>
     <string name="enable_search">Suche aktivieren</string>
     <string name="search_alignment">Ausrichtung der Suche</string>
     <string name="search_size">Größe der Suche</string>
-    <string name="enable_fuzzy_search">Fuzzy Search</string>
+    <string name="enable_fuzzy_search">Fuzzy-Suche</string>
     <string name="automatically_open_keyboard">Tastatur automatisch öffnen</string>
     <string name="automatic_app_opening">Automatisches öffnen der Apps</string>
     <string name="auto_launch_summary">App automatisch öffnen, wenn sie das letzte Suchergebnis ist</string>
