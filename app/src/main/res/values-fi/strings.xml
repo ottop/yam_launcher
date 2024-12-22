@@ -69,6 +69,8 @@
     <string name="swipe_threshold">Pyyhkäisyn Kynnysarvo</string>
     <string name="swipe_velocity_threshold">Pyyhkäisyn Nopeuden Kynnysarvo</string>
     <string name="show_status_bar">Näytä Tilapalkki</string>
+    <string name="enable_confirmation">Vahvistus Sovellusta Avatessa</string>
+    <string name="launch_confirmation_text">Oletko varma, että haluat avata tämän sovelluksen?</string>
 
     <string name="home_settings_title">Kotinäytön Asetukset</string>
     <string name="home_settings_text">Kotinäyttö</string>

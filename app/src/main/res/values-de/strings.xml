@@ -71,6 +71,8 @@
     <string name="swipe_threshold">Schwellenwert für Wischen</string>
     <string name="swipe_velocity_threshold">Schwellenwert für Wischgeschwindigkeit</string>
     <string name="show_status_bar">Statusleiste anzeigen</string>
+    <string name="enable_confirmation">App-Bestätigungsdialog</string>
+    <string name="launch_confirmation_text">Sind Sie sicher, dass Sie diese Anwendung starten möchten?</string>
 
     <string name="home_settings_title">Startbildschirmeinstellungen</string>
     <string name="home_settings_text">Startbildschirm</string>

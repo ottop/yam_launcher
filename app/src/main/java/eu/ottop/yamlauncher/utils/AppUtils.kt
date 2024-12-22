@@ -1,11 +1,14 @@
 package eu.ottop.yamlauncher.utils
 
+import android.app.AlertDialog
 import android.content.ComponentName
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
 import android.os.UserHandle
+import androidx.core.content.ContextCompat.getString
+import eu.ottop.yamlauncher.R
 import eu.ottop.yamlauncher.settings.SharedPreferenceManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -83,7 +86,31 @@ class AppUtils(private val context: Context, private val launcherApps: LauncherA
         }
     }
 
-    fun launchApp(componentName: ComponentName, userHandle: UserHandle) {
+    private fun startApp(componentName: ComponentName, userHandle: UserHandle) {
         launcherApps.startMainActivity(componentName,  userHandle, null, null)
     }
+
+    fun launchApp(componentName: ComponentName, userHandle: UserHandle) {
+        if (sharedPreferenceManager.isConfirmationEnabled()) {
+            showConfirmationDialog(componentName, userHandle)
+        } else {
+            startApp(componentName, userHandle)
+        }
+    }
+
+    private fun showConfirmationDialog(componentName: ComponentName, userHandle: UserHandle) {
+        AlertDialog.Builder(context).apply {
+            setTitle(getString(context, R.string.confirm_title))
+            setMessage(getString(context, R.string.launch_confirmation_text))
+
+            setPositiveButton(getString(context, R.string.confirm_yes)) { _, _ ->
+                startApp(componentName, userHandle)
+            }
+
+            setNegativeButton(getString(context, R.string.confirm_no)) { _, _ ->
+            }
+
+        }.create().show()
+    }
+
 }

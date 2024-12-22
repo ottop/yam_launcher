@@ -67,6 +67,10 @@ class SharedPreferenceManager (private val context: Context) {
         return preferences.getString("swipeVelocity", "100")?.toInt() ?: 100
     }
 
+    fun isConfirmationEnabled(): Boolean {
+        return preferences.getBoolean("enableConfirmation", false)
+    }
+
     // Home Screen
     fun isClockEnabled(): Boolean {
         return preferences.getBoolean("clockEnabled", true)

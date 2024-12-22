@@ -283,7 +283,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 lifecycleScope.launch(Dispatchers.Default) {
                     showHidden = true
                     refreshAppMenu()
-                    runOnUiThread { 
+                    runOnUiThread {
                         toAppMenu() // This is intentionally slow to happen
                     }
                 }
@@ -1189,7 +1189,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     println(leftSwipeActivity)
                     if (leftSwipeActivity.first != null && leftSwipeActivity.second != null) {
                         canLaunchShortcut = false
-                        launcherApps.startMainActivity(leftSwipeActivity.first!!.componentName,  launcherApps.profiles[leftSwipeActivity.second!!], null, null)
+                        appUtils.launchApp(leftSwipeActivity.first!!.componentName, launcherApps.profiles[leftSwipeActivity.second!!])
                     } else {
                         Toast.makeText(this@MainActivity, getString(R.string.launch_error), Toast.LENGTH_SHORT).show()
                     }
@@ -1200,7 +1200,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 else if (deltaX > 0 && abs(deltaX) > swipeThreshold && abs(velocityX) > swipeVelocityThreshold && sharedPreferenceManager.isGestureEnabled("right")) {
                     if (rightSwipeActivity.first != null && rightSwipeActivity.second != null) {
                         canLaunchShortcut = false
-                        launcherApps.startMainActivity(rightSwipeActivity.first!!.componentName,  launcherApps.profiles[rightSwipeActivity.second!!], null, null)
+                        appUtils.launchApp(rightSwipeActivity.first!!.componentName, launcherApps.profiles[rightSwipeActivity.second!!])
                     } else {
                         Toast.makeText(this@MainActivity, getString(R.string.launch_error), Toast.LENGTH_SHORT).show()
                     }

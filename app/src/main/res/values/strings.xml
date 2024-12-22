@@ -71,6 +71,8 @@
     <string name="swipe_threshold">Swipe Threshold</string>
     <string name="swipe_velocity_threshold">Swipe Velocity Threshold</string>
     <string name="show_status_bar">Show Status Bar</string>
+    <string name="enable_confirmation">App Confirmation Dialog</string>
+    <string name="launch_confirmation_text">Are you sure you want to launch this app?</string>
 
     <string name="home_settings_title">Home Screen Settings</string>
     <string name="home_settings_text">Home Screen</string>
