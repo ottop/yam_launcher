@@ -42,6 +42,7 @@
     <string name="rename">Umbenennen</string>
     <string name="hide">Verstecken</string>
     <string name="close">Schließen</string>
+    <string name="accessibility_pin">Pin app</string>
     <string name="accessibility_info">App-Info</string>
     <string name="accessibility_uninstall">App deinstallieren</string>
     <string name="accessibility_rename">App umbenennen</string>
@@ -124,6 +125,17 @@
     <string name="contacts_menu">Kontaktmenü</string>
     <string name="permission_denied">Berechtigung verweigert</string>
     <string name="internet_search">Web Search Button</string>
+
+    <string name="context_menu_settings_title">Context Menu Settings</string>
+    <string name="context_menu_settings_text">Context Menu</string>
+    <string name="context_menu_settings_summary">Enable/disable context menu items</string>
+
+    <string name="enable_pin">Pin App</string>
+    <string name="enable_info">App Info</string>
+    <string name="enable_uninstall">Uninstall App</string>
+    <string name="enable_rename">Rename App</string>
+    <string name="enable_hide">Hide App</string>
+    <string name="enable_close">Close Menu</string>
 
     <string name="search_text">Suche</string>
     <string name="enable_search">Suche aktivieren</string>

@@ -38,76 +38,134 @@ class AppActionMenu(private val activity: MainActivity, private val binding: Act
         userHandle: UserHandle,
         workProfile: Int
     ){
-        ViewCompat.addAccessibilityAction(textView, activity.getString(R.string.accessibility_info)) { _, _ ->
-            appInfo(appActivity, userHandle)
-            true
-        }
+        val pinButton = actionMenu.findViewById<TextView>(R.id.pin)
+        val infoButton = actionMenu.findViewById<TextView>(R.id.info)
+        val uninstallButton = actionMenu.findViewById<TextView>(R.id.uninstall)
+        val renameButton = actionMenu.findViewById<TextView>(R.id.rename)
+        val hideButton = actionMenu.findViewById<TextView>(R.id.hide)
+        val closeButton = actionMenu.findViewById<TextView>(R.id.close)
 
+        val enablePin = sharedPreferenceManager.isPinEnabled()
+        val enableInfo = sharedPreferenceManager.isInfoEnabled()
+        val enableUninstall = sharedPreferenceManager.isUninstallEnabled()
+        val enableRename = sharedPreferenceManager.isRenameEnabled()
+        val enableHide = sharedPreferenceManager.isHideEnabled()
+        val enableClose = sharedPreferenceManager.isCloseEnabled()
+
+        if (enablePin) {
+            pinButton.visibility = View.VISIBLE
+            setPinState(pinButton, appActivity, workProfile)
+
+            ViewCompat.addAccessibilityAction(
+                textView,
+                activity.getString(R.string.accessibility_pin)
+            ) { _, _ ->
+                pinApp(appActivity, workProfile)
+                true
+            }
+
+            pinButton.setOnClickListener {
+                pinApp(appActivity, workProfile)
+                animations.fadeViewOut(actionMenu)
+                textView.visibility = View.VISIBLE
+            }
+        } else {pinButton.visibility = View.GONE}
+
+        if (enableInfo) {
+            infoButton.visibility = View.VISIBLE
+
+            ViewCompat.addAccessibilityAction(
+                textView,
+                activity.getString(R.string.accessibility_info)
+            ) { _, _ ->
+                appInfo(appActivity, userHandle)
+                true
+            }
+
+            infoButton.setOnClickListener {
+                appInfo(appActivity, userHandle)
+                animations.fadeViewOut(actionMenu)
+                textView.visibility = View.VISIBLE
+            }
+        } else {infoButton.visibility = View.GONE}
+
+        if (enableUninstall) {
+            if (appActivity.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM == 0) {
+                uninstallButton.visibility = View.VISIBLE
+            }
+
+            ViewCompat.addAccessibilityAction(
+                textView,
+                activity.getString(R.string.accessibility_uninstall)
+            ) { _, _ ->
+                uninstallApp(appActivity.applicationInfo, userHandle)
+                true
+            }
+
+            uninstallButton.setOnClickListener {
+                uninstallApp(appActivity.applicationInfo, userHandle)
+                animations.fadeViewOut(actionMenu)
+                textView.visibility = View.VISIBLE
+            }
+        } else {uninstallButton.visibility = View.GONE}
+
+        if (enableRename) {
+            renameButton.visibility = View.VISIBLE
+
+            ViewCompat.addAccessibilityAction(
+                textView,
+                activity.getString(R.string.accessibility_rename)
+            ) { _, _ ->
+                renameApp(textView, editLayout, actionMenu, appActivity, userHandle, workProfile)
+                true
+            }
+
+            renameButton.setOnClickListener {
+                renameApp(textView, editLayout, actionMenu, appActivity, userHandle, workProfile)
+            }
+        } else {renameButton.visibility = View.GONE}
+
+        if (enableHide) {
+            hideButton.visibility = View.VISIBLE
+
+            ViewCompat.addAccessibilityAction(
+                textView,
+                activity.getString(R.string.accessibility_hide)
+            ) { _, _ ->
+                hideApp(editLayout, textView, actionMenu, appActivity, workProfile)
+                true
+            }
+
+            hideButton.setOnClickListener {
+                hideApp(editLayout, textView, actionMenu, appActivity, workProfile)
+            }
+        } else {hideButton.visibility = View.GONE}
+
+        if (enableClose) {
+            closeButton.visibility = View.VISIBLE
+
+            closeButton.setOnClickListener {
+                animations.fadeViewOut(actionMenu)
+                textView.visibility = View.VISIBLE
+            }
+        } else {closeButton.visibility = View.GONE}
+    }
+
+    private fun setPinState(button: TextView, appActivity: LauncherActivityInfo, workProfile: Int) {
         val isPinned = sharedPreferenceManager.isAppPinned(appActivity.componentName.flattenToString(), workProfile)
         val topDrawable = when (isPinned) {
             true -> getDrawable(activity, R.drawable.keep_off_24px)
             false -> getDrawable(activity,R.drawable.keep_24px)
         }
 
-        actionMenu.findViewById<TextView>(R.id.pin).setCompoundDrawablesWithIntrinsicBounds(null, topDrawable, null, null)
+        button.setCompoundDrawablesWithIntrinsicBounds(null, topDrawable, null, null)
 
         val pinLabel = when (isPinned) {
             true -> "Unpin"
             false -> "Pin"
         }
 
-        actionMenu.findViewById<TextView>(R.id.pin).text = pinLabel
-
-        actionMenu.findViewById<TextView>(R.id.pin).setOnClickListener {
-            pinApp(appActivity, workProfile)
-            animations.fadeViewOut(actionMenu)
-            textView.visibility = View.VISIBLE
-        }
-
-        ViewCompat.addAccessibilityAction(textView, activity.getString(R.string.accessibility_info)) { _, _ ->
-            appInfo(appActivity, userHandle)
-            true
-        }
-
-        actionMenu.findViewById<TextView>(R.id.info).setOnClickListener {
-            appInfo(appActivity, userHandle)
-            animations.fadeViewOut(actionMenu)
-            textView.visibility = View.VISIBLE
-        }
-
-        ViewCompat.addAccessibilityAction(textView, activity.getString(R.string.accessibility_uninstall)) { _, _ ->
-            uninstallApp(appActivity.applicationInfo, userHandle)
-            true
-        }
-
-        actionMenu.findViewById<TextView>(R.id.uninstall).setOnClickListener {
-            uninstallApp(appActivity.applicationInfo, userHandle)
-            animations.fadeViewOut(actionMenu)
-            textView.visibility = View.VISIBLE
-        }
-
-        ViewCompat.addAccessibilityAction(textView, activity.getString(R.string.accessibility_rename)) { _, _ ->
-            renameApp(textView, editLayout, actionMenu, appActivity, userHandle, workProfile)
-            true
-        }
-
-        actionMenu.findViewById<TextView>(R.id.rename).setOnClickListener {
-            renameApp(textView, editLayout, actionMenu, appActivity, userHandle, workProfile)
-        }
-
-        ViewCompat.addAccessibilityAction(textView, activity.getString(R.string.accessibility_hide)) { _, _ ->
-            hideApp(editLayout, textView, actionMenu, appActivity, workProfile)
-            true
-        }
-
-        actionMenu.findViewById<TextView>(R.id.hide).setOnClickListener {
-            hideApp(editLayout, textView, actionMenu, appActivity, workProfile)
-        }
-
-        actionMenu.findViewById<TextView>(R.id.close).setOnClickListener {
-            animations.fadeViewOut(actionMenu)
-            textView.visibility = View.VISIBLE
-        }
+        button.text = pinLabel
     }
 
     private fun pinApp(appActivity: LauncherActivityInfo, workProfile: Int) {

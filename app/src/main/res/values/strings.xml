@@ -42,6 +42,7 @@
     <string name="rename">Rename</string>
     <string name="hide">Hide</string>
     <string name="close">Close</string>
+    <string name="accessibility_pin">Pin app</string>
     <string name="accessibility_info">App info</string>
     <string name="accessibility_uninstall">Uninstall app</string>
     <string name="accessibility_rename">Rename app</string>
@@ -125,6 +126,17 @@
     <string name="permission_denied">Permission Denied</string>
     <string name="internet_search">Web Search Button</string>
 
+    <string name="context_menu_settings_title">Context Menu Settings</string>
+    <string name="context_menu_settings_text">Context Menu</string>
+    <string name="context_menu_settings_summary">Enable/disable context menu items</string>
+
+    <string name="enable_pin">Pin App</string>
+    <string name="enable_info">App Info</string>
+    <string name="enable_uninstall">Uninstall App</string>
+    <string name="enable_rename">Rename App</string>
+    <string name="enable_hide">Hide App</string>
+    <string name="enable_close">Close Menu</string>
+
     <string name="search_text">Search</string>
     <string name="enable_search">Enable Search</string>
     <string name="search_alignment">Search Alignment</string>
@@ -183,5 +195,4 @@
     <!--Double tap to lock-->
     <string name="screenlock_confirmation">To lock with double tap, enable YAM Launcher in accessibility settings.</string>
     <string name="accessibility_service_description">The permission is required for double tap to work for locking the screen.\n\nIt is only needed if you want to use the double tap to lock screen feature in YAM Launcher.</string>
-
 </resources>

@@ -46,6 +46,14 @@
             app:dependency="searchEnabled"
             app:key="webSearchEnabled" />
 
+        <Preference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:key="contextMenuSettings"
+            app:selectable="true"
+            app:summary="@string/context_menu_settings_summary"
+            app:title="@string/context_menu_settings_text" />
+
     </PreferenceCategory>
     <PreferenceCategory
         app:allowDividerAbove="false"

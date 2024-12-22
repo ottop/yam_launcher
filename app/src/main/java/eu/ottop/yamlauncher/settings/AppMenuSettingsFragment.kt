@@ -7,6 +7,7 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import eu.ottop.yamlauncher.R
 import eu.ottop.yamlauncher.utils.PermissionUtils
+import eu.ottop.yamlauncher.utils.UIUtils
 
 class AppMenuSettingsFragment : PreferenceFragmentCompat(), TitleProvider { private val permissionUtils = PermissionUtils()
     private var contactPref: SwitchPreference? = null
@@ -15,6 +16,10 @@ class AppMenuSettingsFragment : PreferenceFragmentCompat(), TitleProvider { priv
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.app_menu_preferences, rootKey)
+
+        val uiUtils = UIUtils(requireContext())
+        val contextMenuSettings = findPreference<Preference>("contextMenuSettings")
+
         contactPref = findPreference("contactsEnabled")
         webSearchPref = findPreference("webSearchEnabled")
         autoLaunchPref = findPreference("autoLaunch")
@@ -41,6 +46,11 @@ class AppMenuSettingsFragment : PreferenceFragmentCompat(), TitleProvider { priv
                 return@OnPreferenceChangeListener true
             }
         }
+
+        contextMenuSettings?.onPreferenceClickListener =
+            Preference.OnPreferenceClickListener {
+                uiUtils.switchFragment(requireActivity(), ContextMenuSettingsFragment())
+                true }
     }
 
     override fun getTitle(): String {

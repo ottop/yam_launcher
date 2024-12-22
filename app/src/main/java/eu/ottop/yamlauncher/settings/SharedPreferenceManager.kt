@@ -243,6 +243,30 @@ class SharedPreferenceManager (private val context: Context) {
         return preferences.getString("appMenuSize", "medium")
     }
 
+    fun isPinEnabled(): Boolean {
+        return preferences.getBoolean("pinEnabled", true)
+    }
+
+    fun isInfoEnabled(): Boolean {
+        return preferences.getBoolean("infoEnabled", false)
+    }
+
+    fun isUninstallEnabled(): Boolean {
+        return preferences.getBoolean("uninstallEnabled", true)
+    }
+
+    fun isRenameEnabled(): Boolean {
+        return preferences.getBoolean("renameEnabled", true)
+    }
+
+    fun isHideEnabled(): Boolean {
+        return preferences.getBoolean("hideEnabled", true)
+    }
+
+    fun isCloseEnabled(): Boolean {
+        return preferences.getBoolean("closeEnabled", true)
+    }
+
     fun isSearchEnabled(): Boolean {
         return preferences.getBoolean("searchEnabled", true)
     }
