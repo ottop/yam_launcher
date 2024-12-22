@@ -113,6 +113,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private var isJobActive = true
     private var isInitialOpen = false
     private var canLaunchShortcut = true
+    private var showHidden = false
 
     private var swipeThreshold = 100
     private var swipeVelocityThreshold = 100
@@ -277,6 +278,17 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             contactAdapter?.shortcutIndex = index
             contactAdapter?.shortcutTextView = textView
             internetSearch.visibility = View.GONE
+
+            if (sharedPreferenceManager.showHiddenShortcuts()) {
+                lifecycleScope.launch(Dispatchers.Default) {
+                    showHidden = true
+                    refreshAppMenu()
+                    runOnUiThread { 
+                        toAppMenu() // This is intentionally slow to happen
+                    }
+                }
+                return true
+            }
             toAppMenu()
 
             return true
@@ -711,6 +723,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     fun backToHome(animSpeed: Long = sharedPreferenceManager.getAnimationSpeed()) {
         canLaunchShortcut = true
+        showHidden = false
         closeKeyboard()
         animations.showHome(binding.homeView, binding.appView, animSpeed)
         animations.backgroundOut(this@MainActivity, animSpeed)
@@ -745,7 +758,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
             // Don't reset app menu while under a search
             if (isJobActive) {
-                val updatedApps = appUtils.getInstalledApps()
+                val updatedApps = appUtils.getInstalledApps(showHidden)
                 if (!listsEqual(installedApps, updatedApps)) {
 
                     updateMenu(updatedApps)
@@ -987,7 +1000,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         when (menuView.displayedChild) {
             0 -> {
                 val newFilteredApps = mutableListOf<Triple<LauncherActivityInfo, UserHandle, Int>>()
-                val updatedApps = appUtils.getInstalledApps()
+                val updatedApps = appUtils.getInstalledApps(showHidden)
                 val filteredApps = getFilteredApps(cleanQuery, newFilteredApps, updatedApps)
                 if (filteredApps != null) {
                     applySearchFilter(filteredApps)

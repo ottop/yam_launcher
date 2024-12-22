@@ -202,7 +202,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:defaultValue="true"
-            android:title="@string/lock_shortcuts"
+            android:title="@string/hidden_shortcut_title"
+            android:summary="@string/hidden_shortcuts"
             app:key="showHiddenShortcuts" />
     </PreferenceCategory>
     <PreferenceCategory

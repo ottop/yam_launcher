@@ -104,6 +104,8 @@
     <string name="shortcut_size">Pikakuvakkeiden Koko</string>
     <string name="shortcut_spacing">Pikakuvakkeiden Väli</string>
     <string name="lock_shortcuts">Lukitse Pikakuvakkeet</string>
+    <string name="hidden_shortcut_title">Hidden Apps</string>
+    <string name="hidden_shortcuts">Show Hidden Apps in Shortcut Selection</string>
 
     <string name="gestures">Eleet</string>
     <string name="swipe_left">Vasen Pyyhkäisy</string>

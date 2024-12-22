@@ -106,6 +106,8 @@
     <string name="shortcut_size">Shortcut Size</string>
     <string name="shortcut_spacing">Shortcut Spacing</string>
     <string name="lock_shortcuts">Lock Shortcuts</string>
+    <string name="hidden_shortcut_title">Hidden Apps</string>
+    <string name="hidden_shortcuts">Show Hidden Apps in Shortcut Selection</string>
 
     <string name="gestures">Gestures</string>
     <string name="swipe_left">Swipe Left</string>
