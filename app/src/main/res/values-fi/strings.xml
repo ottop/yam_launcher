@@ -33,6 +33,7 @@
     <string name="launch_error">Sovelluksen avaaminen epäonnistui</string>
 
     <!--Action Menu Items-->
+    <string name="pin">Pin</string>
     <string name="empty_rename">Nimi ei voi olla tyhjä</string>
     <string name="info">Tiedot</string>
     <string name="uninstall">Poista</string>

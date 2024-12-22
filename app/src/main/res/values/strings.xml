@@ -36,6 +36,7 @@
     <string name="empty_rename">Name cannot be empty</string>
 
     <!--Action Menu Items-->
+    <string name="pin">Pin</string>
     <string name="info">Info</string>
     <string name="uninstall">Uninstall</string>
     <string name="rename">Rename</string>

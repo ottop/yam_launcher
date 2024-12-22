@@ -125,7 +125,7 @@ class SharedPreferenceManager (private val context: Context) {
 
     fun setPinnedApp(componentName: String, profile: Int) {
         val editor = preferences.edit()
-        println(isAppPinned(componentName, profile))
+
         val pinnedAppString = when (isAppPinned(componentName, profile)) {
             true -> {
                 getPinnedAppString()?.replace("§section§$componentName§splitter§$profile", "")
@@ -148,9 +148,9 @@ class SharedPreferenceManager (private val context: Context) {
 
     private fun getPinnedApps(): List<Pair<String, Int?>> {
         val pinnedApps = mutableListOf<Pair<String, Int?>>()
-        val pinnedAppsList = getPinnedAppString()?.split("§section§")
+        val pinnedAppList = getPinnedAppString()?.split("§section§")
 
-        pinnedAppsList?.forEach {
+        pinnedAppList?.forEach {
             val app = it.split("§splitter§")
             if (app.size > 1) {
                 pinnedApps.add(Pair(app[0], app[1].toIntOrNull()))

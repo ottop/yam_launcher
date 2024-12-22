@@ -30,7 +30,7 @@ class AppMenuAdapter(
     private val itemClickListener: OnItemClickListener,
     private val shortcutListener: OnShortcutListener,
     private val itemLongClickListener: OnItemLongClickListener,
-    private val launcherApps: LauncherApps
+    launcherApps: LauncherApps
 ) :
     RecyclerView.Adapter<AppMenuAdapter.AppViewHolder>() {
 
@@ -111,8 +111,17 @@ class AppMenuAdapter(
         holder.editView.visibility = View.INVISIBLE
         val app = apps[position]
 
+        if (sharedPreferenceManager.isAppPinned(app.first.componentName.flattenToString(), app.third)) {
+            if (app.third != 0) {
+                holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(activity.resources, R.drawable.keep_filled_15px, null),null, ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null),null)
+            }
+            else {
+                holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(activity.resources, R.drawable.keep_15px, null),null,ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null),null)
+            }
+            holder.textView.compoundDrawables[0].colorFilter = BlendModeColorFilter(sharedPreferenceManager.getTextColor(), BlendMode.SRC_ATOP)
+        }
         // Set initial drawables
-        if (app.third != 0) {
+        else if (app.third != 0) {
             holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_work_app, null),null, ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null),null)
             holder.textView.compoundDrawables[0].colorFilter =
                 BlendModeColorFilter(sharedPreferenceManager.getTextColor(), BlendMode.SRC_ATOP)
@@ -171,6 +180,7 @@ class AppMenuAdapter(
                 app.third,
             )
         }
+
         ViewCompat.addAccessibilityAction(holder.textView, activity.getString(R.string.close_app_menu)) { _, _ ->
             activity.backToHome()
             true

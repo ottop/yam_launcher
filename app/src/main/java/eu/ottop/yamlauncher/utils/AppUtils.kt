@@ -6,8 +6,6 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
 import android.os.UserHandle
-import android.widget.Toast
-import eu.ottop.yamlauncher.R
 import eu.ottop.yamlauncher.settings.SharedPreferenceManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -35,7 +33,7 @@ class AppUtils(private val context: Context, private val launcherApps: LauncherA
             // Sort apps by name
             sortedApps = allApps.sortedWith(
                 compareBy<Triple<LauncherActivityInfo, UserHandle, Int>> {
-                    !sharedPreferenceManager.isAppPinned(it.first.componentName.flattenToString(), it.third)
+                    !sharedPreferenceManager.isAppPinned(it.first.componentName.flattenToString(), it.third) // This displays the pinned apps for some reason.
                 }.thenBy {
                 sharedPreferenceManager.getAppName(
                     it.first.componentName.flattenToString(),

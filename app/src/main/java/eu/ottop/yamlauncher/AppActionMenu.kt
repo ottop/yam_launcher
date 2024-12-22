@@ -17,6 +17,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
+import androidx.core.content.ContextCompat.getDrawable
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.lifecycleScope
 import eu.ottop.yamlauncher.databinding.ActivityMainBinding
@@ -41,6 +42,21 @@ class AppActionMenu(private val activity: MainActivity, private val binding: Act
             appInfo(appActivity, userHandle)
             true
         }
+
+        val isPinned = sharedPreferenceManager.isAppPinned(appActivity.componentName.flattenToString(), workProfile)
+        val topDrawable = when (isPinned) {
+            true -> getDrawable(activity, R.drawable.keep_off_24px)
+            false -> getDrawable(activity,R.drawable.keep_24px)
+        }
+
+        actionMenu.findViewById<TextView>(R.id.pin).setCompoundDrawablesWithIntrinsicBounds(null, topDrawable, null, null)
+
+        val pinLabel = when (isPinned) {
+            true -> "Unpin"
+            false -> "Pin"
+        }
+
+        actionMenu.findViewById<TextView>(R.id.pin).text = pinLabel
 
         actionMenu.findViewById<TextView>(R.id.pin).setOnClickListener {
             pinApp(appActivity, workProfile)

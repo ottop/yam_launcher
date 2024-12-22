@@ -91,11 +91,11 @@
             android:background="@drawable/app_action_background"
             android:paddingVertical="5dp"
             android:singleLine="true"
-            android:text="@string/info"
+            android:text="@string/pin"
             android:textAlignment="center"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault"
             android:textColor="#E3F3F3F3"
-            app:drawableTopCompat="@drawable/info_24px" />
+            app:drawableTopCompat="@drawable/keep_24px" />
 
         <TextView
             android:id="@+id/info"
