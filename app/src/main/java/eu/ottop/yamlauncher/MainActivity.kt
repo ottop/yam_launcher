@@ -139,6 +139,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         setMainVariables()
 
+        uiUtils.adjustInsets(binding.root)
+
         setShortcuts()
 
         setPreferences()
@@ -164,7 +166,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 }
             }
         }
+
         setupApps()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            uiUtils.setLayoutListener(binding.root) // Manually resize app menu on search since adjustResize no longer works with sdk 35
+        }
     }
 
     private fun setMainVariables() {
@@ -954,8 +961,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
         return contacts
     }
-
-
 
     private suspend fun updateContacts(filterString: String) {
         val contacts = getContacts(filterString)

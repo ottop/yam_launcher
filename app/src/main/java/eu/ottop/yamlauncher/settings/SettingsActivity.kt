@@ -18,6 +18,7 @@ import eu.ottop.yamlauncher.MainActivity
 import eu.ottop.yamlauncher.R
 import eu.ottop.yamlauncher.databinding.ActivitySettingsBinding
 import eu.ottop.yamlauncher.utils.PermissionUtils
+import eu.ottop.yamlauncher.utils.UIUtils
 import org.json.JSONObject
 
 class SettingsActivity : AppCompatActivity() {
@@ -32,8 +33,9 @@ class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        sharedPreferenceManager = SharedPreferenceManager(this@SettingsActivity)
+        val uiUtils = UIUtils(this@SettingsActivity)
 
+        sharedPreferenceManager = SharedPreferenceManager(this@SettingsActivity)
         preferences = PreferenceManager.getDefaultSharedPreferences(this@SettingsActivity)
 
         binding = ActivitySettingsBinding.inflate(layoutInflater)
@@ -42,6 +44,8 @@ class SettingsActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = getString(R.string.settings_title)
         supportActionBar?.setDisplayShowTitleEnabled(true)
+
+        uiUtils.adjustInsets(binding.root)
 
         if (supportFragmentManager.backStackEntryCount == 0) {
             supportFragmentManager
@@ -69,6 +73,7 @@ class SettingsActivity : AppCompatActivity() {
                 }
             }
         }
+
     }
 
     override fun onSupportNavigateUp(): Boolean {

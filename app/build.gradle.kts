@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "eu.ottop.yamlauncher"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "eu.ottop.yamlauncher"
         minSdk = 31
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 12
         versionName = "1.7"
     }
@@ -49,7 +49,7 @@ android {
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.core:core-ktx:1.15.0")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.recyclerview:recyclerview:1.3.2")

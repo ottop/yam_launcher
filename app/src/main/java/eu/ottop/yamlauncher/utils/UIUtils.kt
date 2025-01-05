@@ -5,12 +5,14 @@ import android.content.res.Configuration
 import android.graphics.BlendMode
 import android.graphics.BlendModeColorFilter
 import android.graphics.Color
+import android.graphics.Rect
 import android.graphics.Typeface
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.view.ViewTreeObserver
 import android.view.Window
 import android.view.WindowInsets
 import android.view.WindowInsetsController
@@ -21,7 +23,10 @@ import android.widget.TextClock
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.textfield.TextInputEditText
@@ -31,6 +36,53 @@ import eu.ottop.yamlauncher.settings.SharedPreferenceManager
 class UIUtils(private val context: Context) {
 
     private val sharedPreferenceManager = SharedPreferenceManager(context)
+
+    fun adjustInsets(view: View) {
+        ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
+            val bars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars()
+                        or WindowInsetsCompat.Type.displayCutout()
+            )
+            v.updatePadding(
+                left = bars.left,
+                top = bars.top,
+                right = bars.right,
+                bottom = bars.bottom,
+            )
+            WindowInsetsCompat.CONSUMED
+        }
+    }
+
+    // Replicate adjustResize
+    fun setLayoutListener(view: View) {
+        view.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+            private var lastKeyboardState = false
+
+            override fun onPreDraw(): Boolean {
+                val rect = Rect()
+                view.getWindowVisibleDisplayFrame(rect)
+
+                val screenHeight = view.rootView.height
+                val keyboardHeight = screenHeight - rect.bottom
+
+                val isKeyboardVisible = keyboardHeight > screenHeight * 0.15
+
+                if (isKeyboardVisible != lastKeyboardState) {
+                    lastKeyboardState = isKeyboardVisible
+
+                    if (isKeyboardVisible) {
+                        val availableHeight = screenHeight - keyboardHeight
+                        view.layoutParams.height = availableHeight
+                    } else {
+                        view.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+                    }
+
+                    view.requestLayout()
+                }
+                return true
+            }
+        })
+    }
 
     // Colors
     fun setBackground(window: Window) {
