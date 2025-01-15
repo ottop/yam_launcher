@@ -22,6 +22,7 @@ import android.os.Looper
 import android.os.UserHandle
 import android.provider.AlarmClock
 import android.provider.ContactsContract
+import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.GestureDetector
@@ -34,6 +35,7 @@ import android.widget.LinearLayout
 import android.widget.TextClock
 import android.widget.TextView
 import android.widget.Toast
+import android.widget.ViewFlipper
 import android.widget.ViewSwitcher
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
@@ -52,6 +54,7 @@ import eu.ottop.yamlauncher.databinding.ActivityMainBinding
 import eu.ottop.yamlauncher.settings.SettingsActivity
 import eu.ottop.yamlauncher.settings.SharedPreferenceManager
 import eu.ottop.yamlauncher.tasks.BatteryReceiver
+import eu.ottop.yamlauncher.tasks.PrivateReceiver
 import eu.ottop.yamlauncher.tasks.ScreenLockService
 import eu.ottop.yamlauncher.utils.Animations
 import eu.ottop.yamlauncher.utils.AppMenuEdgeFactory
@@ -92,7 +95,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private lateinit var dateText: TextClock
     private var dateElements = mutableListOf<String>()
 
-    private lateinit var menuView: ViewSwitcher
+    private lateinit var menuView: ViewFlipper
     private lateinit var menuTitle: TextInputEditText
     private lateinit var appRecycler: RecyclerView
     private lateinit var contactRecycler: RecyclerView
@@ -102,6 +105,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private var appAdapter: AppMenuAdapter? = null
     private var contactAdapter: ContactsAdapter? = null
     private var batteryReceiver: BatteryReceiver? = null
+    private var privateReceiver: PrivateReceiver? = null
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var launcherApps: LauncherApps
@@ -110,6 +114,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private lateinit var preferences: SharedPreferences
 
     private var isBatteryReceiverRegistered = false
+    private var isPrivateReceiverRegistered = false
     private var isJobActive = true
     private var isInitialOpen = false
     private var canLaunchShortcut = true
@@ -463,6 +468,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     @SuppressLint("ClickableViewAccessibility")
     private fun setHomeListeners() {
         registerBatteryReceiver()
+        registerPrivateReceiver()
 
         if (!sharedPreferenceManager.isBatteryEnabled()) {
             unregisterBatteryReceiver()
@@ -551,6 +557,20 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         if (isBatteryReceiverRegistered) {
             unregisterReceiver(batteryReceiver)
             isBatteryReceiverRegistered = false
+        }
+    }
+
+    private fun registerPrivateReceiver() {
+        if (!isPrivateReceiverRegistered) {
+            privateReceiver = PrivateReceiver.register(this, this@MainActivity)
+            isPrivateReceiverRegistered = true
+        }
+    }
+
+    private fun unregisterPrivateReceiver() {
+        if (isPrivateReceiverRegistered) {
+            unregisterReceiver(privateReceiver)
+            isPrivateReceiverRegistered = false
         }
     }
 
@@ -894,13 +914,14 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     fun switchMenus() {
-        menuView.showNext()
         when (menuView.displayedChild) {
             0 -> {
-                setAppViewDetails()
+                menuView.displayedChild = 1
+                setContactViewDetails()
             }
             1 -> {
-                setContactViewDetails()
+                menuView.displayedChild = 0
+                setAppViewDetails()
             }
         }
     }
@@ -1078,6 +1099,22 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         appRecycler.layoutManager = appMenuLinearLayoutManager
     }
 
+    fun lockPrivateSpace() {
+        if (!appUtils.isPrivateSpaceEnabled()) {
+            binding.privateSpace.visibility = View.GONE
+        } else {
+
+        }
+    }
+
+    fun unlockPrivateSpace() {
+        if (appUtils.isPrivateSpaceEnabled()) {
+            binding.privateSpace.visibility = View.VISIBLE
+        } else {
+            binding.privateSpace.visibility = View.GONE
+        }
+    }
+
     // On home key or swipe, return to home screen
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
@@ -1088,6 +1125,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         super.onDestroy()
 
         unregisterBatteryReceiver()
+        unregisterPrivateReceiver()
         preferences.unregisterOnSharedPreferenceChangeListener(this)
     }
 
