@@ -3,10 +3,10 @@ package eu.ottop.yamlauncher.utils
 import android.content.Context
 import android.content.pm.LauncherApps
 import android.os.Build
-import android.os.UserHandle
 import android.os.UserManager
 
 class ProfileUtils(private val context: Context, private val launcherApps: LauncherApps) {
+
     private fun getPrivateProfileInt(): Int {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
             val userManager = context.getSystemService(Context.USER_SERVICE) as UserManager
@@ -34,7 +34,8 @@ class ProfileUtils(private val context: Context, private val launcherApps: Launc
         return profile == getPrivateProfileInt()
     }
 
-    fun isPrivateSpaceLocked(profile: UserHandle): Boolean {
+    fun isPrivateSpaceLocked(): Boolean {
+        val profile = launcherApps.profiles[getPrivateProfileInt()]
         val userManager = context.getSystemService(Context.USER_SERVICE) as UserManager
         return userManager.isQuietModeEnabled(profile)
     }

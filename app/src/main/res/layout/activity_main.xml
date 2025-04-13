@@ -38,7 +38,7 @@
             android:textSize="36sp"
             app:drawableStartCompat="@drawable/edit_24px" />
 
-        <ViewFlipper
+        <ViewSwitcher
             android:id="@+id/menuView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -53,8 +53,7 @@
                 android:fadingEdgeLength="20dp"
                 android:padding="0dp"
                 android:requiresFadingEdge="vertical"
-                android:scrollbars="none">
-            </androidx.recyclerview.widget.RecyclerView>
+                android:scrollbars="none" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/contactRecycler"
@@ -64,20 +63,8 @@
                 android:fadingEdgeLength="20dp"
                 android:padding="0dp"
                 android:requiresFadingEdge="vertical"
-                android:scrollbars="none">
-            </androidx.recyclerview.widget.RecyclerView>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/privateRecycler"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clipToPadding="false"
-                android:fadingEdgeLength="20dp"
-                android:padding="0dp"
-                android:requiresFadingEdge="vertical"
-                android:scrollbars="none">
-            </androidx.recyclerview.widget.RecyclerView>
-        </ViewFlipper>
+                android:scrollbars="none" />
+        </ViewSwitcher>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/searchLayout"
@@ -476,16 +463,14 @@
             android:id="@+id/privateSpace"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/switch_to_contacts"
-            android:drawablePadding="3dp"
-            android:padding="6dp"
-            android:paddingHorizontal="20dp"
-            android:scaleType="fitCenter"
-            app:drawableEndCompat="@drawable/travel_explore_24"
-            app:drawableStartCompat="@drawable/ic_empty"
-            tools:layout_conversion_absoluteHeight="0dp"
-            tools:layout_conversion_absoluteWidth="0dp" />
+            android:layout_gravity="center_horizontal"
+            android:layout_marginHorizontal="25dp"
+            android:layout_marginBottom="30dp"
+            android:autoSizeTextType="uniform"
+            android:padding="3dp"
+            android:scaleX="1.3"
+            android:scaleY="1.3"
+            app:drawableTopCompat="@drawable/shield_24px" />
 
     </LinearLayout>
 

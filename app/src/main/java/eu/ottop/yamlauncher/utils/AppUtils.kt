@@ -56,7 +56,7 @@ class AppUtils(private val context: Context, private val launcherApps: LauncherA
                     profileIndex = 1
                 }
                 else if (profileUtils.isPrivateProfile(profile)) {
-                    if (profileUtils.isPrivateSpaceLocked(launcherApps.profiles[profile])) {
+                    if (profileUtils.isPrivateSpaceLocked()) {
                         return mutableListOf()
                     }
                     profileIndex = 2
