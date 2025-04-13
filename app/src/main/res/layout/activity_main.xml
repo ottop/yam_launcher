@@ -466,29 +466,26 @@
             android:textColor="#F3F3F3"
             android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/privateSpace"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.09"
-            android:autoSizeTextType="uniform"
-            android:clickable="false"
-            android:drawableLeft="@drawable/ic_empty"
-            android:drawablePadding="3dp"
-            android:gravity="center_vertical"
-            android:paddingHorizontal="20dp"
-            android:shadowColor="#00FFFFFF"
-            android:shadowRadius="10"
-            android:text="Private Space"
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault"
-            android:textColor="#F3F3F3"
-            android:visibility="visible" />
-
         <Space
             android:id="@+id/bottomSpace"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="0.3" />
+
+        <TextView
+            android:id="@+id/privateSpace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/switch_to_contacts"
+            android:drawablePadding="3dp"
+            android:padding="6dp"
+            android:paddingHorizontal="20dp"
+            android:scaleType="fitCenter"
+            app:drawableEndCompat="@drawable/travel_explore_24"
+            app:drawableStartCompat="@drawable/ic_empty"
+            tools:layout_conversion_absoluteHeight="0dp"
+            tools:layout_conversion_absoluteWidth="0dp" />
 
     </LinearLayout>
 

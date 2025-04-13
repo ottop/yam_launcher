@@ -121,8 +121,13 @@ class AppMenuAdapter(
             holder.textView.compoundDrawables[0].colorFilter = BlendModeColorFilter(sharedPreferenceManager.getTextColor(), BlendMode.SRC_ATOP)
         }
         // Set initial drawables
-        else if (app.third != 0) {
+        else if (app.third == 1) {
             holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_work_app, null),null, ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null),null)
+            holder.textView.compoundDrawables[0].colorFilter =
+                BlendModeColorFilter(sharedPreferenceManager.getTextColor(), BlendMode.SRC_ATOP)
+        }
+        else if (app.third == 2) {
+            holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(activity.resources, R.drawable.keep_15px, null),null, ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null),null)
             holder.textView.compoundDrawables[0].colorFilter =
                 BlendModeColorFilter(sharedPreferenceManager.getTextColor(), BlendMode.SRC_ATOP)
         }
@@ -142,7 +147,7 @@ class AppMenuAdapter(
         // Update the application information (allows updating apps to work)
         val isAppInstalled = appUtils.getAppInfo(
             app.first.applicationInfo.packageName,
-            app.third
+            app.second
         ) != null
 
         // Set app name on the menu. If the app has been uninstalled, replace it with "Removing" until the app menu updates.

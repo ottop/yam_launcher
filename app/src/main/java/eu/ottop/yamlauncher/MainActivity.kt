@@ -22,7 +22,6 @@ import android.os.Looper
 import android.os.UserHandle
 import android.provider.AlarmClock
 import android.provider.ContactsContract
-import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.GestureDetector
@@ -36,7 +35,6 @@ import android.widget.TextClock
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.ViewFlipper
-import android.widget.ViewSwitcher
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -54,7 +52,6 @@ import eu.ottop.yamlauncher.databinding.ActivityMainBinding
 import eu.ottop.yamlauncher.settings.SettingsActivity
 import eu.ottop.yamlauncher.settings.SharedPreferenceManager
 import eu.ottop.yamlauncher.tasks.BatteryReceiver
-import eu.ottop.yamlauncher.tasks.PrivateReceiver
 import eu.ottop.yamlauncher.tasks.ScreenLockService
 import eu.ottop.yamlauncher.utils.Animations
 import eu.ottop.yamlauncher.utils.AppMenuEdgeFactory
@@ -62,6 +59,7 @@ import eu.ottop.yamlauncher.utils.AppMenuLinearLayoutManager
 import eu.ottop.yamlauncher.utils.AppUtils
 import eu.ottop.yamlauncher.utils.GestureUtils
 import eu.ottop.yamlauncher.utils.PermissionUtils
+import eu.ottop.yamlauncher.utils.ProfileUtils
 import eu.ottop.yamlauncher.utils.StringUtils
 import eu.ottop.yamlauncher.utils.UIUtils
 import eu.ottop.yamlauncher.utils.WeatherSystem
@@ -77,6 +75,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private lateinit var weatherSystem: WeatherSystem
     private lateinit var appUtils: AppUtils
+    private lateinit var profileUtils: ProfileUtils
     private val stringUtils = StringUtils()
     private val permissionUtils = PermissionUtils()
     private lateinit var uiUtils: UIUtils
@@ -105,7 +104,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private var appAdapter: AppMenuAdapter? = null
     private var contactAdapter: ContactsAdapter? = null
     private var batteryReceiver: BatteryReceiver? = null
-    private var privateReceiver: PrivateReceiver? = null
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var launcherApps: LauncherApps
@@ -114,7 +112,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private lateinit var preferences: SharedPreferences
 
     private var isBatteryReceiverRegistered = false
-    private var isPrivateReceiverRegistered = false
     private var isJobActive = true
     private var isInitialOpen = false
     private var canLaunchShortcut = true
@@ -184,6 +181,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         weatherSystem = WeatherSystem(this@MainActivity)
         appUtils = AppUtils(this@MainActivity, launcherApps)
+        profileUtils = ProfileUtils(this@MainActivity, launcherApps)
         uiUtils = UIUtils(this@MainActivity)
         gestureUtils = GestureUtils(this@MainActivity)
         sharedPreferenceManager = SharedPreferenceManager(this@MainActivity)
@@ -468,7 +466,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     @SuppressLint("ClickableViewAccessibility")
     private fun setHomeListeners() {
         registerBatteryReceiver()
-        registerPrivateReceiver()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            setPrivateListener()
+        }
 
         if (!sharedPreferenceManager.isBatteryEnabled()) {
             unregisterBatteryReceiver()
@@ -560,17 +560,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
     }
 
-    private fun registerPrivateReceiver() {
-        if (!isPrivateReceiverRegistered) {
-            privateReceiver = PrivateReceiver.register(this, this@MainActivity)
-            isPrivateReceiverRegistered = true
-        }
-    }
-
-    private fun unregisterPrivateReceiver() {
-        if (isPrivateReceiverRegistered) {
-            unregisterReceiver(privateReceiver)
-            isPrivateReceiverRegistered = false
+    private fun setPrivateListener() {
+        binding.privateSpace.setOnClickListener {
+            profileUtils.togglePrivateSpace()
+            lifecycleScope.launch(Dispatchers.Default) {
+                refreshAppMenu()
+            }
         }
     }
 
@@ -782,7 +777,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     suspend fun refreshAppMenu() {
         try {
-
             // Don't reset app menu while under a search
             if (isJobActive) {
                 val updatedApps = appUtils.getInstalledApps(showHidden)
@@ -1099,22 +1093,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         appRecycler.layoutManager = appMenuLinearLayoutManager
     }
 
-    fun lockPrivateSpace() {
-        if (!appUtils.isPrivateSpaceEnabled()) {
-            binding.privateSpace.visibility = View.GONE
-        } else {
-
-        }
-    }
-
-    fun unlockPrivateSpace() {
-        if (appUtils.isPrivateSpaceEnabled()) {
-            binding.privateSpace.visibility = View.VISIBLE
-        } else {
-            binding.privateSpace.visibility = View.GONE
-        }
-    }
-
     // On home key or swipe, return to home screen
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
@@ -1125,7 +1103,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         super.onDestroy()
 
         unregisterBatteryReceiver()
-        unregisterPrivateReceiver()
         preferences.unregisterOnSharedPreferenceChangeListener(this)
     }
 
