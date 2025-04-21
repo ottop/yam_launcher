@@ -1,8 +1,4 @@
 <resources>
-    <string name="app_name">YAM Launcher</string>
-
-    <string name="empty"></string>
-
     <!--Home Screen-->
     <string name="shortcut_default">App</string>
 
@@ -166,14 +162,6 @@
     <string name="donate">Spenden</string>
     <string name="stripe">Stripe</string>
     <string name="liberapay">Liberapay</string>
-    <string name="weather_data_credit">Wetterdaten von Open-Meteo.com\n(CC BY 4.0)</string>
-    <!--About page links-->
-    <string name="my_website_link"><![CDATA[by <a href="https://ottop.rip">Otto Petäjä</a>]]></string>
-    <string name="codeberg_link"><![CDATA[<a href="https://codeberg.org/ottoptj/yamlauncher">Codeberg</a>]]></string>
-    <string name="github_link"><![CDATA[<a href="https://github.com/ottop/yam_launcher">GitHub</a>]]></string>
-    <string name="libera_link"><![CDATA[<a href="https://liberapay.com/ottoptj/donate">Liberapay</a><br>(recurring)]]></string>
-    <string name="stripe_link"><![CDATA[<a href="https://donate.stripe.com/14k6s2bMJdnDgtW288">Stripe</a><br>(one-time)]]></string>
-    <string name="weather_link"><![CDATA[Weather data by <a href="https://open-meteo.com/">Open-Meteo.com</a><br>(<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>)]]></string>
 
     <string name="reset">Reset</string>
     <string name="restart_text">YAM Launcher neu starten</string>
@@ -193,7 +181,6 @@
     <string name="restore_error">Datei kann nicht gelesen werden</string>
 
     <!--Location Selector Items-->
-    <string name="location_link"><![CDATA[Standortdaten von <a href="https://open-meteo.com/">Open-Meteo.com</a> (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>)]]></string>
     <string name="region_text">%1$s%2$s</string>
 
     <!--Double tap to lock-->

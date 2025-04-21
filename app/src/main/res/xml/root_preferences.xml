@@ -9,6 +9,13 @@
         app:selectable="true"
         app:title="@string/default_home" />
 
+    <SwitchPreference
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:defaultValue="false"
+        android:title="@string/lock_settings"
+        app:key="lockSettings" />
+
     <PreferenceCategory
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

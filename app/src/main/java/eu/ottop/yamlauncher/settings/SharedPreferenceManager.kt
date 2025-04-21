@@ -2,34 +2,35 @@ package eu.ottop.yamlauncher.settings
 
 import android.app.AlertDialog
 import android.content.Context
-import android.graphics.Color
 import android.util.TypedValue
+import androidx.core.content.edit
+import androidx.core.graphics.toColorInt
 import androidx.preference.PreferenceManager
 import eu.ottop.yamlauncher.R
 
-class SharedPreferenceManager (private val context: Context) {
+class SharedPreferenceManager(private val context: Context) {
 
     private val preferences = PreferenceManager.getDefaultSharedPreferences(context)
 
     // General UI
     fun getBgColor(): Int {
-        val bgColor = preferences.getString("bgColor",  "#00000000")
-        if(bgColor == "material") {
+        val bgColor = preferences.getString("bgColor", "#00000000")
+        if (bgColor == "material") {
             return getThemeColor(com.google.android.material.R.attr.colorOnPrimary)
         }
-        return Color.parseColor(bgColor)
+        return bgColor!!.toColorInt()
     }
 
     fun getTextColor(): Int {
         val textColor = getTextString()
-        if(textColor == "material") {
+        if (textColor == "material") {
             return getThemeColor(com.google.android.material.R.attr.colorPrimary)
         }
-        return Color.parseColor(textColor)
+        return textColor!!.toColorInt()
     }
 
     fun getTextString(): String? {
-        return preferences.getString("textColor",  "#FFF3F3F3")
+        return preferences.getString("textColor", "#FFF3F3F3")
     }
 
     private fun getThemeColor(attr: Int): Int {
@@ -71,6 +72,10 @@ class SharedPreferenceManager (private val context: Context) {
         return preferences.getBoolean("enableConfirmation", false)
     }
 
+    fun isSettingsLocked(): Boolean {
+        return preferences.getBoolean("lockSettings", false)
+    }
+
     // Home Screen
     fun isClockEnabled(): Boolean {
         return preferences.getBoolean("clockEnabled", true)
@@ -81,7 +86,7 @@ class SharedPreferenceManager (private val context: Context) {
     }
 
     fun getClockSize(): String? {
-        return preferences.getString("clockSize","medium")
+        return preferences.getString("clockSize", "medium")
     }
 
     fun isDateEnabled(): Boolean {
@@ -93,9 +98,9 @@ class SharedPreferenceManager (private val context: Context) {
     }
 
     fun setShortcut(index: Int, text: CharSequence, componentName: String, profile: Int, isContact: Boolean = false) {
-        val editor = preferences.edit()
-        editor.putString("shortcut${index}", "$componentName§splitter§$profile§splitter§${text}§splitter§${isContact}")
-        editor.apply()
+        preferences.edit {
+            putString("shortcut${index}", "$componentName§splitter§$profile§splitter§${text}§splitter§${isContact}")
+        }
     }
 
     fun getShortcut(index: Int): List<String>? {
@@ -133,22 +138,23 @@ class SharedPreferenceManager (private val context: Context) {
     }
 
     fun setPinnedApp(componentName: String, profile: Int) {
-        val editor = preferences.edit()
+        preferences.edit {
 
-        val pinnedAppString = when (isAppPinned(componentName, profile)) {
-            true -> {
-                getPinnedAppString()?.replace("§section§$componentName§splitter§$profile", "")
-            }
-            false -> {
-                "${getPinnedAppString()}§section§$componentName§splitter§$profile"
-            }
-        }
+            val pinnedAppString = when (isAppPinned(componentName, profile)) {
+                true -> {
+                    getPinnedAppString()?.replace("§section§$componentName§splitter§$profile", "")
+                }
 
-        editor.putString(
-            "pinnedApps",
-            pinnedAppString
+                false -> {
+                    "${getPinnedAppString()}§section§$componentName§splitter§$profile"
+                }
+            }
+
+            putString(
+                "pinnedApps",
+                pinnedAppString
             )
-        editor.apply()
+        }
     }
 
     private fun getPinnedAppString(): String? {
@@ -187,16 +193,16 @@ class SharedPreferenceManager (private val context: Context) {
     }
 
     fun setWeatherGPS(isEnabled: Boolean) {
-        val editor = preferences.edit()
-        editor.putBoolean("gpsLocation", isEnabled)
-        editor.apply()
+        preferences.edit {
+            putBoolean("gpsLocation", isEnabled)
+        }
     }
 
     fun setWeatherLocation(location: String, region: String?) {
-        val editor = preferences.edit()
-        editor.putString("location", location)
-        editor.putString("locationRegion", region)
-        editor.apply()
+        preferences.edit {
+            putString("location", location)
+            putString("locationRegion", region)
+        }
     }
 
     fun getWeatherLocation(): String? {
@@ -211,31 +217,31 @@ class SharedPreferenceManager (private val context: Context) {
         return preferences.getString("tempUnits", "celsius")
     }
 
-    fun isClockGestureEnabled() : Boolean {
+    fun isClockGestureEnabled(): Boolean {
         return preferences.getBoolean("clockClick", true)
     }
 
-    fun isDateGestureEnabled() : Boolean {
+    fun isDateGestureEnabled(): Boolean {
         return preferences.getBoolean("dateClick", true)
     }
 
     // Gestures
     fun setGestures(direction: String, appInfo: String?) {
-        val editor = preferences.edit()
-        editor.putString("${direction}SwipeApp", appInfo)
-        editor.apply()
+        preferences.edit {
+            putString("${direction}SwipeApp", appInfo)
+        }
     }
 
-    fun getGestureName(direction: String) : String? {
+    fun getGestureName(direction: String): String? {
         val name = preferences.getString("${direction}SwipeApp", "")?.split("§splitter§")
         return name?.get(0)
     }
 
-    fun getGestureInfo(direction: String) : List<String>? {
+    fun getGestureInfo(direction: String): List<String>? {
         return preferences.getString("${direction}SwipeApp", "")?.split("§splitter§")
     }
 
-    fun isGestureEnabled(direction: String) : Boolean {
+    fun isGestureEnabled(direction: String): Boolean {
         return preferences.getBoolean("${direction}Swipe", false)
     }
 
@@ -309,9 +315,9 @@ class SharedPreferenceManager (private val context: Context) {
     }
 
     fun setContactsEnabled(isEnabled: Boolean) {
-        val editor = preferences.edit()
-        editor.putBoolean("contactsEnabled", isEnabled)
-        editor.apply()
+        preferences.edit {
+            putBoolean("contactsEnabled", isEnabled)
+        }
     }
 
     fun isWebSearchEnabled(): Boolean {
@@ -320,9 +326,9 @@ class SharedPreferenceManager (private val context: Context) {
 
     // Hidden Apps
     fun setAppHidden(componentName: String, profile: Int, hidden: Boolean) {
-        val editor = preferences.edit()
-        editor.putBoolean("hidden$componentName-$profile", hidden)
-        editor.apply()
+        preferences.edit {
+            putBoolean("hidden$componentName-$profile", hidden)
+        }
     }
 
     fun isAppHidden(componentName: String, profile: Int): Boolean {
@@ -330,16 +336,16 @@ class SharedPreferenceManager (private val context: Context) {
     }
 
     fun setAppVisible(componentName: String, profile: Int) {
-        val editor = preferences.edit()
-        editor.remove("hidden$componentName-$profile")
-        editor.apply()
+        preferences.edit {
+            remove("hidden$componentName-$profile")
+        }
     }
 
     //Renaming apps
     fun setAppName(componentName: String, profile: Int, newName: String) {
-        val editor = preferences.edit()
-        editor.putString("name$componentName-$profile", newName)
-        editor.apply()
+        preferences.edit {
+            putString("name$componentName-$profile", newName)
+        }
     }
 
     fun getAppName(componentName: String, profile: Int, appName: CharSequence): CharSequence? {
@@ -347,9 +353,9 @@ class SharedPreferenceManager (private val context: Context) {
     }
 
     fun resetAppName(componentName: String, profile: Int) {
-        val editor = preferences.edit()
-        editor.remove("name$componentName-$profile")
-        editor.apply()
+        preferences.edit {
+            remove("name$componentName-$profile")
+        }
     }
 
     fun resetAllPreferences() {
@@ -366,9 +372,9 @@ class SharedPreferenceManager (private val context: Context) {
     }
 
     private fun performReset() {
-        val editor = preferences.edit()
-        editor.clear()
-        editor.putBoolean("isRestored", true)
-        editor.apply()
+        preferences.edit {
+            clear()
+            putBoolean("isRestored", true)
+        }
     }
 }
