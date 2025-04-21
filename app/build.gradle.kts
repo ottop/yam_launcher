@@ -24,7 +24,9 @@ android {
         debug {
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
+            resValue("string", "app_name", "YAM Launcher Dev")
         }
+
         release {
             isDebuggable = false
             isShrinkResources = true
@@ -34,6 +36,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            resValue("string", "app_name", "YAM Launcher")
         }
     }
     compileOptions {
