@@ -54,6 +54,8 @@
     <string name="default_home">Set Default Home</string>
     <string name="unable_to_launch_settings">Unable to launch settings</string>
 
+    <string name="lock_settings">Lock_Settings</string>
+
     <string name="customization">Customization</string>
 
     <string name="ui_settings_title">General UI Settings</string>
@@ -199,4 +201,11 @@
     <!--Double tap to lock-->
     <string name="screenlock_confirmation">To lock with double tap, enable YAM Launcher in accessibility settings.</string>
     <string name="accessibility_service_description">The permission is required for double tap to work for locking the screen.\n\nIt is only needed if you want to use the double tap to lock screen feature in YAM Launcher.</string>
+
+    <string name="text_authentication_cancel">Authentication Cancel.</string>
+    <string name="text_authentication_error">Authentication error: %1$s (code %2$d)</string>
+    <string name="text_authentication_failed">Authentication failed.</string>
+    <string name="text_biometric_login">Biometric login YAM Launcher Settings</string>
+    <string name="text_biometric_login_app">Biometric login for %1$s</string>
+    <string name="text_biometric_login_sub">Log in using your biometric credentials.</string>
 </resources>
