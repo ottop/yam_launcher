@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import eu.ottop.yamlauncher.R
 import eu.ottop.yamlauncher.utils.StringUtils
@@ -44,6 +45,9 @@ class AboutFragment : Fragment(), TitleProvider {
                 null
             )
         }
+
+        val currentVersion = "v" + requireActivity().packageManager.getPackageInfo(requireActivity().packageName, 0).versionName
+        requireActivity().findViewById<TextView>(R.id.version).text = currentVersion
     }
 
     override fun getTitle(): String {
