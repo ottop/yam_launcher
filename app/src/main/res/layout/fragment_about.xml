@@ -161,4 +161,13 @@
         android:textAlignment="center"
         android:textSize="14sp" />
 
+    <TextView
+        android:id="@+id/version"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="v0.0.0"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        tools:ignore="HardcodedText" />
+
 </LinearLayout>
