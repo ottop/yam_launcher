@@ -6,23 +6,29 @@ import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.LauncherActivityInfo
 import android.content.pm.LauncherApps
+import android.os.Build
 import android.os.UserHandle
+import android.os.UserManager
 import androidx.core.content.ContextCompat.getString
 import eu.ottop.yamlauncher.R
 import eu.ottop.yamlauncher.settings.SharedPreferenceManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import android.provider.Settings
 
 class AppUtils(private val context: Context, private val launcherApps: LauncherApps) {
 
     private val sharedPreferenceManager = SharedPreferenceManager(context)
-    private val profileUtils = ProfileUtils(context, launcherApps)
 
     suspend fun getInstalledApps(showApps: Boolean = false): List<Triple<LauncherActivityInfo, UserHandle, Int>> {
         val allApps = mutableListOf<Triple<LauncherActivityInfo, UserHandle, Int>>()
         var sortedApps = listOf<Triple<LauncherActivityInfo, UserHandle, Int>>()
         withContext(Dispatchers.Default) {
             for (i in launcherApps.profiles.indices) { // Check apps for all
+                // Don't show private space apps in app menu
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM && launcherApps.getLauncherUserInfo(launcherApps.profiles[i])?.userType == UserManager.USER_TYPE_PROFILE_PRIVATE) {
+                        continue
+                }
                 allApps.addAll(getAppsForProfile(i, showApps))
             }
 
@@ -39,7 +45,6 @@ class AppUtils(private val context: Context, private val launcherApps: LauncherA
                 }
             )
         }
-
         return sortedApps
     }
 
@@ -51,22 +56,53 @@ class AppUtils(private val context: Context, private val launcherApps: LauncherA
                     profile
                 ) or showApps)&& app.applicationInfo.packageName != context.applicationInfo.packageName // Hide the launcher itself
             ) {
-                var profileIndex = 0
-                if (profileUtils.isWorkProfile(profile)) {
-                    profileIndex = 1
-                }
-                else if (profileUtils.isPrivateProfile(profile)) {
-                    if (profileUtils.isPrivateSpaceLocked(launcherApps.profiles[profile])) {
-                        return mutableListOf()
-                    }
-                    profileIndex = 2
-                }
-
-                apps.add(Triple(app, launcherApps.profiles[profile], profileIndex)) // The i variable gets used to determine whether an app is in the personal profile or work profile
+                apps.add(Triple(app, launcherApps.profiles[profile], profile)) // The i variable gets used to determine whether an app is in the personal profile or work profile
             }
         }
 
         return apps
+    }
+
+    suspend fun getPrivateApps(): List<Triple<LauncherActivityInfo, UserHandle, Int>> {
+        val allApps = mutableListOf<Triple<LauncherActivityInfo, UserHandle, Int>>()
+        var sortedApps = listOf<Triple<LauncherActivityInfo, UserHandle, Int>>()
+        withContext(Dispatchers.Default) {
+            for (i in launcherApps.profiles.indices) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM && launcherApps.getLauncherUserInfo(launcherApps.profiles[i])?.userType == UserManager.USER_TYPE_PROFILE_PRIVATE) {
+                    allApps.addAll(getAppsForProfile(i))
+                }
+            }
+
+            // Sort apps by name
+            sortedApps = allApps.sortedWith(
+                compareBy<Triple<LauncherActivityInfo, UserHandle, Int>> {
+                    !sharedPreferenceManager.isAppPinned(it.first.componentName.flattenToString(), it.third) // This displays the pinned apps for some reason.
+                }.thenBy {
+                    sharedPreferenceManager.getAppName(
+                        it.first.componentName.flattenToString(),
+                        it.third,
+                        it.first.label
+                    ).toString().lowercase()
+                }
+            )
+        }
+
+        return sortedApps
+    }
+
+    fun isPrivateSpaceEnabled(): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            val userManager = context.getSystemService(Context.USER_SERVICE) as UserManager
+
+            for (profile in userManager.userProfiles) {
+                println(launcherApps.getLauncherUserInfo(profile)?.userType)
+                 if (launcherApps.getLauncherUserInfo(profile)?.userType == UserManager.USER_TYPE_PROFILE_PRIVATE) {
+                     // Check if the private space is hidden
+                     return !(Settings.Secure.getString(context.contentResolver, "hide_privatespace_entry_point") == "1" && userManager.isQuietModeEnabled(profile))
+                 }
+            }
+        }
+        return false
     }
 
     // Get hidden apps for the hidden apps settings
@@ -96,10 +132,10 @@ class AppUtils(private val context: Context, private val launcherApps: LauncherA
 
     fun getAppInfo(
         packageName: String,
-        profile: UserHandle
+        profile: Int
     ): ApplicationInfo? {
         return try {
-            launcherApps.getApplicationInfo(packageName, 0, profile)
+            launcherApps.getApplicationInfo(packageName, 0, launcherApps.profiles[profile])
         } catch (_: Exception) {
             null
         }
