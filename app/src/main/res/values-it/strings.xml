@@ -1,0 +1,202 @@
+<resources>
+    <string name="app_name">YAM Launcher</string>
+
+    <string name="empty"></string>
+
+    <!--Home Screen-->
+    <string name="shortcut_default">App</string>
+
+    <string name="shortcut_default_click">Tocca e tieni premuto per selezionare un'app</string>
+
+    <string name="accessibility_set_shortcut">Imposta scorciatoia app</string>
+
+    <string name="open_app_menu">Apri menu app</string>
+
+    <string name="no_calendar_app">Nessuna app Calendario trovata</string>
+
+    <!--App Menu-->
+    <string name="select_an_app">Seleziona un'app</string>
+
+    <string name="search">Cerca…</string>
+
+    <string name="switch_to_contacts">Passa ai contatti</string>
+    <string name="switch_to_apps">Passa alle app</string>
+
+    <string name="confirm_title">Conferma</string>
+    <string name="app_confirm_text">Sei sicuro di voler scegliere</string>
+    <string name="confirm_yes">Sì</string>
+    <string name="confirm_no">Annulla</string>
+
+    <string name="removing">Rimozione in corso…</string>
+
+    <string name="close_app_menu">Chiudi menu app</string>
+
+    <string name="launch_error">Impossibile avviare l'app</string>
+
+    <string name="empty_rename">Il nome non può essere vuoto</string>
+
+    <!--Action Menu Items-->
+    <string name="pin">Aggiungi alla schermata principale</string>
+    <string name="info">Info</string>
+    <string name="uninstall">Disinstalla</string>
+    <string name="rename">Rinomina</string>
+    <string name="hide">Nascondi</string>
+    <string name="close">Chiudi</string>
+    <string name="accessibility_pin">Aggiungi app alla schermata principale</string>
+    <string name="accessibility_info">Info app</string>
+    <string name="accessibility_uninstall">Disinstalla app</string>
+    <string name="accessibility_rename">Rinomina app</string>
+    <string name="accessibility_hide">Nascondi app</string>
+
+    <!--Settings Page-->
+    <string name="settings_title">Impostazioni del Launcher</string>
+
+    <string name="default_home">Imposta come Home predefinita</string>
+    <string name="unable_to_launch_settings">Impossibile aprire le impostazioni</string>
+
+    <string name="customization">Personalizzazione</string>
+
+    <string name="ui_settings_title">Impostazioni generali UI</string>
+    <string name="ui_settings_text">Generali UI</string>
+    <string name="ui_settings_summary">Configura l'aspetto complessivo</string>
+
+    <string name="appearance">Aspetto</string>
+    <string name="background_color">Colore di sfondo</string>
+    <string name="text_color">Colore del testo</string>
+    <string name="text_font">Carattere del testo</string>
+    <string name="text_style">Stile del testo</string>
+
+    <string name="operation">Operazioni</string>
+    <string name="animation_speed">Velocità animazione</string>
+    <string name="swipe_threshold">Soglia swipe</string>
+    <string name="swipe_velocity_threshold">Soglia velocità swipe</string>
+    <string name="show_status_bar">Mostra barra di stato</string>
+    <string name="enable_confirmation">Conferma l'avvio dell'app</string>
+    <string name="launch_confirmation_text">Sei sicuro di voler avviare questa app?</string>
+
+    <string name="home_settings_title">Impostazioni schermata principale</string>
+    <string name="home_settings_text">Schermata principale</string>
+    <string name="home_settings_summary">Configura la schermata principale</string>
+
+    <string name="clock">Orologio</string>
+    <string name="show_clock">Mostra orologio</string>
+    <string name="clock_alignment">Allineamento orologio</string>
+    <string name="clock_size">Dimensione orologio</string>
+    <string name="clicking_time_opens_clock">Cliccando sull'ora si aprirà l'orologio</string>
+    <string name="custom_clock_gesture">Orologio personalizzato</string>
+    <string name="set_clock_app">Imposta app orologio</string>
+
+    <string name="date">Data</string>
+    <string name="show_date">Mostra data</string>
+    <string name="date_size">Dimensione data</string>
+    <string name="battery_indicator">Indicatore batteria</string>
+    <string name="clicking_date_opens_calendar">Cliccando sulla data si aprirà il calendario</string>
+    <string name="custom_date_gesture">Calendario personalizzato</string>
+    <string name="set_calendar_app">Imposta app calendario</string>
+
+    <string name="weather">Meteo</string>
+    <string name="gps_location">Posizione GPS</string>
+    <string name="latest_location">Ultima posizione GPS</string>
+    <string name="set_manual_location">Imposta posizione manuale</string>
+    <string name="find_your_city">Cerca la tua città</string>
+    <string name="units">Unità di misura</string>
+
+    <string name="shortcuts">Scorciatoie</string>
+    <string name="number_of_shortcuts">Numero di scorciatoie</string>
+    <string name="horizontal_alignment">Allineamento orizzontale</string>
+    <string name="vertical_alignment">Allineamento verticale</string>
+    <string name="shortcut_size">Dimensione scorciatoie</string>
+    <string name="shortcut_spacing">Spaziatura scorciatoie</string>
+    <string name="lock_shortcuts">Blocca scorciatoie</string>
+    <string name="hidden_shortcut_title">App nascoste</string>
+    <string name="hidden_shortcuts">Mostra app nascoste nella selezione scorciatoie</string>
+
+    <string name="gestures">Gestures</string>
+    <string name="swipe_left">Swipe a sinistra</string>
+    <string name="left_swipe_app">App swipe sinistra</string>
+    <string name="swipe_right">Swipe a destra</string>
+    <string name="right_swipe_app">App swipe destra</string>
+    <string name="double_tap_to_lock_screen">Doppio tap per bloccare schermo</string>
+
+    <string name="app_settings_title">Impostazioni menu app</string>
+    <string name="app_settings_text">Menu app</string>
+    <string name="app_settings_summary">Configura il menu applicazioni</string>
+
+    <string name="apps">App</string>
+    <string name="app_alignment">Allineamento app</string>
+    <string name="app_size">Dimensione app</string>
+    <string name="app_spacing">Spaziatura app</string>
+    <string name="contacts_menu">Menu contatti</string>
+    <string name="permission_denied">Permesso negato</string>
+    <string name="internet_search">Cerca nel web</string>
+
+    <string name="context_menu_settings_title">Impostazioni menu contestuale</string>
+    <string name="context_menu_settings_text">Menu contestuale</string>
+    <string name="context_menu_settings_summary">Abilita/disabilita voci menu contestuale</string>
+
+    <string name="enable_pin">Aggiungi app alla schermata principale</string>
+    <string name="enable_info">Info app</string>
+    <string name="enable_uninstall">Disinstalla app</string>    
+    <string name="enable_rename">Rinomina app</string>
+    <string name="enable_hide">Nascondi app</string>
+    <string name="enable_close">Chiudi menu</string>
+
+    <string name="search_text">Cerca</string>
+    <string name="enable_search">Abilita ricerca</string>
+    <string name="search_alignment">Allineamento ricerca</string>
+    <string name="search_size">Dimensione ricerca</string>
+    <string name="enable_fuzzy_search">Ricerca approssimativa</string>
+    <string name="automatically_open_keyboard">Apri tastiera automaticamente</string>
+    <string name="automatic_app_opening">Apertura automatica app</string>
+    <string name="auto_launch_summary">Avvia automaticamente un'app quando è l'ultimo risultato di ricerca</string>
+
+    <string name="hidden_apps_title">App nascoste</string>
+    <string name="hidden_apps_text">Gestisci app nascoste</string>
+    <string name="hidden_apps_summary">Ripristina app visibili</string>
+    <string name="hidden_confirm_text">Sei sicuro di voler ripristinare</string>
+
+    <string name="about">Info</string>
+    <!--About Page Items-->
+    <string name="about_title">Informazioni su YAM Launcher</string>
+    <string name="app_icon">Icona app</string>
+    <string name="creditName">Di Otto Petäjä</string>
+    <string name="source_code">Codice sorgente</string>
+    <string name="codeberg">Codeberg</string>
+    <string name="github">GitHub</string>
+    <string name="donate">Dona</string>
+    <string name="stripe">Stripe</string>
+    <string name="liberapay">Liberapay</string>
+    <string name="weather_data_credit">Dati meteo da Open-Meteo.com\n(CC BY 4.0)</string>
+    <!--About page links-->
+    <string name="my_website_link"><![CDATA[by <a href="https://ottop.rip">Otto Petäjä</a>]]></string>
+    <string name="codeberg_link"><![CDATA[<a href="https://codeberg.org/ottoptj/yamlauncher">Codeberg</a>]]></string>
+    <string name="github_link"><![CDATA[<a href="https://github.com/ottop/yam_launcher">GitHub</a>]]></string>
+    <string name="libera_link"><![CDATA[<a href="https://liberapay.com/ottoptj/donate">Liberapay</a><br>(ricorrente)]]></string>
+    <string name="stripe_link"><![CDATA[<a href="https://donate.stripe.com/14k6s2bMJdnDgtW288">Stripe</a><br>(una tantum)]]></string>
+    <string name="weather_link"><![CDATA[Dati meteo da <a href="https://open-meteo.com/">Open-Meteo.com</a><br>(<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>)]]></string>
+
+    <string name="reset">Ripristina</string>
+    <string name="restart_text">Riavvia YAM Launcher</string>
+    <string name="reset_text">Ripristina tutte le impostazioni</string>
+    <string name="reset_confirm_text">Perderai TUTTI i cambiamenti che hai fatto nelle impostazioni del launcher, scorciatoie, app nascoste, ecc.\n\nSei sicuro?</string>
+
+    <string name="backup_restore">Backup e Ripristino</string>
+    <string name="backup">Backup</string>
+    <string name="backup_summary">Esegui il backup delle tue impostazioni</string>
+    <string name="restore">Ripristina</string>
+    <string name="restore_summary">Ripristina un backup</string>
+    <string name="backup_success">Backup riuscito :)</string>
+    <string name="backup_fail">Backup fallito :(</string>
+    <string name="restore_success">Ripristino riuscito :)</string>
+    <string name="restore_fail">Ripristino fallito :( (file danneggiato?)</string>
+    <string name="restore_wrong_app">Non è un backup di YAM Launcher</string>
+    <string name="restore_error">Impossibile leggere il file</string>
+
+    <!--Location Selector Items-->
+    <string name="location_link"><![CDATA[Dati di localizzazione da <a href="https://open-meteo.com/">Open-Meteo.com</a> (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>)]]></string>
+    <string name="region_text">%1$s%2$s</string>
+
+    <!--Double tap to lock-->
+    <string name="screenlock_confirmation">Per bloccare con doppio tap, abilita YAM Launcher nelle impostazioni di accessibilità.</string>
+    <string name="accessibility_service_description">Il permesso è necessario per il doppio tap per bloccare lo schermo.\n\nÈ necessario solo se vuoi usare la funzione di blocco schermo con doppio tap in YAM Launcher.</string>
+</resources>

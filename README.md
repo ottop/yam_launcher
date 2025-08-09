@@ -1,3 +1,6 @@
+# Notice
+I have stopped maintaining this project. 1.8 is the final release of the app. If you want to make a fork, feel free to do so. 
+
 <p align="center">
 <img src="https://codeberg.org/ottoptj/yamlauncher/raw/branch/main/metadata/en-US/images/featureGraphic.png" width=100%/>
 </p>
@@ -79,22 +82,6 @@ Submit an issue on the *Issues* tab.
 ### Development tracker
 
 You can check what I'm already working on here: [Taiga board](https://tree.taiga.io/project/ottoptj-yam-launcher/kanban)
-
-## Contributing
-
-### Development
-
-A big thank you to all contributors. You can find a list of contributions in [CREDITS.md](https://codeberg.org/ottoptj/yamlauncher/src/branch/main/CREDITS.md). 
-
-Feel free to contribute code improvements and bug fixes. For big changes, I would recommend creating an issue first so that I can figure out whether I want the change to be implemented. Generally I am open to optional features that can be enabled or disabled in the preferences as long as they are not too convoluted, but no guarantees.
-
-### Donations
-
-If you wish to support me and my work financially, I welcome all donations. These help me feed myself and get any equipment I may need for future development (Wouldn't it be cool to run my own instance of Open-Meteo instead of using the public one?).
-
-One-time donations: [Stripe](https://donate.stripe.com/14k6s2bMJdnDgtW288)
-
-Recurring donations: [Liberapay](https://liberapay.com/ottoptj/donate)
 
 ## Privacy
 

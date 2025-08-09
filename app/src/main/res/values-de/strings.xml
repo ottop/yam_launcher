@@ -54,13 +54,13 @@
 
     <string name="ui_settings_title">Allgemeine Oberflächeneinstellungen</string>
     <string name="ui_settings_text">Allgemeine Oberfläche</string>
-    <string name="ui_settings_summary">Ddas gesamte Erscheinungsbild konfigurieren</string>
+    <string name="ui_settings_summary">Das gesamte Erscheinungsbild konfigurieren</string>
 
     <string name="appearance">Aussehen</string>
     <string name="background_color">Hintergrundfarbe</string>
     <string name="text_color">Textfarbe</string>
     <string name="text_font">Schriftart</string>
-    <string name="text_style">Sstil</string>
+    <string name="text_style">Stil</string>
 
     <string name="operation">Bedienung</string>
     <string name="animation_speed">Animationsgeschwindigkeit</string>

@@ -16,14 +16,21 @@ import kotlinx.coroutines.withContext
 class AppUtils(private val context: Context, private val launcherApps: LauncherApps) {
 
     private val sharedPreferenceManager = SharedPreferenceManager(context)
-    private val profileUtils = ProfileUtils(context, launcherApps)
 
     suspend fun getInstalledApps(showApps: Boolean = false): List<Triple<LauncherActivityInfo, UserHandle, Int>> {
         val allApps = mutableListOf<Triple<LauncherActivityInfo, UserHandle, Int>>()
         var sortedApps = listOf<Triple<LauncherActivityInfo, UserHandle, Int>>()
         withContext(Dispatchers.Default) {
-            for (i in launcherApps.profiles.indices) { // Check apps for all
-                allApps.addAll(getAppsForProfile(i, showApps))
+            for (i in launcherApps.profiles.indices) { // Check apps on both, normal and work profiles
+                launcherApps.getActivityList(null, launcherApps.profiles[i]).forEach { app ->
+                    if ((!sharedPreferenceManager.isAppHidden( // Only include the app if it isn't set as hidden or in shortcut selection with the appropriate option enabled
+                            app.componentName.flattenToString(),
+                            i
+                        ) or showApps)&& app.applicationInfo.packageName != context.applicationInfo.packageName // Hide the launcher itself
+                    ) {
+                        allApps.add(Triple(app, launcherApps.profiles[i], i)) // The i variable gets used to determine whether an app is in the personal profile or work profile
+                    }
+                }
             }
 
             // Sort apps by name
@@ -39,34 +46,8 @@ class AppUtils(private val context: Context, private val launcherApps: LauncherA
                 }
             )
         }
-
         return sortedApps
-    }
 
-    private fun getAppsForProfile(profile: Int, showApps: Boolean = false): MutableList<Triple<LauncherActivityInfo, UserHandle, Int>> {
-        val apps = mutableListOf<Triple<LauncherActivityInfo, UserHandle, Int>>()
-        launcherApps.getActivityList(null, launcherApps.profiles[profile]).forEach { app ->
-            if ((!sharedPreferenceManager.isAppHidden( // Only include the app if it isn't set as hidden or in shortcut selection with the appropriate option enabled
-                    app.componentName.flattenToString(),
-                    profile
-                ) or showApps)&& app.applicationInfo.packageName != context.applicationInfo.packageName // Hide the launcher itself
-            ) {
-                var profileIndex = 0
-                if (profileUtils.isWorkProfile(profile)) {
-                    profileIndex = 1
-                }
-                else if (profileUtils.isPrivateProfile(profile)) {
-                    if (profileUtils.isPrivateSpaceLocked()) {
-                        return mutableListOf()
-                    }
-                    profileIndex = 2
-                }
-
-                apps.add(Triple(app, launcherApps.profiles[profile], profileIndex)) // The i variable gets used to determine whether an app is in the personal profile or work profile
-            }
-        }
-
-        return apps
     }
 
     // Get hidden apps for the hidden apps settings
@@ -96,10 +77,10 @@ class AppUtils(private val context: Context, private val launcherApps: LauncherA
 
     fun getAppInfo(
         packageName: String,
-        profile: UserHandle
+        profile: Int
     ): ApplicationInfo? {
         return try {
-            launcherApps.getApplicationInfo(packageName, 0, profile)
+            launcherApps.getApplicationInfo(packageName, 0, launcherApps.profiles[profile])
         } catch (_: Exception) {
             null
         }
