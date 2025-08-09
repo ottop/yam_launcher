@@ -1,5 +1,5 @@
 # Notice
-I have stopped maintaining this project. 1.8 is the final release of the app. If you want to make a fork, feel free to do so. 
+I have stopped maintaining this project. 1.8 is the final release of the app. There is a fork that intends to continue the development: https://github.com/ThomasNowProductions/yam_launcher_continuation
 
 <p align="center">
 <img src="https://codeberg.org/ottoptj/yamlauncher/raw/branch/main/metadata/en-US/images/featureGraphic.png" width=100%/>
