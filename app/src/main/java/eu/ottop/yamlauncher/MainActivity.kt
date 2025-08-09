@@ -6,7 +6,6 @@ import android.app.SearchManager
 import android.content.ActivityNotFoundException
 import android.content.ComponentName
 import android.content.ContentResolver
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.LauncherActivityInfo
@@ -185,7 +184,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     private fun setMainVariables() {
-        launcherApps = getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
+        launcherApps = getSystemService(LAUNCHER_APPS_SERVICE) as LauncherApps
 
         weatherSystem = WeatherSystem(this@MainActivity)
         appUtils = AppUtils(this@MainActivity, launcherApps)
@@ -336,7 +335,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     return@setOnEditorActionListener true
                 }
                 val imm =
-                    getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(menuTitle.windowToken, 0)
                 val savedView = sharedPreferenceManager.getShortcut(index)!!
                 textView.text = menuTitle.text
@@ -382,7 +381,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         if (sharedPreferenceManager.isAutoKeyboardEnabled()) {
             isInitialOpen = true
             val imm =
-                getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
             searchView.requestFocus()
             imm.showSoftInput(searchView, InputMethodManager.SHOW_IMPLICIT)
         }
@@ -828,7 +827,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private fun closeKeyboard() {
         val imm =
-            getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
     }
 
@@ -1267,7 +1266,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
                 // Swipe down
                 else if (deltaY > swipeThreshold && abs(velocityY) > swipeVelocityThreshold) {
-                    val statusBarService = getSystemService(Context.STATUS_BAR_SERVICE)
+                    val statusBarService = getSystemService(STATUS_BAR_SERVICE)
                     val statusBarManager: Class<*> = Class.forName("android.app.StatusBarManager")
                     val expandMethod: Method = statusBarManager.getMethod("expandNotificationsPanel")
                     expandMethod.invoke(statusBarService)
@@ -1278,7 +1277,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                         "left"
                     )
                 ) {
-                    println(leftSwipeActivity)
                     if (leftSwipeActivity.first != null && leftSwipeActivity.second != null) {
                         canLaunchShortcut = false
                         appUtils.launchApp(leftSwipeActivity.first!!.componentName, launcherApps.profiles[leftSwipeActivity.second!!])

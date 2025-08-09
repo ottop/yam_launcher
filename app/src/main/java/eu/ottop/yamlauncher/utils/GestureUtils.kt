@@ -21,7 +21,7 @@ class GestureUtils(private val context: Context) {
 
     fun getSwipeInfo(launcherApps: LauncherApps, direction: String): Pair<LauncherActivityInfo?, Int?> {
         val app = sharedPreferenceManager.getGestureInfo(direction)
-        println(app)
+
         if (app != null) {
             if (app.size >= 3) {
                 val componentName = ComponentName.unflattenFromString(app[1])
