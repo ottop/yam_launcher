@@ -158,9 +158,6 @@
     <string name="source_code">Lähdekoodi</string>
     <string name="codeberg">Codeberg</string>
     <string name="github">GitHub</string>
-    <string name="donate">Lahjoitukset</string>
-    <string name="stripe">Stripe</string>
-    <string name="liberapay">Liberapay</string>
 
     <string name="reset">Reset</string>
     <string name="restart_text">Käynnistä YAM Launcher Uudelleen</string>

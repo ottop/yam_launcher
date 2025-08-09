@@ -160,9 +160,6 @@
     <string name="source_code">Quellcode</string>
     <string name="codeberg">Codeberg</string>
     <string name="github">GitHub</string>
-    <string name="donate">Spenden</string>
-    <string name="stripe">Stripe</string>
-    <string name="liberapay">Liberapay</string>
 
     <string name="reset">Reset</string>
     <string name="restart_text">YAM Launcher neu starten</string>

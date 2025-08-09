@@ -164,9 +164,7 @@
     <string name="source_code">Codice sorgente</string>
     <string name="codeberg">Codeberg</string>
     <string name="github">GitHub</string>
-    <string name="donate">Dona</string>
-    <string name="stripe">Stripe</string>
-    <string name="liberapay">Liberapay</string>
+
     <string name="weather_data_credit">Dati meteo da Open-Meteo.com\n(CC BY 4.0)</string>
     <!--About page links-->
     <string name="my_website_link"><![CDATA[by <a href="https://ottop.rip">Otto Petäjä</a>]]></string>
