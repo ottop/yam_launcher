@@ -50,7 +50,7 @@
     <string name="default_home">Set Default Home</string>
     <string name="unable_to_launch_settings">Unable to launch settings</string>
 
-    <string name="lock_settings">Lock_Settings</string>
+    <string name="lock_settings">Lock Settings</string>
 
     <string name="customization">Customization</string>
 
@@ -192,7 +192,7 @@
     <string name="text_authentication_cancel">Authentication Cancel.</string>
     <string name="text_authentication_error">Authentication error: %1$s (code %2$d)</string>
     <string name="text_authentication_failed">Authentication failed.</string>
-    <string name="text_biometric_login">Biometric login YAM Launcher Settings</string>
+    <string name="text_biometric_login">Unlock YAM Launcher Settings</string>
     <string name="text_biometric_login_app">Biometric login for %1$s</string>
     <string name="text_biometric_login_sub">Log in using your biometric credentials.</string>
 </resources>

@@ -49,6 +49,7 @@
     <string name="unable_to_launch_settings">Asetuksien avaaminen epäonnistui</string>
 
     <string name="customization">Kustomointi</string>
+    <string name="lock_settings">Lukitse Asetukset</string>
 
     <string name="ui_settings_title">Yleiset UI-asetukset</string>
     <string name="ui_settings_text">Yleinen UI</string>
@@ -184,5 +185,12 @@
     <!--Double tap to lock-->
     <string name="screenlock_confirmation">Lukitaksesi näytön kaksoisnapautuksella, laita YAM Launcher päälle saavutettavuusasetuksissa.</string>
     <string name="accessibility_service_description">Näitä lupia tarvitaan näytön lukitsemiseen.\n\nNe ovat tarpeellisia pelkästään jos käytät elettä, joka lukitsee näytön kaksoisnapautuksesta.</string>
+
+    <string name="text_authentication_cancel">Asetuksien avaus peruttiin.</string>
+    <string name="text_authentication_error">Vika asetuksia avatessa: %1$s (code %2$d)</string>
+    <string name="text_authentication_failed">Asetuksien avaus ei onnistunut.</string>
+    <string name="text_biometric_login">Avaa YAM Launcherin asetukset</string>
+    <string name="text_biometric_login_app">Biometrinen kirjaantuminen: %1$s</string>
+    <string name="text_biometric_login_sub">Kirjaudu biometrisilla tiedoillasi.</string>
 
 </resources>

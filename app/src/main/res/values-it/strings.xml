@@ -6,7 +6,7 @@
     <!--Home Screen-->
     <string name="shortcut_default">App</string>
 
-    <string name="shortcut_default_click">Tocca e tieni premuto per selezionare un'app</string>
+    <string name="shortcut_default_click">Tocca e tieni premuto per selezionare un\'app</string>
 
     <string name="accessibility_set_shortcut">Imposta scorciatoia app</string>
 
@@ -15,7 +15,7 @@
     <string name="no_calendar_app">Nessuna app Calendario trovata</string>
 
     <!--App Menu-->
-    <string name="select_an_app">Seleziona un'app</string>
+    <string name="select_an_app">Seleziona un\'app</string>
 
     <string name="search">Cerca…</string>
 
@@ -31,7 +31,7 @@
 
     <string name="close_app_menu">Chiudi menu app</string>
 
-    <string name="launch_error">Impossibile avviare l'app</string>
+    <string name="launch_error">Impossibile avviare l\'app</string>
 
     <string name="empty_rename">Il nome non può essere vuoto</string>
 
@@ -58,7 +58,7 @@
 
     <string name="ui_settings_title">Impostazioni generali UI</string>
     <string name="ui_settings_text">Generali UI</string>
-    <string name="ui_settings_summary">Configura l'aspetto complessivo</string>
+    <string name="ui_settings_summary">Configura l\'aspetto complessivo</string>
 
     <string name="appearance">Aspetto</string>
     <string name="background_color">Colore di sfondo</string>
@@ -71,7 +71,7 @@
     <string name="swipe_threshold">Soglia swipe</string>
     <string name="swipe_velocity_threshold">Soglia velocità swipe</string>
     <string name="show_status_bar">Mostra barra di stato</string>
-    <string name="enable_confirmation">Conferma l'avvio dell'app</string>
+    <string name="enable_confirmation">Conferma l\'avvio dell\'app</string>
     <string name="launch_confirmation_text">Sei sicuro di voler avviare questa app?</string>
 
     <string name="home_settings_title">Impostazioni schermata principale</string>
@@ -82,7 +82,7 @@
     <string name="show_clock">Mostra orologio</string>
     <string name="clock_alignment">Allineamento orologio</string>
     <string name="clock_size">Dimensione orologio</string>
-    <string name="clicking_time_opens_clock">Cliccando sull'ora si aprirà l'orologio</string>
+    <string name="clicking_time_opens_clock">Cliccando sull\'ora si aprirà l\'orologio</string>
     <string name="custom_clock_gesture">Orologio personalizzato</string>
     <string name="set_clock_app">Imposta app orologio</string>
 
@@ -148,7 +148,7 @@
     <string name="enable_fuzzy_search">Ricerca approssimativa</string>
     <string name="automatically_open_keyboard">Apri tastiera automaticamente</string>
     <string name="automatic_app_opening">Apertura automatica app</string>
-    <string name="auto_launch_summary">Avvia automaticamente un'app quando è l'ultimo risultato di ricerca</string>
+    <string name="auto_launch_summary">Avvia automaticamente un\'app quando è l\'ultimo risultato di ricerca</string>
 
     <string name="hidden_apps_title">App nascoste</string>
     <string name="hidden_apps_text">Gestisci app nascoste</string>
