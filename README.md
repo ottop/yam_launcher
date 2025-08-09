@@ -75,14 +75,6 @@ To fix (only if you want to enable the double tap to lock feature):
     width="19%">
 </p>
 
-## Bugs, feature requests, etc
-
-Submit an issue on the *Issues* tab.
-
-### Development tracker
-
-You can check what I'm already working on here: [Taiga board](https://tree.taiga.io/project/ottoptj-yam-launcher/kanban)
-
 ## Privacy
 
 [Privacy Policy](https://codeberg.org/ottoptj/yamlauncher/src/branch/main/PrivacyPolicy.md)
