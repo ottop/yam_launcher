@@ -55,6 +55,7 @@
     <string name="unable_to_launch_settings">Impossibile aprire le impostazioni</string>
 
     <string name="customization">Personalizzazione</string>
+    <string name="lock_settings">Blocco impostazione</string>
 
     <string name="ui_settings_title">Impostazioni generali UI</string>
     <string name="ui_settings_text">Generali UI</string>

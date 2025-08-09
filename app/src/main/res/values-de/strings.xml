@@ -51,6 +51,7 @@
     <string name="unable_to_launch_settings">Einstellungen können nicht aufgerufen werden</string>
 
     <string name="customization">Anpassung</string>
+    <string name="lock_settings">Einstellungen Sperren</string>
 
     <string name="ui_settings_title">Allgemeine Oberflächeneinstellungen</string>
     <string name="ui_settings_text">Allgemeine Oberfläche</string>
