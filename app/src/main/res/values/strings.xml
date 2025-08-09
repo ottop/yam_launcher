@@ -1,8 +1,4 @@
 <resources>
-    <string name="app_name">YAM Launcher</string>
-
-    <string name="empty"></string>
-
     <!--Home Screen-->
     <string name="shortcut_default">App</string>
 
@@ -53,6 +49,8 @@
 
     <string name="default_home">Set Default Home</string>
     <string name="unable_to_launch_settings">Unable to launch settings</string>
+
+    <string name="lock_settings">Lock_Settings</string>
 
     <string name="customization">Customization</string>
 
@@ -166,14 +164,6 @@
     <string name="donate">Donate</string>
     <string name="stripe">Stripe</string>
     <string name="liberapay">Liberapay</string>
-    <string name="weather_data_credit">Weather data by Open-Meteo.com\n(CC BY 4.0)</string>
-    <!--About page links-->
-    <string name="my_website_link"><![CDATA[by <a href="https://ottop.rip">Otto Petäjä</a>]]></string>
-    <string name="codeberg_link"><![CDATA[<a href="https://codeberg.org/ottoptj/yamlauncher">Codeberg</a>]]></string>
-    <string name="github_link"><![CDATA[<a href="https://github.com/ottop/yam_launcher">GitHub</a>]]></string>
-    <string name="libera_link"><![CDATA[<a href="https://liberapay.com/ottoptj/donate">Liberapay</a><br>(recurring)]]></string>
-    <string name="stripe_link"><![CDATA[<a href="https://donate.stripe.com/14k6s2bMJdnDgtW288">Stripe</a><br>(one-time)]]></string>
-    <string name="weather_link"><![CDATA[Weather data by <a href="https://open-meteo.com/">Open-Meteo.com</a><br>(<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>)]]></string>
 
     <string name="reset">Reset</string>
     <string name="restart_text">Restart YAM Launcher</string>
@@ -193,10 +183,16 @@
     <string name="restore_error">Failed to read file</string>
 
     <!--Location Selector Items-->
-    <string name="location_link"><![CDATA[Location data by <a href="https://open-meteo.com/">Open-Meteo.com</a> (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>)]]></string>
     <string name="region_text">%1$s%2$s</string>
 
     <!--Double tap to lock-->
     <string name="screenlock_confirmation">To lock with double tap, enable YAM Launcher in accessibility settings.</string>
     <string name="accessibility_service_description">The permission is required for double tap to work for locking the screen.\n\nIt is only needed if you want to use the double tap to lock screen feature in YAM Launcher.</string>
+
+    <string name="text_authentication_cancel">Authentication Cancel.</string>
+    <string name="text_authentication_error">Authentication error: %1$s (code %2$d)</string>
+    <string name="text_authentication_failed">Authentication failed.</string>
+    <string name="text_biometric_login">Biometric login YAM Launcher Settings</string>
+    <string name="text_biometric_login_app">Biometric login for %1$s</string>
+    <string name="text_biometric_login_sub">Log in using your biometric credentials.</string>
 </resources>

@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "eu.ottop.yamlauncher"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "eu.ottop.yamlauncher"
         minSdk = 31
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 12
         versionName = "1.7"
     }
@@ -24,7 +24,9 @@ android {
         debug {
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
+            resValue("string", "app_name", "YAM Launcher Dev")
         }
+
         release {
             isDebuggable = false
             isShrinkResources = true
@@ -34,14 +36,15 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            resValue("string", "app_name", "YAM Launcher")
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
     buildFeatures {
         viewBinding = true
@@ -49,11 +52,12 @@ android {
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.15.0")
-    implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation("com.google.android.material:material:1.12.0")
-    implementation("androidx.recyclerview:recyclerview:1.3.2")
-    implementation("androidx.preference:preference-ktx:1.2.1")
-    implementation("androidx.activity:activity-ktx:1.9.3")
-    implementation("androidx.constraintlayout:constraintlayout:2.2.0")
+    implementation(libs.core.ktx)
+    implementation(libs.appcompat)
+    implementation(libs.material)
+    implementation(libs.recyclerview)
+    implementation(libs.preference.ktx)
+    implementation(libs.activity.ktx)
+    implementation(libs.constraintlayout)
+    implementation(libs.biometric.ktx)
 }
