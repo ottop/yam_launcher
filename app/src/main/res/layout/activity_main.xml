@@ -38,7 +38,7 @@
             android:textSize="36sp"
             app:drawableStartCompat="@drawable/edit_24px" />
 
-        <ViewFlipper
+        <ViewSwitcher
             android:id="@+id/menuView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -54,6 +54,7 @@
                 android:padding="0dp"
                 android:requiresFadingEdge="vertical"
                 android:scrollbars="none">
+
             </androidx.recyclerview.widget.RecyclerView>
 
             <androidx.recyclerview.widget.RecyclerView
@@ -65,19 +66,10 @@
                 android:padding="0dp"
                 android:requiresFadingEdge="vertical"
                 android:scrollbars="none">
+
             </androidx.recyclerview.widget.RecyclerView>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/privateRecycler"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clipToPadding="false"
-                android:fadingEdgeLength="20dp"
-                android:padding="0dp"
-                android:requiresFadingEdge="vertical"
-                android:scrollbars="none">
-            </androidx.recyclerview.widget.RecyclerView>
-        </ViewFlipper>
+        </ViewSwitcher>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/searchLayout"
@@ -465,24 +457,6 @@
             android:textAppearance="@android:style/TextAppearance.DeviceDefault"
             android:textColor="#F3F3F3"
             android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/privateSpace"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.09"
-            android:autoSizeTextType="uniform"
-            android:clickable="false"
-            android:drawableLeft="@drawable/ic_empty"
-            android:drawablePadding="3dp"
-            android:gravity="center_vertical"
-            android:paddingHorizontal="20dp"
-            android:shadowColor="#00FFFFFF"
-            android:shadowRadius="10"
-            android:text="Private Space"
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault"
-            android:textColor="#F3F3F3"
-            android:visibility="visible" />
 
         <Space
             android:id="@+id/bottomSpace"
