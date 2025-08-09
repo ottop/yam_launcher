@@ -250,7 +250,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 }
             }
         }
-        uiUtils.setShortcutsAlignment(binding.homeLayout)
+        uiUtils.setShortcutsAlignment(binding.homeView)
         uiUtils.setShortcutsVAlignment(binding.topSpace, binding.bottomSpace)
     }
 
@@ -450,10 +450,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         uiUtils.setClockSize(clock)
         uiUtils.setDateSize(dateText)
-        uiUtils.setShortcutsSize(binding.homeLayout)
+        uiUtils.setShortcutsSize(binding.homeView)
         uiUtils.setSearchSize(searchView)
 
-        uiUtils.setShortcutsSpacing(binding.homeLayout)
+        uiUtils.setShortcutsSpacing(binding.homeView)
 
         // This didn't work and somehow delaying it by 0 makes it work
         handler.postDelayed({
@@ -655,7 +655,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 }
 
                 "shortcutAlignment" -> {
-                    uiUtils.setShortcutsAlignment(binding.homeLayout)
+                    uiUtils.setShortcutsAlignment(binding.homeView)
                 }
 
                 "shortcutVAlignment" -> {
@@ -675,7 +675,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 }
 
                 "shortcutSize" -> {
-                    uiUtils.setShortcutsSize(binding.homeLayout)
+                    uiUtils.setShortcutsSize(binding.homeView)
                 }
 
                 "searchSize" -> {
@@ -683,7 +683,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 }
 
                 "shortcutWeight" -> {
-                    uiUtils.setShortcutsSpacing(binding.homeLayout)
+                    uiUtils.setShortcutsSpacing(binding.homeView)
                 }
 
                 "barVisibility" -> {
