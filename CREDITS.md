@@ -14,3 +14,15 @@
 [schulle4u](https://codeberg.org/schulle4u):
 
 - German translation. [Pull Request](https://codeberg.org/ottoptj/yamlauncher/pulls/36)
+
+[CreativeCodeCat](https://github.com/CreativeCodeCat):
+- Settings biometric lock. [Pull Request](https://github.com/ottop/yam_launcher/pull/44)
+
+[3B4252](https://github.com/3B4252):
+- Italian translation. [Pull Request](https://github.com/ottop/yam_launcher/pull/33)
+
+[tuch96](https://github.com/tuch96):
+- Improvements to the German translation. [Pull Request](https://github.com/ottop/yam_launcher/pull/38)
+
+[rthery](https://codeberg.org/rthery):
+- Added version number to the About page. [Pull Request](https://codeberg.org/ottoptj/yamlauncher/pulls/56)
