@@ -112,11 +112,8 @@ class AppMenuAdapter(
         val app = apps[position]
 
         if (sharedPreferenceManager.isAppPinned(app.first.componentName.flattenToString(), app.third)) {
-            if (app.third == 1) {
+            if (app.third != 0) {
                 holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(activity.resources, R.drawable.keep_filled_15px, null),null, ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null),null)
-            }
-            else if (app.third == 2) {
-                holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(activity.resources, R.drawable.shield_filled_15px, null),null, ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null),null)
             }
             else {
                 holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(activity.resources, R.drawable.keep_15px, null),null,ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null),null)
@@ -130,7 +127,7 @@ class AppMenuAdapter(
                 BlendModeColorFilter(sharedPreferenceManager.getTextColor(), BlendMode.SRC_ATOP)
         }
         else if (app.third == 2) {
-            holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(activity.resources, R.drawable.shield_15px, null),null, ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null),null)
+            holder.textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(activity.resources, R.drawable.keep_15px, null),null, ResourcesCompat.getDrawable(activity.resources, R.drawable.ic_empty, null),null)
             holder.textView.compoundDrawables[0].colorFilter =
                 BlendModeColorFilter(sharedPreferenceManager.getTextColor(), BlendMode.SRC_ATOP)
         }
