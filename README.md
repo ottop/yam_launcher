@@ -1,8 +1,5 @@
-# Notice
-I have stopped maintaining this project. 1.8 is the final release of the app. There is a fork that intends to continue the development: https://github.com/ThomasNowProductions/yam_launcher_continuation
-
 <p align="center">
-<img src="https://codeberg.org/ottoptj/yamlauncher/raw/branch/main/metadata/en-US/images/featureGraphic.png" width=100%/>
+<img src="https://codeberg.org/ThomasNowProductions/yamlauncher/raw/branch/main/metadata/en-US/images/featureGraphic.png" width=100%/>
 </p>
 
 # YAM Launcher
@@ -41,7 +38,7 @@ height="55">](https://apt.izzysoft.de/fdroid/index/apk/eu.ottop.yamlauncher)
 
 ### APK
 
-1. Download the [APK](https://codeberg.org/ottoptj/yamlauncher/releases).
+1. Download the [APK](https://codeberg.org/ThomasNowProductions/yamlauncher/releases).
 2. Enable the permission to install apps for your browser/files (app you are installing the launcher from).
 3. Install the launcher.
 
@@ -58,26 +55,26 @@ To fix (only if you want to enable the double tap to lock feature):
 ## Screenshots
 
 <p align="center">
-<img src="https://codeberg.org/ottoptj/yamlauncher/raw/branch/main/metadata/en-US/images/phoneScreenshots/1.png"
+<img src="https://codeberg.org/ThomasNowProductions/yamlauncher/raw/branch/main/metadata/en-US/images/phoneScreenshots/1.png"
     alt="Weather At Your Fingertips"
     width="19%">
-<img src="https://codeberg.org/ottoptj/yamlauncher/raw/branch/main/metadata/en-US/images/phoneScreenshots/2.png"
+<img src="https://codeberg.org/ThomasNowProductions/yamlauncher/raw/branch/main/metadata/en-US/images/phoneScreenshots/2.png"
     alt="Absolute Minimalism"
     width="19%">
-<img src="https://codeberg.org/ottoptj/yamlauncher/raw/branch/main/metadata/en-US/images/phoneScreenshots/3.png"
+<img src="https://codeberg.org/ThomasNowProductions/yamlauncher/raw/branch/main/metadata/en-US/images/phoneScreenshots/3.png"
     alt="Function Over Form"
     width="19%">
-<img src="https://codeberg.org/ottoptj/yamlauncher/raw/branch/main/metadata/en-US/images/phoneScreenshots/4.png"
+<img src="https://codeberg.org/ThomasNowProductions/yamlauncher/raw/branch/main/metadata/en-US/images/phoneScreenshots/4.png"
     alt="Material You"
     width="19%">
-<img src="https://codeberg.org/ottoptj/yamlauncher/raw/branch/main/metadata/en-US/images/phoneScreenshots/5.png"
+<img src="https://codeberg.org/ThomasNowProductions/yamlauncher/raw/branch/main/metadata/en-US/images/phoneScreenshots/5.png"
     alt="Make It Yours"
     width="19%">
 </p>
 
 ## Privacy
 
-[Privacy Policy](https://codeberg.org/ottoptj/yamlauncher/src/branch/main/PrivacyPolicy.md)
+[Privacy Policy](https://codeberg.org/ThomasNowProductions/yamlauncher/src/branch/main/PrivacyPolicy.md)
 
 No data leaves your device by default and no data is sent to the developer, ever. 
 
@@ -99,6 +96,6 @@ You can optionally enable accessibility services for YAM Launcher if you choose 
 
 ## Mirrors
 
-[Codeberg (primary)](https://codeberg.org/ottoptj/yamlauncher)
+[Codeberg (primary)](https://codeberg.org/ThomasNowProductions/yamlauncher)
 
-[GitHub (secondary)](https://github.com/ottop/yam_launcher)
+[GitHub (secondary)](https://github.com/ThomasNowProductions/yam_launcher)
