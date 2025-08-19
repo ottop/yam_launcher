@@ -194,4 +194,10 @@
     <!--Double tap to lock-->
     <string name="screenlock_confirmation">Per bloccare con doppio tap, abilita YAM Launcher nelle impostazioni di accessibilità.</string>
     <string name="accessibility_service_description">Il permesso è necessario per il doppio tap per bloccare lo schermo.\n\nÈ necessario solo se vuoi usare la funzione di blocco schermo con doppio tap in YAM Launcher.</string>
+    <string name="text_authentication_cancel">Autenticazione Annullata.</string>
+    <string name="text_authentication_error">Errore di autenticazione: %1$s (codice %2$d)</string>
+    <string name="text_authentication_failed">Autenticazione fallita.</string>
+    <string name="text_biometric_login">Sblocca Impostazioni YAM Launcher</string>
+    <string name="text_biometric_login_app">Accesso biometrico per %1$s</string>
+    <string name="text_biometric_login_sub">Accedi utilizzando le tue credenziali biometriche.</string>
 </resources>

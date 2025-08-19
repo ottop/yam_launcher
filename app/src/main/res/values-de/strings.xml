@@ -184,5 +184,11 @@
     <!--Double tap to lock-->
     <string name="screenlock_confirmation">Um die Bildschirmsperre per Doppeltipp zu nutzen, aktiviere YAM Launcher in den Bedienungshilfen.</string>
     <string name="accessibility_service_description">Die Berechtigung ist erforderlich, damit das Doppeltippen zum Sperren des Bildschirms funktioniert.\n\nSie wird nur benötigt, wenn du die Funktion zum Sperren des Bildschirms durch Doppeltippen in YAM Launcher verwenden möchtest.</string>
+    <string name="text_authentication_cancel">Authentifizierung abgebrochen.</string>
+    <string name="text_authentication_error">Authentifizierungsfehler: %1$s (Code %2$d)</string>
+    <string name="text_authentication_failed">Authentifizierung fehlgeschlagen.</string>
+    <string name="text_biometric_login">YAM Launcher-Einstellungen entsperren</string>
+    <string name="text_biometric_login_app">Biometrische Anmeldung für %1$s</string>
+    <string name="text_biometric_login_sub">Melde dich mit deinen biometrischen Daten an.</string>
 
 </resources>
