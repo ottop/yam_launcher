@@ -1,10 +1,5 @@
 .gradle/
 .idea/
 local.properties
-<<<<<<< HEAD
 uploadkey.jks
 keystore.properties
-=======
-keystore.properties
-uploadkey.jks
->>>>>>> main
