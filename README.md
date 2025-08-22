@@ -1,6 +1,5 @@
-# Notice
-I have stopped maintaining this project. 1.8 is the final release of the app. There is a fork that intends to continue the development: https://github.com/ThomasNowProductions/yam_launcher_continuation
-
+> [!NOTE]
+> Ottop stopped developing this launcher. Thanks to him for the amazing groundwork! We'll continue supporting this project. If you made a issue on the main repo from Ottop, please make one here. We'll only implement features asked for by our community.
 <p align="center">
 <img src="https://codeberg.org/ottoptj/yamlauncher/raw/branch/main/metadata/en-US/images/featureGraphic.png" width=100%/>
 </p>
@@ -9,7 +8,33 @@ I have stopped maintaining this project. 1.8 is the final release of the app. Th
 
 YAM (Yet Another Minimalist) Launcher is a minimalist text-based launcher for Android with weather integration.
 
-Key features:
+## Table of Contents
+
+- [What is a Launcher?](#what-is-a-launcher)
+- [Why Choose YAM Launcher?](#why-choose-yam-launcher)
+- [Key Features](#key-features)
+- [Getting Started](#getting-started)
+- [Installation](#installation)
+- [Screenshots](#screenshots)
+- [Privacy](#privacy)
+- [Permissions](#android-permissions)
+- [Accessibility Services](#accessibility-services)
+
+## What is a Launcher?
+
+A launcher is the home screen application on your Android device that allows you to access your apps, widgets, and other features. By default, Android comes with a launcher (like Google's Pixel Launcher), but you can install and use alternative launchers that offer different features and customization options.
+
+## Why Choose YAM Launcher?
+
+If you're looking for a clean, distraction-free Android experience that focuses on what matters most - your apps and information - YAM Launcher is for you. It's designed for users who value:
+
+- **Digital Minimalism**: No distracting icons, animations, or clutter - just clean text-based app shortcuts
+- **Performance**: Lightweight design that won't slow down your device
+- **Privacy**: No data collection or tracking by default
+- **Customization**: Highly configurable while maintaining simplicity
+
+## Key Features
+
 - No flashy effects, icons or other distractions. Perfect for digital minimalism.
 - Customizable shortcuts for your most used apps.
 - Weather integration with [Open-Meteo](https://open-meteo.com/). (optional)
@@ -22,30 +47,46 @@ Key features:
 - Accessibility Actions support.
 - Open-source under the MIT License.
 
+## Getting Started
+
+1. **Install YAM Launcher** using the instructions below
+2. **Set as Default** when prompted, or manually set it in Settings > Apps > Default apps > Home app
+3. **Configure Shortcuts** by long-pressing on the default "App" shortcuts and selecting your most used apps
+4. **Customize** the look and feel in Settings (accessed by long-pressing on the clock or date)
+
+For a complete list of features and customization options, see the full documentation below.
+
 ## Installation
 
-### F-Droid
-[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
-    alt="Get it on F-Droid"
-    height="80">](https://f-droid.org/en/packages/eu.ottop.yamlauncher)
+### Installing from APK
 
-### IzzyOnDroid
-[<img src="https://github.com/user-attachments/assets/0e6a8084-f056-4db1-9ba3-58b4edb578d0"
-alt="Get it on IzzyOnDroid"
-height="55">](https://apt.izzysoft.de/fdroid/index/apk/eu.ottop.yamlauncher)
+1. Download the latest APK from the [Releases tab](../../releases)
+2. Open the downloaded APK file
+3. If prompted, enable installation from this source in your device settings
+4. Follow the prompts to install the app
 
-### Google Play
-[<img src="https://github.com/user-attachments/assets/18e22711-eadc-4757-8b47-7588cfa9ab8d"
-    alt="Get it on Google Play"
-    height="55">](https://play.google.com/store/apps/details?id=eu.ottop.yamlauncher&pcampaignid=web_share)
+### Setting YAM Launcher as Your Default Home App
 
-### APK
+After installation, Android will usually prompt you to set YAM Launcher as your default home app. If not:
 
-1. Download the [APK](https://codeberg.org/ottoptj/yamlauncher/releases).
-2. Enable the permission to install apps for your browser/files (app you are installing the launcher from).
-3. Install the launcher.
+1. Press the Home button
+2. Select "YAM Launcher" from the options
+3. Choose "Always" to set it as default
 
-#### Important for APK installations
+Alternatively, you can manually set it in your device settings:
+1. Go to Settings > Apps > Default apps (or similar, depending on your device)
+2. Tap "Home app" 
+3. Select "YAM Launcher"
+
+### First-Time Setup
+
+When you first launch YAM Launcher:
+
+1. You'll see a clean, minimalist home screen with default "App" shortcuts
+2. Long-press on any shortcut to select the app you want there
+3. Customize the look and feel through Settings (access by long-pressing the clock or date)
+
+### Important Notes for APK Installations
 
 If you wish to use the double tap to lock feature, Android blocks the accessibility settings for manually installed APKs by default. 
 
@@ -77,28 +118,52 @@ To fix (only if you want to enable the double tap to lock feature):
 
 ## Privacy
 
-[Privacy Policy](https://codeberg.org/ottoptj/yamlauncher/src/branch/main/PrivacyPolicy.md)
+### Your Privacy Matters
 
-No data leaves your device by default and no data is sent to the developer, ever. 
+We take your privacy seriously. YAM Launcher is designed with privacy as a core principle:
 
-Enabling weather integration will send the coordinates that are set for the weather to Open-Meteo and they may also store your IP address.
+- **No Data Collection**: By default, no data leaves your device and no data is sent to the developer or any third parties
+- **No Tracking**: No analytics, no user behavior tracking, no advertising
+- **Open Source**: You can verify our privacy claims by reviewing the source code yourself
+- **Local Processing**: All app management, searching, and customization happens locally on your device
 
-### Permissions
+### Optional Features & Data Usage
 
-- `REQUEST_DELETE_PACKAGES` - Allows uninstallation of apps through the launcher's activity menu.
-- `EXPAND_STATUS_BAR` - Allows pulling down the status bar from the app.
-- `INTERNET` - Required for API calls to Open-Meteo. Only used if weather integration is enabled.
-- `ACCESS_COARSE_LOCATION` - Requested when enabling GPS location. Needs to be allowed to use GPS location.
-- `READ_CONTACTS` - Used to find contacts. Only necessary if the contacts menu is enabled. 
-- `SET_ALARM` - Used for the clock opening gesture on clicking the time. 
-- `QUERY_ALL_PACKAGES` - Used to ensure that the app properly detects all installed apps. 
+Some optional features require external services:
+
+- **Weather Integration** (optional): When enabled, coordinates are sent to [Open-Meteo](https://open-meteo.com/) (a privacy-focused weather service). They may log your IP address for server statistics, but no personal data is stored.
+- **Contacts Search** (optional): Requires permission to read contacts, but contact data never leaves your device
+
+### Permissions Explained
+
+We only request permissions that are essential for launcher functionality. See the detailed permissions list below for explanations of why each permission is needed.
+
+### Android Permissions
+
+YAM Launcher requests several permissions to provide its functionality. Here's what each permission does and why it's needed:
+
+- `REQUEST_DELETE_PACKAGES` - Allows uninstallation of apps through the launcher's activity menu (when you long-press an app and select "Uninstall")
+- `EXPAND_STATUS_BAR` - Allows pulling down the status bar/notification panel when you swipe down on the home screen
+- `INTERNET` - Required for API calls to Open-Meteo weather service. Only used if weather integration is enabled in settings
+- `ACCESS_COARSE_LOCATION` - Used to determine your location for weather forecasts when GPS location is enabled. Not used unless you enable weather with GPS
+- `READ_CONTACTS` - Used to search and access your contacts. Only requested if you enable the contacts search feature
+- `SET_ALARM` - Used when you tap the clock to open your default alarm/clock app
+- `QUERY_ALL_PACKAGES` - Required to detect all installed apps on your device so they appear in the app drawer
 
 ### Accessibility Services
 
-You can optionally enable accessibility services for YAM Launcher if you choose to use the "Double Tap to Lock Screen" gesture. The accessibility services are exclusively used to lock the screen and are not used to collect any data.
+YAM Launcher can optionally use Android's accessibility service for the "Double Tap to Lock Screen" gesture. 
 
-## Mirrors
+**Important**: This feature is completely optional and disabled by default. If you choose to enable it:
 
-[Codeberg (primary)](https://codeberg.org/ottoptj/yamlauncher)
+1. The accessibility service is only used to lock your screen - nothing else
+2. No data is collected or transmitted
+3. You must explicitly grant permission in Android's accessibility settings
 
-[GitHub (secondary)](https://github.com/ottop/yam_launcher)
+This is a limitation of Android - only accessibility services can lock the screen programmatically.
+
+## Ready to Simplify Your Home Screen?
+
+YAM Launcher offers a refreshing alternative to cluttered, resource-heavy launchers. With its focus on simplicity, performance, and privacy, it's perfect for users who want quick access to their apps without distractions.
+
+Give it a try and experience a cleaner, more focused Android home screen today!

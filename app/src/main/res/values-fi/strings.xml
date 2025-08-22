@@ -1,8 +1,11 @@
 <resources>
     <!--Home Screen-->
-    <string name="shortcut_default">Sovellus</string>
+    <string name="shortcut_default">Paina pitkään lisätäksesi sovelluksen</string>
 
-    <string name="shortcut_default_click">Paina pitkään valitaksesi sovelluksen</string>
+    <string name="shortcut_default_click">Paina pitkään lisätäksesi sovelluksen</string>
+    
+    <!-- First-time user experience -->
+    <string name="first_time_welcome">Tervetuloa! Paina pitkään yhtä \"Paina pitkään lisätäksesi sovelluksen\" -kuvakkeista valitaksesi suosikkisovelluksesi</string>
 
     <string name="accessibility_set_shortcut">Valitse pikakuvakkeen sovellus</string>
 
@@ -124,6 +127,7 @@
     <string name="contacts_menu">Yhteystiedot</string>
     <string name="permission_denied">Tarvittavat Luvat Kielletty</string>
     <string name="internet_search">Verkkohaku Nappi</string>
+    <string name="hide_app_drawer">Piilota Sovellusvalikko</string>
 
     <string name="context_menu_settings_title">Kontekstivalikon Asetukset</string>
     <string name="context_menu_settings_text">Kontekstimenu</string>

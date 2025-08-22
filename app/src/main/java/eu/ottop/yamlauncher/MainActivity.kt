@@ -389,7 +389,20 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private fun unsetShortcutSetup(textView: TextView) {
         textView.text = getString(R.string.shortcut_default)
+        // Remove any drawable icons for unset shortcuts
+        textView.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(resources, R.drawable.ic_empty, null), null, null, null)
         unsetShortcutListeners(textView)
+    }
+    
+    private fun showFirstTimeWelcome() {
+        // Only show welcome message for first-time users
+        if (sharedPreferenceManager.isFirstTimeUser()) {
+            Toast.makeText(this, getString(R.string.first_time_welcome), Toast.LENGTH_LONG).show()
+        }
+    }
+    
+    private fun markFirstTimeUserAsSeen() {
+        sharedPreferenceManager.setFirstTimeUser(false)
     }
 
     private fun unsetShortcutListeners(textView: TextView) {
@@ -615,6 +628,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     private fun openAppMenu() {
+        // Check if app drawer is hidden
+        if (sharedPreferenceManager.isAppDrawerHidden()) {
+            return
+        }
+        
         appAdapter?.shortcutTextView = null
         contactAdapter?.shortcutTextView = null
         menuTitle.visibility = View.GONE
@@ -1190,6 +1208,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
         returnAllowed = true
         appAdapter?.notifyDataSetChanged()
+        
+        // Show welcome message for first-time users
+        showFirstTimeWelcome()
+        markFirstTimeUserAsSeen()
     }
 
     override fun onItemClick(appInfo: LauncherActivityInfo, userHandle: UserHandle) {

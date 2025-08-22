@@ -1,8 +1,8 @@
 <resources>
     <!--Home Screen-->
-    <string name="shortcut_default">App</string>
+    <string name="shortcut_default">Long press to add app</string>
 
-    <string name="shortcut_default_click">Long click to select an app</string>
+    <string name="shortcut_default_click">Long press to add app</string>\n    \n    <!-- First-time user experience -->\n    <string name="first_time_welcome">Welcome! Long-press on any "Long press to add app" shortcut to select your favorite apps</string>
 
     <string name="accessibility_set_shortcut">Set Shortcut App</string>
 
@@ -127,6 +127,7 @@
     <string name="contacts_menu">Contacts Menu</string>
     <string name="permission_denied">Permission Denied</string>
     <string name="internet_search">Web Search Button</string>
+    <string name="hide_app_drawer">Hide App Drawer</string>
 
     <string name="context_menu_settings_title">Context Menu Settings</string>
     <string name="context_menu_settings_text">Context Menu</string>

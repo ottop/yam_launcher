@@ -324,6 +324,21 @@ class SharedPreferenceManager(private val context: Context) {
         return preferences.getBoolean("webSearchEnabled", false) && isSearchEnabled() && !isAutoLaunchEnabled()
     }
 
+    fun isAppDrawerHidden(): Boolean {
+        return preferences.getBoolean("hideAppDrawer", false)
+    }
+    
+    // First-time user detection
+    fun isFirstTimeUser(): Boolean {
+        return preferences.getBoolean("isFirstTime", true)
+    }
+    
+    fun setFirstTimeUser(isFirstTime: Boolean) {
+        preferences.edit {
+            putBoolean("isFirstTime", isFirstTime)
+        }
+    }
+
     // Hidden Apps
     fun setAppHidden(componentName: String, profile: Int, hidden: Boolean) {
         preferences.edit {

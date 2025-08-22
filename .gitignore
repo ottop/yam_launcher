@@ -1,3 +1,5 @@
 .gradle/
 .idea/
 local.properties
+keystore.properties
+uploadkey.jks
