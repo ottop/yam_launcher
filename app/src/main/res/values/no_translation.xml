@@ -7,5 +7,9 @@
     <string name="github_link" translatable="false"><![CDATA[<a href="https://github.com/ThomasNowProductions/yam_launcher">GitHub</a>]]></string>
     <string name="weather_link" translatable="false"><![CDATA[Weather data by <a href="https://open-meteo.com/">Open-Meteo.com</a><br>(<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>)]]></string>
     <string name="location_link" translatable="false"><![CDATA[Location data by <a href="https://open-meteo.com/">Open-Meteo.com</a> (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>)]]></string>
+<<<<<<< HEAD
     <string name="itsover" translatable="false"><![CDATA[If you would like to support open source development, we recommend donating to good projects such as <a href="https://signal.org/donate/">Signal</a>.]]> </string>
+=======
+    <string name="itsover" translatable="false"><![CDATA[We would like to express our gratitude to Otto Petäjä, the original creator of YAM Launcher, for his excellent work and dedication to this project.<br><br>Otto has decided to stop developing the launcher, but we are continuing the project to ensure it remains actively maintained and improved.]]> </string>
+>>>>>>> main
 </resources>

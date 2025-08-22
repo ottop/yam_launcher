@@ -2,9 +2,12 @@
     <string name="empty"></string>
 
     <!--Home Screen-->
-    <string name="shortcut_default">App</string>
+    <string name="shortcut_default">Premi a lungo per aggiungere l\'app</string>
 
-    <string name="shortcut_default_click">Tocca e tieni premuto per selezionare un\'app</string>
+    <string name="shortcut_default_click">Premi a lungo per aggiungere l\'app</string>
+    
+    <!-- First-time user experience -->
+    <string name="first_time_welcome">Benvenuto! Tieni premuto su uno qualsiasi dei collegamenti "Premi a lungo per aggiungere l\'app" per selezionare le tue app preferite</string>
 
     <string name="accessibility_set_shortcut">Imposta scorciatoia app</string>
 
@@ -128,6 +131,7 @@
     <string name="contacts_menu">Menu contatti</string>
     <string name="permission_denied">Permesso negato</string>
     <string name="internet_search">Cerca nel web</string>
+    <string name="hide_app_drawer">Nascondi menu app</string>
 
     <string name="context_menu_settings_title">Impostazioni menu contestuale</string>
     <string name="context_menu_settings_text">Menu contestuale</string>

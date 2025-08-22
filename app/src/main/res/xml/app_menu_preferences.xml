@@ -46,6 +46,13 @@
             app:dependency="searchEnabled"
             app:key="webSearchEnabled" />
 
+        <SwitchPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="false"
+            android:title="@string/hide_app_drawer"
+            app:key="hideAppDrawer" />
+
         <Preference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

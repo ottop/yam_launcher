@@ -1,8 +1,11 @@
 <resources>
     <!--Home Screen-->
-    <string name="shortcut_default">App</string>
+    <string name="shortcut_default">Gedrückt halten zum Hinzufügen einer App</string>
 
-    <string name="shortcut_default_click">Gedrückt halten zum Wählen einer App</string>
+    <string name="shortcut_default_click">Gedrückt halten zum Hinzufügen einer App</string>
+    
+    <!-- First-time user experience -->
+    <string name="first_time_welcome">Willkommen! Halten Sie eines der "Gedrückt halten zum Hinzufügen einer App" Symbole gedrückt, um Ihre Lieblings-Apps auszuwählen</string>
 
     <string name="accessibility_set_shortcut">Verknüpfungs-App festlegen</string>
 
@@ -126,6 +129,7 @@
     <string name="contacts_menu">Kontaktmenü</string>
     <string name="permission_denied">Berechtigung verweigert</string>
     <string name="internet_search">Web-Suchfunktion</string>
+    <string name="hide_app_drawer">App-Menü ausblenden</string>
 
     <string name="context_menu_settings_title">Kontextmenü-Einstellungen</string>
     <string name="context_menu_settings_text">Kontextmenü</string>
