@@ -96,6 +96,8 @@ You can optionally enable accessibility services for YAM Launcher if you choose 
 
 ## Mirrors
 
-[Codeberg (primary)](https://codeberg.org/ThomasNowProductions/yamlauncher)
 
-[GitHub (secondary)](https://github.com/ThomasNowProductions/yam_launcher)
+
+[GitHub (primary)](https://github.com/ThomasNowProductions/yam_launcher)
+
+[Codeberg (secondary)](https://codeberg.org/ThomasNowProductions/yamlauncher)
